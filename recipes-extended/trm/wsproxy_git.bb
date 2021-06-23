@@ -15,6 +15,7 @@ S = "${WORKDIR}/git/wsproxy"
 
 DEPENDS = "trm-common qtbase qtwebsockets safec-common-wrapper"
 DEPENDS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' safec', '', d)}"
+DEPENDS += " rfc"
 
 CXXFLAGS += "-DTRM_USE_SSL"
 CFLAGS += "-DTRM_USE_SSL"
