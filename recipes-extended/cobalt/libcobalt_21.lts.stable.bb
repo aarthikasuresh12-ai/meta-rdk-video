@@ -13,16 +13,15 @@ TOOLCHAIN = "gcc"
 SRC_URI  = "git://cobalt.googlesource.com/cobalt.git;protocol=https;name=cobalt;branch=21.lts.stable"
 SRC_URI += "git://cobalt.googlesource.com/depot_tools.git;protocol=https;destsuffix=depot_tools;name=depottools"
 SRC_URI += "${CMF_GIT_ROOT}/rdk/components/generic/cobalt;protocol=${CMF_GIT_PROTOCOL};destsuffix=starboard;name=starboard;branch=master"
-SRC_URI += "file://0001-Init-last-media-time-reported.patch"
 
-SRCREV_cobalt = "21.lts.3"
+SRCREV_cobalt = "21.lts.4"
 SRCREV_depottools = "913305037df7027dc118253b7c2d3655d181c612"
 # Aug 20, 2021
 SRCREV_starboard = "19be06d17a22b0a5fbb44cd500c6a270c8cd6fa8"
 SRCREV_FORMAT = "cobalt_depottools_starboard"
 
 do_fetch[vardeps] += " SRCREV_FORMAT SRCREV_cobalt SRCREV_depottools SRCREV_starboard"
-PR = "3"
+PR = "4"
 S = "${WORKDIR}/git"
 
 DEPENDS += "virtual/egl westeros wpeframework-clientlibraries gstreamer1.0 gstreamer1.0-plugins-base python-native ninja-native bison-native openssl-native"
