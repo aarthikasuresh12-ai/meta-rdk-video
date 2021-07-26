@@ -15,16 +15,18 @@ diff --git a/SecurityAgent/SecurityAgent.cpp b/SecurityAgent/SecurityAgent.cpp
 index 6d03197..627d2a1 100644
 --- a/SecurityAgent/SecurityAgent.cpp
 +++ b/SecurityAgent/SecurityAgent.cpp
-@@ -95,11 +95,18 @@ namespace Plugin {
+@@ -79,13 +79,20 @@ namespace Plugin {
          string version = service->Version();
  
          _skipURL = static_cast<uint8_t>(service->WebPrefix().length());
 -        Core::File aclFile(service->PersistentPath() + config.ACL.Value(), true);
 +        Core::File aclFile("/opt/thunder_acl.json", true);
-+        
++
 +        if (aclFile.Exists() == false) {
 +            aclFile = "/etc/thunder_acl.json";
 +        }
+ 
+         PluginHost::ISubSystem* subSystem = service->SubSystems();
  
          if (aclFile.Exists() == false) {
              aclFile = service->DataPath() + config.ACL.Value();
@@ -35,7 +37,7 @@ index 6d03197..627d2a1 100644
          if ((aclFile.Exists() == true) && (aclFile.Open(true) == true)) {
  
              if (_acl.Load(aclFile) == Core::ERROR_INCOMPLETE_CONFIG) {
-@@ -134,8 +141,11 @@ namespace Plugin {
+@@ -106,8 +113,11 @@ namespace Plugin {
          string connector = config.Connector.Value();
  
          if (connector.empty() == true) {
@@ -45,19 +47,19 @@ index 6d03197..627d2a1 100644
 +
 +        SYSLOG(Logging::Notification,(_T("SecurityAgent TokenDispatcher connector path %s"),connector.c_str()));
 +
-         _dispatcher = new TokenDispatcher(Core::NodeId(connector.c_str()), this);
+         _engine = Core::ProxyType<RPC::InvokeServer>::Create(&Core::IWorkerPool::Instance());
+         _dispatcher.reset(new TokenDispatcher(Core::NodeId(connector.c_str()), service->ProxyStubPath(), this, _engine));
  
-         // On success return empty, to indicate there is no error text.
-@@ -166,6 +176,10 @@ namespace Plugin {
+@@ -156,6 +166,10 @@ namespace Plugin {
  
      /* virtual */ uint32_t SecurityAgent::CreateToken(const uint16_t length, const uint8_t buffer[], string& token)
      {
 +        string strBuffer;
 +        strBuffer.assign(reinterpret_cast<const char*>(buffer),length);
 +        SYSLOG(Logging::Notification, (_T("Creating Token for %s"), strBuffer.c_str()));
-+        
++
          // Generate the token from the buffer coming in...
-         Web::JSONWebToken newToken(Web::JSONWebToken::SHA256, sizeof(_secretKey), _secretKey);
+         auto newToken = JWTFactory::Instance().Element();
  
 diff --git a/SecurityAgent/SecurityContext.cpp b/SecurityAgent/SecurityContext.cpp
 index 34d937f..dff676e 100644

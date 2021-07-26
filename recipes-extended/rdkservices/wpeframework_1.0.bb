@@ -15,7 +15,6 @@ SRC_URI += "file://0003-OCDM-increase-RPC-comm-timeout.patch \
            file://0001-RDK-28534-Security-Agent-Utility-and-Logging.patch \
            file://0001-RDK-30034-callsign.patch \
            file://0004-Enable-BrowserConsoleLog-by-default.patch \
-           file://0001-Merge-pull-request-496-from-npoltorapavlo-RDK-29971_.patch \
            file://603.patch \
            file://0001-Support-negative-numbers-with-write_config.patch \
            file://LLAMA-2254_fix_netlink_buffer_size_error.patch \

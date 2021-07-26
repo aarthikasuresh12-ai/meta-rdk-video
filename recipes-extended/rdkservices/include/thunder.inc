@@ -5,8 +5,8 @@ HOMEPAGE = "https://github.com/rdkcentral/Thunder"
 
 SRC_URI = "git://github.com/rdkcentral/Thunder.git;protocol=git;branch=R2;name=thunder"
 
-# Jun 10, 2021
-SRCREV_thunder = "a1d8fbf0f35b13a8e55b6c334cb92f510067aefc"
+# Aug 24, 2021
+SRCREV_thunder = "0391c6e4de47d9ecc3d21d0e8b312c7d9174b8c2"
 
 PACKAGECONFIG ??= ""
 PACKAGECONFIG[debug]            = "-DCMAKE_BUILD_TYPE=Debug,-DCMAKE_BUILD_TYPE=Release,"

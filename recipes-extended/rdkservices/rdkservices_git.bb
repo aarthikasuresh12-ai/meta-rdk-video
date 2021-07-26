@@ -24,8 +24,8 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://0001-support-for-focus-events.patch \
           "
 
-# Sep 21, 2021
-SRCREV = "85ef7c429c7010ffe5c30d1b1ddb23f91eb89cef"
+# Sep 22, 2021
+SRCREV = "a36ebf96d80934c61e3d2c50fcee2681ad8fe3a8"
 
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"

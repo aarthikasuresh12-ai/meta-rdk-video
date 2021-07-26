@@ -16,12 +16,10 @@ SRC_URI = "git://github.com/rdkcentral/ThunderClientLibraries.git;protocol=git;b
            file://0001-IPersistent_API_Cobalt.patch \
            file://0008-added-opencdm_gstreamer_transform_caps-method.patch \
            file://0009-DELIA-51340.patch \
-           file://0001-Merge-pull-request-66-from-npoltorapavlo-RDKTV-4805.patch \
-           file://0001-DELIA-49951-DELIA-49978-add-locking.patch \
            "
 
-# May 26, 2021
-SRCREV = "8c9daaa5128758bcf8f68b230cc0225e2cfab428"
+# Jul 27, 2021
+SRCREV = "8c413c265c4e6b73f63b067d81aa580960817274"
 
 
 # ----------------------------------------------------------------------------
