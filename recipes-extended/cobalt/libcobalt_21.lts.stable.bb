@@ -24,7 +24,7 @@ do_fetch[vardeps] += " SRCREV_FORMAT SRCREV_cobalt SRCREV_depottools SRCREV_star
 PR = "4"
 S = "${WORKDIR}/git"
 
-DEPENDS += "virtual/egl westeros wpeframework-clientlibraries gstreamer1.0 gstreamer1.0-plugins-base python-native ninja-native bison-native openssl-native"
+DEPENDS += "virtual/egl essos wpeframework-clientlibraries gstreamer1.0 gstreamer1.0-plugins-base python-native ninja-native bison-native openssl-native"
 RDEPENDS_${PN} += "gstreamer1.0-plugins-base-app gstreamer1.0-plugins-base-playback"
 
 TUNE_CCARGS_remove = "-fno-omit-frame-pointer -fno-optimize-sibling-calls"

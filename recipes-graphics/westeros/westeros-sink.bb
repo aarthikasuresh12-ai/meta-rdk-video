@@ -10,7 +10,7 @@ LICENSE_LOCATION = "${S}/../LICENSE"
 
 inherit autotools pkgconfig
 
-DEPENDS = "wayland westeros virtual/westeros-soc"
+DEPENDS = "wayland westeros essos virtual/westeros-soc"
 
 #For sky
 CFLAGS += "${@bb.utils.contains('DISTRO_FEATURES', 'build_for_sky', " -DSKY_BUILD", "", d)}"

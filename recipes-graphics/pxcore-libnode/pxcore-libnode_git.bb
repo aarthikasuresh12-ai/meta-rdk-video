@@ -4,7 +4,7 @@ HOMEPAGE = "http://pxscene.org"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=e7948fb185616891f6b4b35c09cd6ba5"
 
-DEPENDS = "openssl freetype westeros util-linux libpng curl rtremote giflib libjpeg-turbo"
+DEPENDS = "openssl freetype westeros util-linux libpng curl rtremote giflib libjpeg-turbo essos"
 
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'build_spark_rtremote', '', 'rtremote', d)}"
 

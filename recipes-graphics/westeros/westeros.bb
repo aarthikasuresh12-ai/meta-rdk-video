@@ -18,6 +18,10 @@ PACKAGECONFIG[modules] = "--enable-modules=yes,,virtual/westeros-soc"
 
 S = "${WORKDIR}/git"
 
+# RDKDEV-162 - intermediate step before adding standalone essos recipe
+PROVIDES += "essos"
+RPROVIDES_${PN} += "essos"
+
 DEPENDS = "wayland libxkbcommon westeros-simplebuffer westeros-simpleshell virtual/westeros-soc wayland-native"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'gstreamer1', 'gstreamer1.0', 'may-not-be-built-without-gstreamer1', d)}"
 

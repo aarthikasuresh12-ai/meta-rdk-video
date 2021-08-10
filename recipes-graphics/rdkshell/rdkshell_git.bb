@@ -4,7 +4,7 @@ HOMEPAGE = ""
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=25e1268bd2a2291ebad380ef00c2f842"
 
-DEPENDS = " westeros rapidjson libjpeg-turbo libpng"
+DEPENDS = "westeros essos rapidjson libjpeg-turbo libpng"
 
 inherit cmake
 
