@@ -12,6 +12,17 @@ SRCREV_netsrvmgr = "${AUTOREV}"
 S = "${WORKDIR}/git"
 
 CXXFLAGS +=" -DYOCTO_BUILD"
+DEPENDS += "safec-common-wrapper"
+DEPENDS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' safec', " ", d)}"
+
+inherit pkgconfig
+CXXFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' `pkg-config --cflags libsafec`', ' -fPIC', d)}"
+CXXFLAGS_append_client = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' `pkg-config --cflags libsafec`', ' -fPIC', d)}"
+
+LDFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' `pkg-config --libs libsafec`', '', d)}"
+CXXFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', '', ' -DSAFEC_DUMMY_API', d)}"
+CXXFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' -DSAFEC_RDKV', '', d)}"
+
 CXXFLAGS += "-I${STAGING_INCDIR}/rdk/iarmbus -DENABLE_SD_NOTIFY -I${STAGING_INCDIR}/rdk/iarmmgrs-hal"
 CFLAGS += "-I${STAGING_INCDIR}/rdk/iarmbus -DENABLE_SD_NOTIFY -I${STAGING_INCDIR}/rdk/iarmmgrs-hal"
 LDFLAGS += "-lsystemd -lsqlite3 -lsecure_wrapper"
