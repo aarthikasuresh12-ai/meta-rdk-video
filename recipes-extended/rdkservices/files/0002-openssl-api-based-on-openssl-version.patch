@@ -1,0 +1,123 @@
+From 3b50d0e8b87fefe59d19cfaa1c0d2e3c22949572 Mon Sep 17 00:00:00 2001
+From: kpathi331 <Krishnakumar_Pathivuraj@comcast.com>
+Source: Comcast
+License: Apache-2.0
+Upstream-Status: NA
+Signed-off-by: Krishnakumar Pathivuraj <Krishnakumar_Pathivuraj@comcast.com>
+Date: Thu, 25 Feb 2021 10:44:58 +0000
+Subject: [PATCH] compilation error on openssl api
+
+diff --git a/Source/cryptography/implementation/OpenSSL/DiffieHellman.cpp b/Source/cryptography/implementation/OpenSSL/DiffieHellman.cpp
+index 8123314..8745c8f 100644
+--- a/Source/cryptography/implementation/OpenSSL/DiffieHellman.cpp
++++ b/Source/cryptography/implementation/OpenSSL/DiffieHellman.cpp
+@@ -70,10 +70,25 @@ public:
+         ASSERT(key != nullptr);
+ 
+         DHKeyHeader header;
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+         header.primeSize = BN_num_bytes(key->p);
+         header.generatorSize =  BN_num_bytes(key->g);
+         header.privateKeySize = BN_num_bytes(key->priv_key);
+         header.publicKeySize = BN_num_bytes(key->pub_key);
++#else
++	const BIGNUM *pnp = NULL;
++	const BIGNUM *png = NULL;
++	const BIGNUM *priv_key = NULL;
++	const BIGNUM *pub_key = NULL;
++
++	DH_get0_pqg(key, &pnp, NULL, &png);
++	DH_get0_key(key, &pub_key, &priv_key);
++
++	header.primeSize = BN_num_bytes(pnp);
++        header.generatorSize =  BN_num_bytes(png);
++        header.privateKeySize = BN_num_bytes(priv_key);
++        header.publicKeySize = BN_num_bytes(pub_key);
++#endif
+ 
+         uint32_t keySize = (sizeof(header) + header.primeSize + header.generatorSize + header.privateKeySize + header.publicKeySize);
+         ASSERT(keySize < USHRT_MAX);
+@@ -83,11 +98,17 @@ public:
+ 
+         ::memcpy(keyBuf, &header, sizeof(header));
+         uint16_t offset = sizeof(header);
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+         offset += BN_bn2bin(key->p, keyBuf + offset);
+         offset += BN_bn2bin(key->g, keyBuf + offset);
+         offset += BN_bn2bin(key->priv_key, keyBuf + offset);
+         offset += BN_bn2bin(key->pub_key, keyBuf + offset);
+-
++#else
++	offset += BN_bn2bin(pnp, keyBuf + offset);
++        offset += BN_bn2bin(png, keyBuf + offset);
++        offset += BN_bn2bin(priv_key, keyBuf + offset);
++        offset += BN_bn2bin(pub_key, keyBuf + offset);
++#endif
+         return (_vault->Import(keySize, keyBuf, false /* DH private key always sealed */));
+     }
+ 
+@@ -110,6 +131,7 @@ public:
+                 ASSERT(key != nullptr);
+ 
+                 DHKeyHeader* header = reinterpret_cast<DHKeyHeader*>(keyBuf);
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+                 key->p = BN_bin2bn(header->data, header->primeSize, nullptr);
+                 key->g = BN_bin2bn((header->data + header->primeSize), header->generatorSize, nullptr);
+                 key->priv_key = BN_bin2bn((header->data + header->primeSize + header->generatorSize), header->privateKeySize, nullptr);
+@@ -119,6 +141,20 @@ public:
+                 ASSERT(key->g != nullptr);
+                 ASSERT(key->priv_key != nullptr);
+                 ASSERT(key->pub_key != nullptr);
++#else
++		BIGNUM *pnp = NULL;
++		BIGNUM *png = NULL;
++
++		pnp = BN_bin2bn(header->data, header->primeSize, nullptr);
++                png = BN_bin2bn((header->data + header->primeSize), header->generatorSize, nullptr);
++		ASSERT(pnp != nullptr);
++                ASSERT(png != nullptr);
++		DH_set0_pqg(key, pnp, NULL, png);
++
++		DH_set0_key(key, 
++				BN_bin2bn((header->data + header->primeSize + header->generatorSize + header->privateKeySize), header->publicKeySize, nullptr),
++				BN_bin2bn((header->data + header->primeSize + header->generatorSize), header->privateKeySize, nullptr));
++#endif
+             }
+         }
+     }
+@@ -178,12 +214,23 @@ uint32_t GenerateDiffieHellmanKeys(KeyStore& store,
+     if (dh == nullptr) {
+         TRACE_L1(_T("DH_new() failed"));
+     } else {
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+         dh->p = BN_bin2bn(modulus, modulusSize, NULL);
+         dh->g = BN_new();
+         ASSERT(dh->p != nullptr);
+         ASSERT(dh->g != nullptr);
+ 
+         BN_set_word(dh->g, generator);
++#else
++	BIGNUM *pnp = NULL;
++        BIGNUM *png = NULL;
++	pnp = BN_bin2bn(modulus, modulusSize, NULL);
++	png = BN_new();
++	ASSERT(pnp != nullptr);
++        ASSERT(png != nullptr);
++	DH_set0_pqg(dh, pnp, NULL, png);
++	BN_set_word(png, generator);
++#endif
+ 
+         int codes = 0;
+         if ((DH_check(dh, &codes) == 0) || (codes != 0)) {
+@@ -193,7 +240,11 @@ uint32_t GenerateDiffieHellmanKeys(KeyStore& store,
+                 TRACE_L1(_T("DH_generate_key() failed"));
+             } else {
+                 privateKeyId = store.Serialize(dh);
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+                 publicKeyId = store.Serialize(dh->pub_key, true /* public key shall not be sealed */);
++#else
++		publicKeyId = store.Serialize(DH_get0_pub_key(dh), true /* public key shall not be sealed */);
++#endif
+ 
+                 ASSERT(privateKeyId != 0);
+                 ASSERT(publicKeyId != 0);

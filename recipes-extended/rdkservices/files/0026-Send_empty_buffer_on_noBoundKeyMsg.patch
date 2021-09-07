@@ -1,0 +1,50 @@
+From f3889e1ef5f36c38532823e42dd27c34f281ea66 Mon Sep 17 00:00:00 2001
+From: akuria844 <anooja_kurian@comcast.com>
+Date: Thu, 3 Dec 2020 08:09:06 +0000
+Subject: [PATCH 26/26] Send_empty_buffer_on_noBoundKeyMsg
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: akuria844 <anooja_kurian@comcast.com>
+---
+ .../implementation/SecApi/VaultNetflix.cpp          | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/Source/cryptography/implementation/SecApi/VaultNetflix.cpp b/Source/cryptography/implementation/SecApi/VaultNetflix.cpp
+index 173d64d8..e3ddedde 100644
+--- a/Source/cryptography/implementation/SecApi/VaultNetflix.cpp
++++ b/Source/cryptography/implementation/SecApi/VaultNetflix.cpp
+@@ -19,7 +19,7 @@
+ 
+ #include "../../Module.h"
+ #include "Vault.h"
+-
++#define MAX_FILE_SIZE 300
+ namespace Implementation {
+ 
+     
+@@ -38,14 +38,17 @@ namespace Implementation {
+             std::string path;
+             WPEFramework::Core::SystemInfo::GetEnvironment(_T("NETFLIX_VAULT"), path);
+             WPEFramework::Core::File file(path.c_str(), true);
++            /*Send an empty buffer for cases where boundndkymsg File is not required or  present.
++            The buffer content will be ignored by Secapi-Netflix lib for such cases*/    
++            uint8_t buf[MAX_FILE_SIZE]={0};
++            uint16_t inSize = MAX_FILE_SIZE;
+             if (file.Open(true) == true) {
+                 uint64_t fileSize = file.Size();
+-                uint8_t buf[fileSize];
+-                uint16_t inSize = file.Read(buf, fileSize);
++                inSize = file.Read(buf, fileSize);
+                 file.Close();
+-                bool result = netflix.loadBoundKeys(buf, inSize);
+-                ASSERT(result == true);
+             }
++            bool result = netflix.loadBoundKeys(buf, inSize);
++            ASSERT(result == true);
+         };
+ 
+         auto dtor = [](VaultNetflix& netflix) {
+-- 
+2.24.0
+

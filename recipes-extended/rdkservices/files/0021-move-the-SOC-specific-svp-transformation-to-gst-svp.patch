@@ -1,0 +1,137 @@
+From 4bed40c97002866abe31e06ac53ffc6c7d331556 Mon Sep 17 00:00:00 2001
+From: Siva Sankar Raja <sivasankar_raja@comcast.com>
+Date: Thu, 17 Sep 2020 06:19:41 +0000
+Subject: [PATCH] moved the SOC specific svp transformation to gst-svp-ext
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: Siva Sankar Raja <sivasankar_raja@comcast.com>
+
+---
+ .../broadcom-svp-secbuf/open_cdm_adapter.cpp  | 76 ++++---------------
+ 1 file changed, 15 insertions(+), 61 deletions(-)
+
+diff --git a/Source/ocdm/adapter/broadcom-svp-secbuf/open_cdm_adapter.cpp b/Source/ocdm/adapter/broadcom-svp-secbuf/open_cdm_adapter.cpp
+index b8c99328..43ff797f 100644
+--- a/Source/ocdm/adapter/broadcom-svp-secbuf/open_cdm_adapter.cpp
++++ b/Source/ocdm/adapter/broadcom-svp-secbuf/open_cdm_adapter.cpp
+@@ -94,22 +94,6 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
+ 
+             if(totalEncrypted > 0)
+             {
+-                svp_meta_data_t * ptr = (svp_meta_data_t *) g_malloc(sizeof(svp_meta_data_t));
+-                if (ptr) {
+-                    uint32_t chunks_cnt = 0;
+-                    enc_chunk_data_t * ci = NULL;
+-
+-                    memset((uint8_t *)ptr, 0, sizeof(svp_meta_data_t));
+-                    // The next line need to change to assign the opaque handle after calling ->processPayload()
+-                    ptr->secure_memory_ptr = NULL; //pData;
+-                    chunks_cnt = subSampleCount;
+-                    ptr->num_chunks = chunks_cnt;
+-                    if (chunks_cnt) {
+-                        ci = (enc_chunk_data_t *)g_malloc(chunks_cnt * sizeof(enc_chunk_data_t));
+-                        ptr->info = ci;
+-                    }
+-                }
+-
+                 totalEncrypted += sizeof(Rpc_Secbuf_Info); //make sure enough data for metadata
+ 
+                 uint8_t* encryptedData = reinterpret_cast<uint8_t*> (g_malloc(totalEncrypted));
+@@ -124,35 +108,24 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
+                     memcpy(encryptedDataIter, mappedData + index + inClear, inEncrypted);
+                     index += inClear + inEncrypted;
+                     encryptedDataIter += inEncrypted;
+-
+-                    if (ptr && ptr->num_chunks > 0 && ptr->info) {
+-                        enc_chunk_data_t * ci = ptr->info;
+-                        ci[position].clear_data_size = inClear;
+-                        ci[position].enc_data_size = inEncrypted;
+-                    }
+                 }
+                 gst_byte_reader_set_pos(reader, 0);
+ 
+                 result = opencdm_session_decrypt(session, encryptedData, totalEncrypted, mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15);
+ 
+-                if(ptr && (result == ERROR_NONE)) {
++                if(result == ERROR_NONE) {
+                     memcpy(&sb_info, encryptedData, sizeof(Rpc_Secbuf_Info));
+                     if (B_Secbuf_AllocWithToken(sb_info.size, (B_Secbuf_Type)sb_info.type, sb_info.token, (void**)&sb_info.ptr)) {
+                         fprintf(stderr, "B_Secbuf_AllocWithToken() failed!\n");
+                         fprintf(stderr, "%u subsamples, totalEncrypted: %u, sb_inf: ptr=%p, type=%i, size=%i, token=%p\n", subSampleCount, totalEncrypted, sb_info.ptr, sb_info.type, sb_info.size, sb_info.token);
+                     }
+-
+-                    ptr->secure_memory_ptr = (uintptr_t) sb_info.ptr; //assign the handle here!
+-                    gst_buffer_append_svp_metadata(buffer, ptr);
+-                    g_free(ptr->info);
+-                    g_free(ptr);
++                    gst_buffer_append_svp_transform(buffer, subSampleBuffer, subSampleCount, (uint32_t) sb_info.ptr);
+                 }
+                 g_free(encryptedData);
+             } else {
+                 // no encrypted data, skip decryption...
+                 result = ERROR_NONE;
+             }
+-
+             gst_byte_reader_free(reader);
+             gst_buffer_unmap(subSampleBuffer, &sampleMap);
+         } else {
+@@ -160,42 +133,23 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
+             uint8_t* fEncryptedData = NULL;
+             uint32_t totalEncryptedSize = 0;
+ 
+-            svp_meta_data_t * ptr = (svp_meta_data_t *) g_malloc(sizeof(svp_meta_data_t));
+-            if (ptr) {
+-                enc_chunk_data_t *ci = NULL;
+-                memset((uint8_t *)ptr, 0, sizeof(svp_meta_data_t));
+-                // The next line need to change to assign the opaque handle after calling ->processPayload()
+-                ptr->secure_memory_ptr = NULL; //pData;
+-                ptr->num_chunks = 1;
+-
+-                ci = (enc_chunk_data_t *)g_malloc(sizeof(enc_chunk_data_t));
+-                ptr->info = ci;
+-                ci[0].clear_data_size = 0;
+-                ci[0].enc_data_size = mappedDataSize;
++            totalEncryptedSize = mappedDataSize + sizeof(Rpc_Secbuf_Info); //make sure it is enough for metadata
++            encryptedData = (uint8_t*) g_malloc(totalEncryptedSize);
++            fEncryptedData = encryptedData;
++            memcpy(encryptedData, mappedData, mappedDataSize);
+ 
+-                totalEncryptedSize = mappedDataSize + sizeof(Rpc_Secbuf_Info); //make sure it is enough for metadata
+-                encryptedData = (uint8_t*) g_malloc(totalEncryptedSize);
+-                fEncryptedData = encryptedData;
+-                memcpy(encryptedData, mappedData, mappedDataSize);
++            result = opencdm_session_decrypt(session, encryptedData, totalEncryptedSize, mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15);
+ 
+-                result = opencdm_session_decrypt(session, encryptedData, totalEncryptedSize, mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15);
+-
+-                if(result == ERROR_NONE){
+-                    memcpy(&sb_info, fEncryptedData, sizeof(Rpc_Secbuf_Info));
+-                    if (B_Secbuf_AllocWithToken(sb_info.size, (B_Secbuf_Type)sb_info.type, sb_info.token, (void**)&sb_info.ptr)) {
+-                        fprintf(stderr, "B_Secbuf_AllocWithToken() failed!\n");
+-                        fprintf(stderr, "no subsamples, encrypted size: %u, sb_inf: ptr=%p, type=%i, size=%i, token=%p\n", totalEncryptedSize, sb_info.ptr, sb_info.type, sb_info.size, sb_info.token);
+-                    }
+-
+-                    ptr->secure_memory_ptr = (uintptr_t) sb_info.ptr; //assign the handle here!
+-                    gst_buffer_append_svp_metadata(buffer, ptr);
+-                    g_free(ptr->info);
+-                    g_free(ptr);
+-                }
+-                g_free(fEncryptedData);
++            if(result == ERROR_NONE){
++               memcpy(&sb_info, fEncryptedData, sizeof(Rpc_Secbuf_Info));
++               if (B_Secbuf_AllocWithToken(sb_info.size, (B_Secbuf_Type)sb_info.type, sb_info.token, (void**)&sb_info.ptr)) {
++                    fprintf(stderr, "B_Secbuf_AllocWithToken() failed!\n");
++                    fprintf(stderr, "no subsamples, encrypted size: %u, sb_inf: ptr=%p, type=%i, size=%i, token=%p\n", totalEncryptedSize, sb_info.ptr, sb_info.type, sb_info.size, sb_info.token);
++               }
++               gst_buffer_append_svp_transform(buffer, NULL, mappedDataSize, (uint32_t) sb_info.ptr);
+             }
++            g_free(fEncryptedData);
+         }
+-
+         gst_buffer_unmap(keyID, &keyIDMap);
+         gst_buffer_unmap(IV, &ivMap);
+         gst_buffer_unmap(buffer, &dataMap);
+-- 
+2.23.0
+

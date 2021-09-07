@@ -1,0 +1,52 @@
+From 3b50d0e8b87fefe59d19cfaa1c0d2e3c22949572 Mon Sep 17 00:00:00 2001
+From: yramak601 <Yashaswini_Ramakrishna@comcast.com>
+Source: Comcast
+License: Apache-2.0
+Upstream-Status: NA
+Date: Mon, 23 Nov 2020 10:44:58 +0000
+Subject: [PATCH] link-secapi-crypto
+
+Reason for change:Link secapi crypto .TRIAL only.
+Test Procedure: Refer ticket
+Signed-off-by: yramak601  <Yashaswini_Ramakrishna@comcast.com>
+Risks: None
+---
+ .../implementation/SecApi/CMakeLists.txt      | 22 ++++++++++++++-----
+ 1 file changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/Source/cryptography/implementation/SecApi/CMakeLists.txt b/Source/cryptography/implementation/SecApi/CMakeLists.txt
+index c598ad68..a7760809 100644
+--- a/Source/cryptography/implementation/SecApi/CMakeLists.txt
++++ b/Source/cryptography/implementation/SecApi/CMakeLists.txt
+@@ -31,12 +31,22 @@ add_library(${TARGET} STATIC
+ 
+ )
+ 
+-target_link_libraries(${TARGET}
+-    PUBLIC
+-        ${NAMESPACE}Core::${NAMESPACE}Core
+-	-lsec_api
+-	-lsec_api_netflix
+-)
++if(SECAPI_ENGINE_CRYPTANIUM)
++  target_link_libraries(${TARGET}
++      PUBLIC
++          ${NAMESPACE}Core::${NAMESPACE}Core
++          -lsec_api_crypto
++          -lsec_api_common_crypto
++          -lsec_api_netflix
++  )
++else()
++  target_link_libraries(${TARGET}
++      PUBLIC
++          ${NAMESPACE}Core::${NAMESPACE}Core
++	  -lsec_api
++	  -lsec_api_netflix
++  )
++endif()
+ #OpenSSL::SSL
+ #        OpenSSL::Crypto
+ 
+-- 
+2.24.0
+
