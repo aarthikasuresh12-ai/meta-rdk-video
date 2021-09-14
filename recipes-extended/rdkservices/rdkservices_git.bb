@@ -142,7 +142,7 @@ MONITOR_PLUGIN_ARGS                ?= " \
                                        -DPLUGIN_YOUTUBE_MEMORYLIMIT=614400 \
                                        -DPLUGIN_NETFLIX_MEMORYLIMIT=307200 \
                                        -DPLUGIN_MONITOR_CLONED_APPS=ON -DPLUGIN_MONITOR_CLONED_APP_MEMORYLIMIT=657408 \
-                                       -DPLUGIN_MONITOR_SEARCH_AND_DISCOVERY_MEMORYLIMIT=786432 \
+                                       -DPLUGIN_MONITOR_SEARCH_AND_DISCOVERY_MEMORYLIMIT=888832 \
                                        -DPLUGIN_MONITOR_NETFLIX_APP_MEMORYLIMIT=1048576 \
 "
 
