@@ -92,6 +92,7 @@ SRC_URI += "file://archive.patch \
             file://0003-use-timedjoin-in-terminateClient.patch \
             file://0004-set-wayland-clientpid.patch \
             file://DELIA-50375.patch \
+            file://0001-updates-for-structure-initialization.patch \
             "
 
 SRC_URI += "${@bb.utils.contains('DISTRO_FEATURES', 'build_spark_rtremote', ' file://rtremote.conf ', '', d)}"

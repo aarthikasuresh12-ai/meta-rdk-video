@@ -1,0 +1,103 @@
+Date: Sep 15, 2021 9:11 AM
+From: 11adafb9e2fda0f33a4ac237b7444945d3125aeb Sep 15, 2021 09:11 PM
+Subject: [PATCH] updates for structure initialization
+Source: COMCAST
+License: GPLV2
+Upstream-Status: Pending
+Signed-off-by: Madana Gopal <madanagopal_thirumalai@comcast.com>
+
+---
+ src/rtFileDownloader.cpp | 16 ++++++++++++++--
+ src/rtFileDownloader.h   |  9 ++++++---
+ 2 files changed, 20 insertions(+), 5 deletions(-)
+
+diff --git a/src/rtFileDownloader.cpp b/src/rtFileDownloader.cpp
+index 4687c0518..5bf7041b5 100644
+--- a/src/rtFileDownloader.cpp
++++ b/src/rtFileDownloader.cpp
+@@ -75,6 +75,16 @@ struct MemoryStruct
+       }
+     }
+ 
++    void init()
++    {
++      headerSize = 0;
++      contentsSize = 0;
++      downloadRequest = NULL;
++      readSize = 0;
++      headerBuffer = (char*)malloc(1);
++      contentsBuffer = (char*)malloc(1);
++    }
++
+   size_t headerSize;
+   char* headerBuffer;
+   size_t contentsSize;
+@@ -267,13 +277,13 @@ void rtFileDownloadRequest::setExternalWriteCallback(size_t (*callbackFunction)(
+   mExternalWriteCallbackUserPtr = userPtr;
+ }
+ 
+-void rtFileDownloadRequest::setProgressCallback(int (*callbackFunction)(void* ptr, double dltotal, double dlnow, double ultotal, double ulnow), void *userPtr)
++void rtFileDownloadRequest::setProgressCallback(ProgressCB callbackFunction, void *userPtr)
+ {
+   mProgressCallback = callbackFunction;
+   mProgressCallbackUserPtr = userPtr;
+ }
+ 
+-void* rtFileDownloadRequest::progressCallback(void)
++ProgressCB rtFileDownloadRequest::progressCallback(void)
+ {
+   return mProgressCallback;
+ }
+@@ -1010,6 +1020,7 @@ bool rtFileDownloader::downloadByteRangeFromNetwork(rtFileDownloadRequest* downl
+    rtString proxyServer = downloadRequest->proxy();
+    bool headerOnly = downloadRequest->headerOnly();
+    MemoryStruct chunk;
++   chunk.init();
+    double totalTimeTaken = 0;
+ 
+    rtString method = downloadRequest->method();
+@@ -1534,6 +1545,7 @@ bool rtFileDownloader::downloadFromNetwork(rtFileDownloadRequest* downloadReques
+     rtString proxyServer = downloadRequest->proxy();
+     bool headerOnly = downloadRequest->headerOnly();
+     MemoryStruct chunk;
++    chunk.init();
+ 
+     rtString method = downloadRequest->method();
+     size_t readDataSize = downloadRequest->readDataSize();
+diff --git a/src/rtFileDownloader.h b/src/rtFileDownloader.h
+index 66027c0de..799d6122e 100644
+--- a/src/rtFileDownloader.h
++++ b/src/rtFileDownloader.h
+@@ -43,6 +43,8 @@
+ #pragma GCC diagnostic pop
+ #endif
+ 
++typedef int (*ProgressCB)(void* ptr, double dltotal, double dlnow, double ultotal, double ulnow);
++
+ class rtFileDownloadRequest
+ {
+ public:
+@@ -61,8 +63,9 @@ public:
+   rtString errorString();
+   void setCallbackFunction(void (*callbackFunction)(rtFileDownloadRequest*));
+   void setExternalWriteCallback(size_t (*callbackFunction)(void *ptr, size_t size, size_t nmemb, void *userData), void *userPtr);
+-  void setProgressCallback(int (*callbackFunction)(void* ptr, double dltotal, double dlnow, double ultotal, double ulnow), void *userPtr);
+-  void* progressCallback(void);
++
++  void setProgressCallback(ProgressCB callbackFunction, void *userPtr);
++  ProgressCB progressCallback(void);
+   void* progressCallbackUserPtr(void);
+   void setCallbackFunctionThreadSafe(void (*callbackFunction)(rtFileDownloadRequest*));
+   long httpStatusCode();
+@@ -156,7 +159,7 @@ private:
+   void (*mCallbackFunction)(rtFileDownloadRequest*);
+   size_t (*mExternalWriteCallback)(void *ptr, size_t size, size_t nmemb, void *userData);
+   void *mExternalWriteCallbackUserPtr;
+-  int (*mProgressCallback)(void* ptr, double TotalToDownload, double NowDownloaded, double TotalToUpload, double NowUploaded);
++  ProgressCB mProgressCallback;
+   void *mProgressCallbackUserPtr;
+   char* mDownloadedData;
+   size_t mDownloadedDataSize;
+-- 
+2.17.1
+
