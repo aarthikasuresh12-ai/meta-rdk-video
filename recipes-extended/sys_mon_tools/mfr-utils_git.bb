@@ -15,7 +15,7 @@ PROVIDES="mfr-utils"
 
 inherit pkgconfig autotools systemd
 
-DEPENDS="mfr-library dvrmgr-hal-broadcom rmfpodmgrheaders iarmmgrs-hal-headers"
+DEPENDS="mfr-library rmfpodmgrheaders iarmmgrs-hal-headers"
 RDEPENDS_mfr-utils_dunfell = "mfr-library"
 
 SRCREV_FORMAT ?= "mfr-utils"
