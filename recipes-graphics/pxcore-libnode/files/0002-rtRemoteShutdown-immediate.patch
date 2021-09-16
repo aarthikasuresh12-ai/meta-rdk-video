@@ -1,0 +1,60 @@
+From https://github.com/pxscene/pxCore/pull/825
+From: Alexandr Gavriliuc <Alexandr_Gavriliuc@comcast.com>
+
+1. Implement rtRemoteShutdown() immediate (ignoring RefCount)
+2. Do not start rtRemoteEnvironment if env->Server->open() failed
+
+diff --git a/remote/rtRemote.cpp b/remote/rtRemote.cpp
+index d255fa1..fbbac7f 100644
+--- a/remote/rtRemote.cpp
++++ b/remote/rtRemote.cpp
+@@ -35,8 +35,8 @@ rtRemoteInit(rtRemoteEnvironment* env)
+     e = env->Server->open();
+     if (e != RT_OK)
+       rtLogError("failed to open rtRemoteServer. %s", rtStrError(e));
+-
+-    env->start();
++    else
++      env->start();
+   }
+   else
+   {
+@@ -70,15 +70,17 @@ rtRemoteInitNs(rtRemoteEnvironment* env)
+ extern rtError rtRemoteShutdownStreamSelector();
+ 
+ rtError
+-rtRemoteShutdown(rtRemoteEnvironment* env)
++rtRemoteShutdown(rtRemoteEnvironment* env, bool immediate)
+ {
+   rtError e = RT_FAIL;
+   std::lock_guard<std::mutex> lock(gMutex);
+ 
+-  env->RefCount--;
+-  if (env->RefCount == 0)
++  if (immediate || !--env->RefCount)
+   {
+-    rtLogInfo("environment reference count is zero, deleting");
++    if (env->RefCount)
++      rtLogWarn("immediate shutdown (reference count: %u), deleting", env->RefCount);
++    else
++      rtLogInfo("environment reference count is zero, deleting");
+     env->shutdown();
+     if (env == gEnv)
+       gEnv = nullptr;
+diff --git a/remote/rtRemote.h b/remote/rtRemote.h
+index de20e9d..50b8006 100644
+--- a/remote/rtRemote.h
++++ b/remote/rtRemote.h
+@@ -78,10 +78,11 @@ rtRemoteUnregisterDisconnectedCallback( rtRemoteEnvironment* env, remoteDisconne
+ 
+ /**
+  * Shutdown rtRemote sub-system
++ * @param immediate ignore RefCount
+  * @returns RT_OK for success
+  */
+ rtError
+-rtRemoteShutdown(rtRemoteEnvironment* env);
++rtRemoteShutdown(rtRemoteEnvironment* env, bool immediate = false);
+ 
+ /**
+  * Processes a single queue item. This is an API to be called from main loop from queue callback.

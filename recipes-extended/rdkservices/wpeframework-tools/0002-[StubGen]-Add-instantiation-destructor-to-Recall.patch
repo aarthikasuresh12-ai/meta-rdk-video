@@ -1,0 +1,51 @@
+From 9df5dd3e10213323578d679ceb67fe93260211fb Mon Sep 17 00:00:00 2001
+From: Pierre Wielders <pierre@wielders.net>
+Source: Metrological
+License: Apache-2.0
+Upstream-Status: merged
+Date: Fri, 10 Apr 2020 09:24:42 +0200
+Subject: [PATCH] [StubGen] Add Instantiation destructor implementation to Recall()
+
+As the proxy/stubs announce themselves upon loading to the
+RPC::Administrator using Announce(), they should symmetrically
+recall them when unloading. Otherwise, the Administrator may keep
+stale references to announced proxy/stubs that have been unloaded
+already.
+​
+The RPC::Administrator now has an UnAnnounce() method for this purpose,
+which should then be called when the proxy/stubs are unloaded, which
+happens when Instantiation is destroyed.
+​
+This way, let the proxy/stubs generator provide a destructor for the
+Instantiation class and call RPC::Administrator::UnAnnounce() for both
+the proxies and stubs.
+​
+Signed-off-by: Ricardo Silva <ricardo.silva@gbtembedded.com>
+
+
+---
+ Tools/ProxyStubGenerator/StubGenerator.py | 11 +++++++++++
+ 1 files changed, 11 insertions(+)
+
+diff --git a/Tools/ProxyStubGenerator/StubGenerator.py b/Tools/ProxyStubGenerator/StubGenerator.py
+index 2969be74..43e0da80 100755
+--- a/Tools/ProxyStubGenerator/StubGenerator.py
++++ b/Tools/ProxyStubGenerator/StubGenerator.py
+@@ -1223,6 +1223,17 @@ def __ParseLength(length, maxlength, target, length_name):
+ 
+         emit.IndentDec()
+         emit.Line("}")
++
++        emit.Line("~Instantiation()")
++        emit.Line("{")
++        emit.IndentInc()
++
++        for key, val in announce_list.items():
++            emit.Line("RPC::Administrator::Instance().Recall<%s>();" % (key))
++
++        emit.IndentDec()
++        emit.Line("}")
++
+         emit.IndentDec()
+         emit.Line("} ProxyStubRegistration;")
+         emit.Line()

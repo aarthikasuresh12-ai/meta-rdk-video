@@ -1,0 +1,25 @@
+Date: Nov 30, 2018 8:18 PM
+From: 10274d102c5ca81bd46f8601e5e0da882f8946d7 Nov 30, 2018 8:18 PM
+Subject: [PATCH] DELIA-30067 : updating spark version
+
+      updating spark version
+
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: Michael Fiess <michael_fiess@cable.comcast.com>
+---
+
+diff --git a/examples/pxScene2d/src/CMakeLists.txt b/examples/pxScene2d/src/CMakeLists.txt
+index 5224bda1a..ffa012d3d 100644
+--- a/examples/pxScene2d/src/CMakeLists.txt
++++ b/examples/pxScene2d/src/CMakeLists.txt
+@@ -140,7 +140,7 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+              ${COMM_DEPS_LIBRARIES}
+              pthread rt dl m)
+ 
+-    set(PXSCENE_APP_LIBRARIES ${PXSCENE_APP_LIBRARIES} pxCore rtCore_s)
++    set(PXSCENE_APP_LIBRARIES ${PXSCENE_APP_LIBRARIES} pxCore rtCore)
+ 
+     if (HOSTNAME STREQUAL "raspberrypi")
+         message("building pxscene for raspberrypi")

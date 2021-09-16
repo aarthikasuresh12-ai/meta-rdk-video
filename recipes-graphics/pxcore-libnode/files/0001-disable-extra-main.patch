@@ -1,0 +1,49 @@
+From ffd6135ec0cf71ec16e15c499f77a85ad40785d8 Mon Sep 17 00:00:00 2001
+From: mfiess <michael_fiess@cable.comcast.com>
+Date: Tue, 17 Apr 2018 15:10:53 -0400
+Subject: [PATCH] disable extra main
+
+---
+ src/gles/pxEventLoopNative.cpp | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/src/gles/pxEventLoopNative.cpp b/src/gles/pxEventLoopNative.cpp
+index cbbae4b..9ad34b1 100644
+--- a/src/gles/pxEventLoopNative.cpp
++++ b/src/gles/pxEventLoopNative.cpp
+@@ -9,26 +9,27 @@
+ 
+ void pxEventLoop::runOnce()
+ {
+-  pxWindowNative::runEventLoopOnce();
++  //pxWindowNative::runEventLoopOnce();
+ }
+ 
+ void pxEventLoop::run()
+ {
+   // For now we delegate off to the x11 pxWindowNative class
+-  pxWindowNative::runEventLoop();
++  //pxWindowNative::runEventLoop();
+ }
+ 
+ void pxEventLoop::exit()
+ {
+   // For now we delegate off to the x11 pxWindowNative class
+-  pxWindowNative::exitEventLoop();
++  //pxWindowNative::exitEventLoop();
+ }
+ 
+ 
+ ///////////////////////////////////////////
+ // Entry Point 
+ 
+-int main(int argc, char** argv)
++int main2(int argc, char** argv)
+ {
+-    return pxMain(argc, argv);
++    //return pxMain(argc, argv);
++    return 0;
+ }
+-- 
+1.9.1
+

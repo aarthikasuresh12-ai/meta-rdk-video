@@ -1,0 +1,90 @@
+From 2f8bab61c191c68d3e5c334fd20594ae4b18c603 Mon Sep 17 00:00:00 2001
+From: Anand Kandasamy <Anand_Kandasamy@comcast.com>
+Date: Thu, 6 Aug 2020 15:31:02 -0400
+Source: Comcast
+Upstream-Status: Inappropriate [Comcast specific]
+Subject: [PATCH] RDK-28534: Comcast Security Agent changes
+Signed-off-by: Anand Kandasamy <Anand_Kandasamy@comcast.com>
+
+---
+ SecurityAgent/SecurityAgent.cpp   | 18 ++++++++++++++++--
+ SecurityAgent/SecurityContext.cpp |  8 ++++++--
+ 2 files changed, 22 insertions(+), 4 deletions(-)
+
+diff --git a/SecurityAgent/SecurityAgent.cpp b/SecurityAgent/SecurityAgent.cpp
+index 6d03197..627d2a1 100644
+--- a/SecurityAgent/SecurityAgent.cpp
++++ b/SecurityAgent/SecurityAgent.cpp
+@@ -95,11 +95,18 @@ namespace Plugin {
+         string version = service->Version();
+ 
+         _skipURL = static_cast<uint8_t>(service->WebPrefix().length());
+-        Core::File aclFile(service->PersistentPath() + config.ACL.Value(), true);
++        Core::File aclFile("/opt/thunder_acl.json", true);
++        
++        if (aclFile.Exists() == false) {
++            aclFile = "/etc/thunder_acl.json";
++        }
+ 
+         if (aclFile.Exists() == false) {
+             aclFile = service->DataPath() + config.ACL.Value();
+         }
++
++        SYSLOG(Logging::Startup, (_T("SecurityAgent: Reading acl file %s"), aclFile.Name().c_str()));
++
+         if ((aclFile.Exists() == true) && (aclFile.Open(true) == true)) {
+ 
+             if (_acl.Load(aclFile) == Core::ERROR_INCOMPLETE_CONFIG) {
+@@ -134,8 +141,11 @@ namespace Plugin {
+         string connector = config.Connector.Value();
+ 
+         if (connector.empty() == true) {
+-            connector = service->VolatilePath() + _T("token");
++            connector = _T("/tmp/securityagent");
+         }
++
++        SYSLOG(Logging::Notification,(_T("SecurityAgent TokenDispatcher connector path %s"),connector.c_str()));
++
+         _dispatcher = new TokenDispatcher(Core::NodeId(connector.c_str()), this);
+ 
+         // On success return empty, to indicate there is no error text.
+@@ -166,6 +176,10 @@ namespace Plugin {
+ 
+     /* virtual */ uint32_t SecurityAgent::CreateToken(const uint16_t length, const uint8_t buffer[], string& token)
+     {
++        string strBuffer;
++        strBuffer.assign(reinterpret_cast<const char*>(buffer),length);
++        SYSLOG(Logging::Notification, (_T("Creating Token for %s"), strBuffer.c_str()));
++        
+         // Generate the token from the buffer coming in...
+         Web::JSONWebToken newToken(Web::JSONWebToken::SHA256, sizeof(_secretKey), _secretKey);
+ 
+diff --git a/SecurityAgent/SecurityContext.cpp b/SecurityAgent/SecurityContext.cpp
+index 34d937f..dff676e 100644
+--- a/SecurityAgent/SecurityContext.cpp
++++ b/SecurityAgent/SecurityContext.cpp
+@@ -56,7 +56,7 @@ namespace Plugin {
+         : _token(string(reinterpret_cast<const TCHAR*>(payload), length))
+         , _accessControlList(nullptr)
+     {
+-        _context.FromString(_token);
++        _context.URL.FromString(_token);
+ 
+         if ( (_context.URL.IsSet() == true) && (acl != nullptr) ) {
+             _accessControlList = acl->FilterMapFromURL(_context.URL.Value());
+@@ -87,7 +87,11 @@ namespace Plugin {
+     //! Allow a JSONRPC message to be checked before it is offered for processing.
+     bool SecurityContext::Allowed(const Core::JSONRPC::Message& message) const /* override */ 
+     {
+-        return ((_accessControlList != nullptr) && (_accessControlList->Allowed(message.Callsign(), message.Method())));
++        bool bAllowed = ((_accessControlList != nullptr) && (_accessControlList->Allowed(message.Callsign(), message.Method())));
++        if(!bAllowed)
++            SYSLOG(Logging::Notification, ("Access for token url [%s], plugin [%s], method [%s] not allowed", _context.URL.Value().c_str(),message.Callsign().c_str(),message.Method().c_str()));
++        
++        return bAllowed;
+     }
+ 
+     string SecurityContext::Token() const /* override */
+-- 
+2.25.1
+

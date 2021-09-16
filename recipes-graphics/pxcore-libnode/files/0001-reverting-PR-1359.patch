@@ -1,0 +1,553 @@
+From c625b655c9ba1c7c87ae6637f84c6c95fb42ce31 Mon Sep 17 00:00:00 2001
+From: Michael Fiess <mfiess@comcast.net>
+Date: Wed, 26 Sep 2018 10:27:27 -0400
+Subject: [PATCH] reverting PR 1359
+
+---
+ examples/pxScene2d/src/rcvrcore/AppSceneContext.js | 110 ++++++--
+ examples/pxScene2d/src/rcvrcore/XModule.js         | 286 +++++++++++++++------
+ 2 files changed, 293 insertions(+), 103 deletions(-)
+
+diff --git a/examples/pxScene2d/src/rcvrcore/AppSceneContext.js b/examples/pxScene2d/src/rcvrcore/AppSceneContext.js
+index 22d717a..36ef43d 100644
+--- a/examples/pxScene2d/src/rcvrcore/AppSceneContext.js
++++ b/examples/pxScene2d/src/rcvrcore/AppSceneContext.js
+@@ -26,7 +26,8 @@ var path = require('path');
+ var vm = require('vm');
+ var Logger = require('rcvrcore/Logger').Logger;
+ var SceneModuleLoader = require('rcvrcore/SceneModuleLoader');
+-var XModule = require('rcvrcore/XModule');
++var XModule = require('rcvrcore/XModule').XModule;
++var xmodImportModule = require('rcvrcore/XModule').importModule;
+ var loadFile = require('rcvrcore/utils/FileUtils').loadFile;
+ var loadFileWithSparkPermissionsCheck = require('rcvrcore/utils/FileUtils').loadFileWithSparkPermissionsCheck;
+ var SceneModuleManifest = require('rcvrcore/SceneModuleManifest');
+@@ -35,6 +36,7 @@ var AsyncFileAcquisition = require('rcvrcore/utils/AsyncFileAcquisition');
+ var AccessControl = require('rcvrcore/utils/AccessControl').AccessControl;
+ var WrapObj = require('rcvrcore/utils/WrapObj');
+ var http2_wrap = require('rcvrcore/http2_wrap');
++var ws_wrap = (isDuk)?"":require('rcvrcore/ws_wrap');
+ 
+ var log = new Logger('AppSceneContext');
+ //overriding original timeout and interval functions
+@@ -221,7 +223,51 @@ this.innerscene.on('onClose', function() {
+     this.isCloseEvtRcvd = true;
+   }.bind(this));
+ 
++if (false) {
++if (false) {
++  // This no longer has access to the container
++  this.container.on('onKeyDown', function (e) {
++    log.message(2, "container(" + this.packageUrl + "): keydown:" + e.keyCode);
++  }.bind(this));
++
++}
++  this.innerscene.on('onKeyDown', function (e) {
++    log.message(2, "innerscene(" + this.packageUrl + "): keydown:" + e.keyCode);
++  }.bind(this));
++
++  this.innerscene.root.on('onKeyDown', function (e) {
++    log.message(2, "innerscene root(" + this.packageUrl + "): keydown:" + e.keyCode);
++  }.bind(this));
++}
++
++if (false) {
++  // JRJRJR No longer get this event...
++  this.innerscene.on('onComplete', function (e) {
++//    this.container = null;
++    this.innerscene = null;
++    this.sandbox = null;
++    for(var key in this.scriptMap) {
++      this.scriptMap[key].scriptObject = null;
++      this.scriptMap[key].readyListeners = null;
++/* JRJRJR
++      delete this.scriptMap[key].scriptObject;
++      delete this.scriptMap[key].readyListeners;
++*/
++    }
++    this.scriptMap = null;
++    for(var xmodule in this.xmoduleMap) {
++      this.xmoduleMap[xmodule].freeResources();
++    }
++    this.xmoduleMap = null;
++    this.topXModule = null;
++    this.jarFileMap = null;
++    this.sceneWrapper = null;
++    global.gc();
++  }.bind(this));
++}
++
+   //log.info("loadScene() - ends    on ctx: " + getContextID() );
++
+ };
+ 
+ AppSceneContext.prototype.loadPackage = function(packageUri) {
+@@ -280,8 +326,8 @@ function createModule_pxScope(xModule) {
+     configImport: xModule.configImport.bind(xModule),
+     resolveFilePath: xModule.resolveFilePath.bind(xModule),
+     appQueryParams: this.queryParams,
+-    getPackageBaseFilePath: this.getPackageBaseFilePath.bind(this),
+-    getFile: this.getFile.bind(this),
++    getPackageBaseFilePath: getPackageBaseFilePath.bind(this),
++    getFile: getFile.bind(this),
+     getModuleFile: xModule.getFile.bind(xModule)
+   };
+ }
+@@ -506,20 +552,29 @@ if (false) {
+ 
+       console.log("Main Module: readyPromise=" + xModule.moduleReadyPromise);
+       if( !xModule.hasOwnProperty('moduleReadyPromise') || xModule.moduleReadyPromise === null ) {
+-        console.log("Main module[" + self.packageUrl + "] about to notify. xModule.exports:"+(typeof xModule.exports));
+-        self.innerscene.api = xModule.exports;
+-        this.makeReady(true, xModule.exports);
+-        console.log("Main module[" + self.packageUrl + "] about to notify done");
+-      } else {
+-        xModule.moduleReadyPromise.then( function() {
+-          console.log("Main module[" + self.packageUrl + "] about to notify. xModule.exports:"+(typeof xModule.exports));
++        //        this.container.makeReady(true); // DEPRECATED ?
++
++        //        this.innerscene.api = {isReady:true};
++        this.makeReady(true,{});
++      }
++      else
++      {
++        var modulePromise = xModule.moduleReadyPromise;
++        var thisMakeReady = this.makeReady; // NB:  capture for async then() closure.
++
++        modulePromise.then( function(i)
++        {
+           self.innerscene.api = xModule.exports;
+-          self.makeReady(true, xModule.exports);
++
++          console.log("Main module[" + self.packageUrl + "] about to notify");
++          thisMakeReady(true, xModule.exports);
+           console.log("Main module[" + self.packageUrl + "] about to notify done");
+-        }).catch( function(err) {
++
++        }).catch( function(err)
++        {
+           console.error("Main module[" + self.packageUrl + "]" + " load has failed - on failed imports: " + ", err=" + err);
+-          self.makeReady(false, {});
+-        });
++          thisMakeReady(false,{});
++        } );
+       }
+     }
+     catch (err) {
+@@ -573,6 +628,14 @@ AppSceneContext.prototype.getPackageBaseFilePath = function() {
+   return fullPath;
+ };
+ 
++function getPackageBaseFilePath() {
++  return this.getPackageBaseFilePath();
++}
++
++function getFile(filePath) {
++  return this.getFile(filePath);
++}
++
+ AppSceneContext.prototype.getModuleFile = function(filePath, xModule) {
+   var promise = this.jarFileMap.getArchiveFileAsync(xModule.getJarName(), filePath);
+   if (promise) {
+@@ -809,24 +872,27 @@ AppSceneContext.prototype.processCodeBuffer = function(origFilePath, filePath, c
+   this.setXModule(filePath, xModule);
+ 
+   // Set up a async wait until module indicates it's completly ready
+-  if( !xModule.moduleReadyPromise ) {
++  var modReadyPromise = xModule.moduleReadyPromise;
++  if( modReadyPromise === null ) {
+     // No use of px.import or it's possible that these exports have already been added
+-    log.message(4, "["+xModule.name+"]: <" + filePath + "> MODULE INDICATES IT'S FULLY READY. xModule.exports:" + (typeof xModule.exports));
+     _this.addScript(filePath, 'ready', xModule.exports);
+-    log.message(4, "is about to notify [" + currentXModule.name + "] that <" + filePath + "> has been imported and is ready");
+     onImportComplete([xModule.exports, origFilePath]);
+-    log.message(4, "after notifying [:" + currentXModule.name + "] about import <" + filePath + ">");
++    log.message(4, "AppSceneContext after notifying[:" + currentXModule.name + "] about import<" + filePath + ">");
++    // notify 'ready' listeners
+     _this.callModuleReadyListeners(filePath, xModule.exports);
++
+   } else {
+     // Now wait for module to indicate that it's fully ready to go
+-    xModule.moduleReadyPromise.then(function () {
+-      log.message(4, "["+xModule.name+"]: <" + filePath + "> MODULE INDICATES IT'S FULLY READY. xModule.exports:" + (typeof xModule.exports));
++    modReadyPromise.then(function () {
++      log.message(7, "AppSceneContext[xModule=" + xModule.name + "]: is notified that <" + filePath + "> MODULE INDICATES IT'S FULLY READY");
+       _this.addScript(filePath, 'loaded', xModule.exports);
+       _this.setScriptStatus(filePath, 'ready');
+-      log.message(4, "is about to notify [" + currentXModule.name + "] that <" + filePath + "> has been imported and is ready");
++      log.message(7, "AppSceneContext: is about to notify [" + currentXModule.name + "] that <" + filePath + "> has been imported and is ready");
+       onImportComplete([xModule.exports, origFilePath]);
+-      log.message(4, "after notifying [:" + currentXModule.name + "] about import <" + filePath + ">");
++      log.message(8, "AppSceneContext after notifying[:" + currentXModule.name + "] about import<" + filePath + ">");
++      // notify 'ready' listeners
+       _this.callModuleReadyListeners(filePath, xModule.exports);
++
+     }).catch(function (error) {
+       onImportRejected("include(2): failed while waiting for module <" + filePath + "> to be ready for [" + currentXModule.name + "] - error=" + error);
+     });
+diff --git a/examples/pxScene2d/src/rcvrcore/XModule.js b/examples/pxScene2d/src/rcvrcore/XModule.js
+index 3548d5c..e8e3edc 100644
+--- a/examples/pxScene2d/src/rcvrcore/XModule.js
++++ b/examples/pxScene2d/src/rcvrcore/XModule.js
+@@ -19,6 +19,7 @@ limitations under the License.
+ "use strict";
+ 
+ var hasExtension = require('rcvrcore/utils/FileUtils').hasExtension;
++
+ var Logger = require('rcvrcore/Logger').Logger;
+ var log = new Logger('XModule');
+ 
+@@ -27,24 +28,63 @@ function XModule(name, appSceneContext, basePath, jarName) {
+   this.name = name;
+   this.appSandbox = null;
+   this.moduleReadyPromise = null;
+-  this.exports = {}; // module.exports is an object by default
++  this.exports = {};
++  this.pendingIncludes = {};
++  this.moduleNameList = [];
++  this.promises = [];
++  this.moduleData = {};
+   this.appSceneContext = appSceneContext;
++  this.imports = {};
+   this.log = null;
+   this.basePath = basePath;
+   this.jarName = jarName;
+   this.importReplacementMap = {};
+ }
+ 
++XModule.prototype.load = function(uri) {
++  global.exports = self.exports;
++  global.module = self;
++};
++
+ XModule.prototype.freeResources = function() {
+   this.name = null;
+   this.appSandbox = null;
+   this.moduleReadyPromise = null;
++  for(var key in this.exports) {
++    this.exports[key] = null;
++    delete this.exports[key];
++  }
+   this.exports = null;
++  for(var key in this.pendingIncludes) {
++    this.pendingIncludes[key] = null;
++    delete this.pendingIncludes[key];
++  }
++  this.pendingIncludes = null;
++  if ((undefined != this.moduleNameList) && (null != this.moduleNameList))
++  {
++    var nmodules = this.moduleNameList.length;
++    for (var i=0; i<nmodules; i++)
++    {
++      this.moduleNameList.pop();
++    }
++  }
++  this.moduleNameList = null;
++  if ((undefined != this.promises) && (null != this.promises))
++  {
++    var npromises = this.promises.length;
++    for (var i=0; i<npromises; i++)
++    {
++      this.promises.pop();
++    }
++  }
++  this.promises = null;
++  this.moduleData = null;
+   this.appSceneContext = null;
++  this.imports = null;
+   this.log = null;
++  this.importReplacementMap = null;
+   this.basePath = null;
+   this.jarName = null;
+-  this.importReplacementMap = null;
+ };
+ 
+ XModule.prototype.getBasePath = function() {
+@@ -60,100 +100,171 @@ XModule.prototype.initSandbox = function(otherSandbox) {
+   this.log = new Logger(this.name);
+ };
+ 
+-XModule.prototype.importModule = function(requiredModuleSet) {
++XModule.prototype.include = function(filePath) {
++  var rtnPromise = this.appSceneContext.include(filePath, this);
++  this.pendingIncludes[filePath] = rtnPromise;
++  return rtnPromise;
++};
++
++function importModule(requiredModuleSet, params) {
++  return this.importModule(requiredModuleSet, params);
++}
++
++XModule.prototype.importModule = function(requiredModuleSet, params) {
+   var _this = this;
++  return new Promise(function(resolve, reject) {
++    _this._importModule(requiredModuleSet, function readyCallback(importsArr) {
++      resolve(importsArr);
++    }) ,
++      function failureCallback(error) {
++        reject(error);
++      };
++  } );
++};
+ 
+-  return new Promise(function(readyCallBack, failedCallback) {
+-    // parse input
+-    var isSingleStringImportType = false;
+-    var pathToNameMap = {};
+-    var requiredModules = [];
+-    var k, key;
+-    if( typeof requiredModuleSet === 'string' ) {
+-      requiredModules.push(requiredModuleSet);
+-      isSingleStringImportType = true;
+-    } else if( !Array.isArray(requiredModuleSet) ) {
+-      for(key in requiredModuleSet) {
+-        if (requiredModuleSet.hasOwnProperty(key)) {
+-          var modulePath = requiredModuleSet[key];
+-          requiredModules.push(modulePath);
+-          pathToNameMap[modulePath] = key;
+-        }
+-      }
+-    } else {
+-      for(k = 0; k < requiredModuleSet.length; ++k) {
+-        key = requiredModuleSet[k];
+-        requiredModules.push(key);
+-        pathToNameMap[key] = key.substring(key.lastIndexOf('/')+1);
+-      }
++XModule.prototype._importModule = function(requiredModuleSet, readyCallBack, failedCallback, params) {
++  var isSingleStringImportType = false;
++
++  if( readyCallBack === undefined ) {
++    console.trace("WARNING: " + 'prepareModule was did not have resolutionCallback parameter: USAGE: prepareModule(requiredModules, readyCallback, [failedCallback])');
++  }
++
++  var pathToNameMap = {};
++  var requiredModules = [];
++  if( typeof requiredModuleSet === 'string' ) {
++    requiredModules.push(requiredModuleSet);
++    isSingleStringImportType = true;
++  } else if( !Array.isArray(requiredModuleSet) ) {
++    requiredModules = [];
++    for(var key in requiredModuleSet) {
++      requiredModules.push(requiredModuleSet[key]);
++      pathToNameMap[requiredModuleSet[key]] = key;
+     }
+-    // if empty set return
+-    if( requiredModules.length === 0 ) {
+-      log.message(5, "XModule:  No includes are required for " + _this.name);
+-      readyCallBack();
+-      _this.moduleReadyPromise = null;
+-      return;
++  } else {
++    requiredModules = requiredModuleSet;
++    for(var k = 0; k < requiredModuleSet.length; ++k) {
++      var baseName = requiredModuleSet[k].substring(requiredModuleSet[k].lastIndexOf('/')+1);
++      pathToNameMap[requiredModuleSet[k]] = baseName;
+     }
+-    // get this module's path
+-    var bPath;
+-    if( hasExtension(_this.name, '.js') ) {
+-      bPath = _this.name.substring(0, _this.name.lastIndexOf('.js'));
+-    } else {
+-      bPath = _this.name;
++
++  }
++
++  if( requiredModules.length === 0 ) {
++    log.message(5, "XModule:  No includes are required for " + this.name);
++    if( readyCallBack !== null && readyCallBack !== undefined ) {
++      readyCallBack();
+     }
+-    // add for tracking
+-    if (_this.appSandbox && _this.appSandbox.importTracking) {
+-      if( !_this.appSandbox.importTracking.hasOwnProperty(bPath) ) {
+-        _this.appSandbox.importTracking[bPath] = [];
++    this.moduleReadyPromise = null;
++    return this.getInstance;
++  }
++
++
++  var bPath;
++  if( hasExtension(this.name, '.js') ) {
++    bPath = this.name.substring(0, this.name.lastIndexOf('.js'));
++  } else {
++    bPath = this.name;
++  }
++
++
++  var justAdded = false;
++  if( !this.appSandbox.importTracking.hasOwnProperty(bPath) ) {
++    this.appSandbox.importTracking[bPath] = [];
++    justAdded = true;
++  }
++  for (var k = 0; k < requiredModules.length; ++k) {
++    log.message(9, bPath + " REQUIRES " + requiredModules[k]);
++    this.appSandbox.importTracking[bPath].push(requiredModules[k]);
++
++    if( this.appSandbox.importTracking.hasOwnProperty(requiredModules[k]) ) {
++      var reqArr = this.appSandbox.importTracking[requiredModules[k]];
++      if( reqArr.length !== 0) {
++        for(var j = 0; j < reqArr.length; ++j) {
++          if( bPath === reqArr[j]) {
++            console.trace("Found circular dependency: " + bPath + " requires " + requiredModules[k] + " which requires " + bPath);
++            //process.exit(1);
++          }
++        }
+       }
+-      for (k = 0; k < requiredModules.length; ++k) {
+-        log.message(9, bPath + " REQUIRES " + requiredModules[k]);
+-        _this.appSandbox.importTracking[bPath].push(requiredModules[k]);
++      //this.appSandbox.importTracking.bPath = [];
++    }
++  }
++
++  var _this = this;
++
++  // Create a promise that will be fulfilled when all includes/imports have been completed
++  var promise = new Promise(function(moduleBuildResolve, moduleBuildReject) {
++    if (requiredModules !== undefined) {
++      for (var k = 0; k < requiredModules.length; ++k) {
++        var ipromise = _this.include(requiredModules[k]);
++        _this.moduleNameList[k] = requiredModules[k];
++        _this.promises[k] = ipromise;
+       }
++    } else {
++      console.trace("requiredModules undefined");
+     }
+ 
+-    _this.moduleReadyPromise = new Promise(function(moduleBuildResolve, moduleBuildReject) {
+-      // get a promise for each import
+-      var moduleNameList = [];
+-      var promises = [];
+-      var k, key;
+-      for (k = 0; k < requiredModules.length; ++k) {
+-        key = requiredModules[k];
+-        var promise = _this.appSceneContext.include(key, _this);
+-        moduleNameList[k] = key;
+-        promises[k] = promise;
++    // Now wait for all the include/import promises to be fulfilled
++    Promise.all(_this.promises).then(function (exports) {
++      var exportsMap = {};
++      var exportsArr = [];
++      if( isSingleStringImportType ) {
++        exportsMap = exports[0][0];
++      } else {
++        for (var k = 0; k < _this.moduleNameList.length; ++k) {
++          ///_this.appSandbox[pathToNameMap[exports[k][1]]] = exports[k][0];
++          // commented below because, these variables are not used anymore
++          // And these variables holds complete imported JS module data, taking more memory
++          //_this.moduleData[_this.moduleNameList[k]] = exports[k][0];
++          //exportsArr[k] = exports[k][0];
++          exportsMap[pathToNameMap[exports[k][1]]] = exports[k][0];
++          //since include file is received, remove it from pendingincludes list
++          _this.pendingIncludes[exports[k][1]] = null;
++          delete _this.pendingIncludes[exports[k][1]];
++
++          //console.log("TJC: " + _this.name + " gets: module[" + _this.moduleNameList[k] + "]: " + exports[k][0]);
++        }
+       }
+-      // Now wait for all the include/import promises to be fulfilled
+-      Promise.all(promises).then(function (exports) {
+-        var exportsMap = {};
+-        if( isSingleStringImportType ) {
+-          key = exports[0][1];
+-          log.message(9, bPath + " GOT " + key);
+-          exportsMap = exports[0][0];
+-        } else {
+-          for (k = 0; k < moduleNameList.length; ++k) {
+-            key = pathToNameMap[exports[k][1]];
+-            log.message(9, bPath + " GOT " + key);
+-            exportsMap[key] = exports[k][0];
+-          }
++      //remove the array of modules added for tracking in sandbox
++      var bPath;
++      if( hasExtension(_this.name, '.js') ) {
++        bPath = _this.name.substring(0, _this.name.lastIndexOf('.js'));
++      } else {
++        bPath = _this.name;
++      }
++
++      var imports = _this.appSandbox.importTracking[bPath];
++
++      if(imports !== undefined && imports !== null && imports.length !== undefined) {
++        var nmodules = _this.appSandbox.importTracking[bPath].length;
++        for (var modindex=0; modindex<nmodules; modindex++)
++        {
++          _this.appSandbox.importTracking[bPath].pop();
+         }
+-        // remove the array of modules added for tracking in sandbox
+-        _this.appSandbox.importTracking[bPath] = {};
+-        log.message(7, "XMODULE ABOUT TO NOTIFY [" + _this.name + "] that all its imports are Ready");
++        delete _this.appSandbox.importTracking[bPath];
++      }
++
++      log.message(7, "XMODULE ABOUT TO NOTIFY [" + _this.name + "] that all its imports are Ready");
++      if( readyCallBack !== null && readyCallBack !== undefined ) {
+         readyCallBack(exportsMap);
+-        moduleBuildResolve();
+-        log.message(8, "XMODULE AFTER NOTIFY [" + _this.name + "] that all its imports are Ready");
+-      }).catch(function (error) {
+-        log.error("Error - failed to get Remote modules for: " + _this.name + ", error=" + error);
+-        // notify that the promise can't be kept
++      }
++      moduleBuildResolve();
++      log.message(8, "XMODULE AFTER NOTIFY [" + _this.name + "] that all its imports are Ready");
++    }).catch(function (error) {
++      console.error("Error - failed to get Remote modules for: " + _this.name + ", error=" + error);
++      // notify that the promise can't be kept
++      if( failedCallback !== null && failedCallback !== undefined ) {
+         failedCallback();
+-        moduleBuildReject(error);
+-      });
+-    });
++      }
++      moduleBuildReject(error);
++    }); // end of individual file promise
++  }); // end of module promise
+ 
+-  });
++  this.moduleReadyPromise = promise;
++  return this.getInstance;
+ };
+ 
++
+ XModule.prototype.configImport = function(replacementMap) {
+   this.importReplacementMap = replacementMap;
+ };
+@@ -165,20 +276,33 @@ XModule.prototype.findImportReplacementMatch = function(path) {
+   // look for direct matches or partial matches at beginning of uri
+   for(var key in this.importReplacementMap) {
+     var regexp = new RegExp('^' + key);
++    var found = path.match(regexp);
+     if( path.match(regexp) ) {
+       var newUri = path.replace(regexp, this.importReplacementMap[key]);
+       return {fileUri:newUri, isJarFile:false};
+     }
+   }
++
+   return null;
+ };
+ 
++function getFile(filePath) {
++  this.getFile(filePath);
++}
++
+ XModule.prototype.getFile = function(filePath) {
+   return this.appSceneContext.getModuleFile(filePath, this);
+ };
+ 
++function resolveFilePath(filePath) {
++  this.getFile(filePath);
++}
++
+ XModule.prototype.resolveFilePath = function(filePath) {
+   return this.appSceneContext.resolveModulePath(filePath, this);
+ };
+ 
+-module.exports = XModule;
++module.exports = {
++  importModule: importModule,
++  XModule: XModule
++};
+-- 
+1.9.1
+

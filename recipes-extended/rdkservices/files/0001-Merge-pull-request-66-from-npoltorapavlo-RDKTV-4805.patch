@@ -1,0 +1,56 @@
+From 7a538c4c645160bf82b624a9820d563a1a7da973 Mon Sep 17 00:00:00 2001
+From: Pierre Wielders <pierre@wielders.net>
+Date: Thu, 20 May 2021 17:48:08 +0200
+Source: RDK
+License: Apache License 2.0
+Upstream-Status: master branch
+Signed-off-by: Nikita Poltorapavlo <npoltorapavlo@productengine.com>
+Subject: [PATCH] Merge pull request #66 from npoltorapavlo/RDKTV-4805
+
+RDKTV-4805 : fix GetSecurityToken
+---
+ Source/securityagent/ipclink.cpp | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/Source/securityagent/ipclink.cpp b/Source/securityagent/ipclink.cpp
+index e07f3a0..a9bad74 100644
+--- a/Source/securityagent/ipclink.cpp
++++ b/Source/securityagent/ipclink.cpp
+@@ -20,6 +20,8 @@
+ #include "IPCSecurityToken.h"
+ #include "securityagent.h"
+ 
++#include <mutex>
++
+ using namespace WPEFramework;
+ 
+ static string GetEndPoint()
+@@ -37,7 +39,7 @@ static string GetEndPoint()
+ 
+ extern "C" {
+ 
+-Core::ProxyType<IPC::SecurityAgent::TokenData> _tokenId(Core::ProxyType<IPC::SecurityAgent::TokenData>::Create());
++Core::ProxyPoolType<IPC::SecurityAgent::TokenData> _tokens(1);
+ 
+ /*
+  * GetToken - function to obtain a token from the SecurityAgent
+@@ -55,12 +57,16 @@ Core::ProxyType<IPC::SecurityAgent::TokenData> _tokenId(Core::ProxyType<IPC::Sec
+  */
+ int GetToken(unsigned short maxLength, unsigned short inLength, unsigned char buffer[])
+ {
++    static std::mutex mtx;
++    std::unique_lock<std::mutex> lock(mtx);
++
+     Core::IPCChannelClientType<Core::Void, false, true> channel(Core::NodeId(GetEndPoint().c_str()), 2048);
+     int result = -1;
+ 
+     if (channel.Open(1000) == Core::ERROR_NONE) { // Wait for 1 Second.
+ 
+         // Prepare the data we have to send....
++        Core::ProxyType<IPC::SecurityAgent::TokenData> _tokenId(_tokens.Element());
+         _tokenId->Clear();
+         _tokenId->Parameters().Set(inLength, buffer);
+ 
+-- 
+2.29.0
+

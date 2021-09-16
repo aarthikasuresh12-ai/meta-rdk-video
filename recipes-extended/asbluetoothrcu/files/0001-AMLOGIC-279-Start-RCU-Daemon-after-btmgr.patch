@@ -1,0 +1,27 @@
+Upstream-Status: Pending
+Source: Sky
+Signed-off-by: Marcin Twardak <marcin.twardak@sky.uk>
+
+From 6516d70b2652999d0bf9f50c5e0955ca6d0c46c0 Mon Sep 17 00:00:00 2001
+From: Marcin Twardak <marcin.twardak@consult.red>
+Date: Wed, 15 Jul 2020 13:30:51 +0200
+Subject: [PATCH 1/1] [AMLOGIC-279] Start RCU Daemon after btmgr 
+
+diff --git a/daemon/source/services/sky-bluetoothrcu.service b/daemon/source/services/sky-bluetoothrcu.service
+index 1e101b27..1be10899 100644
+--- a/daemon/source/services/sky-bluetoothrcu.service
++++ b/daemon/source/services/sky-bluetoothrcu.service
+@@ -7,8 +7,8 @@
+ ##########################################################################
+ [Unit]
+ Description=Sky Bluetooth RCU Daemon
+-After=bluetooth.service
+-Requires=bluetooth.service
++After=bluetooth.service btmgr.service
++Wants=bluetooth.service btmgr.service
+
+ [Service]
+ User=blercu
+--
+2.25.1
+

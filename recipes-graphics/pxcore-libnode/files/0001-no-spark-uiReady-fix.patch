@@ -1,0 +1,35 @@
+From 61583ae57a222e0d2f75db272da2984c35d5fc0e Mon Sep 17 00:00:00 2001
+From: Michael Fiess <michael_fiess@cable.comcast.com>
+Date: Fri, 12 Jul 2019 12:26:25 -0400
+Subject: [PATCH] no spark uiReady fix
+
+---
+ examples/pxScene2d/src/rcvrcore/optimus.js | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/examples/pxScene2d/src/rcvrcore/optimus.js b/examples/pxScene2d/src/rcvrcore/optimus.js
+index 161a090..00f763a 100644
+--- a/examples/pxScene2d/src/rcvrcore/optimus.js
++++ b/examples/pxScene2d/src/rcvrcore/optimus.js
+@@ -465,6 +465,9 @@ function Application(props) {
+           function(err) { _uiReadyReject(err); }
+         );
+       }
++      else
++        _uiReadyResolve("no uiReady promise");
++      
+     }, function rejection() {
+       var msg = "Failed to load uri: " + uri;
+       _this.log("failed to launch Spark app: " + _this.id + ". " + msg);
+@@ -620,7 +623,7 @@ function Application(props) {
+         }
+         else
+         {
+-          _uiReadyResolve("no uiReady event");
++          _uiReadyResolve("no uiReady promise");
+         }
+       },
+       function()
+-- 
+2.7.4
+

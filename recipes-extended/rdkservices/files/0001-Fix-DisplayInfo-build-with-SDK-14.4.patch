@@ -1,0 +1,47 @@
+Date: May 6, 2020 4:20 PM
+From: daf09da133fe5614132a439483ec4027f9128739 May 6, 2020 4:20 PM
+Subject: [PATCH] RDK-28236 : Modify RDKV build scripts to use rkdcentral/rdkservices
+
+     Build script changes to use rdkservices
+
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: Venkataprasad Karna <Venkataprasad_Karna@comcast.com>
+---
+diff --git a/DisplayInfo/Nexus/PlatformImplementation.cpp b/DisplayInfo/Nexus/PlatformImplementation.cpp
+index 2df6298..31a12b7 100644
+--- a/DisplayInfo/Nexus/PlatformImplementation.cpp
++++ b/DisplayInfo/Nexus/PlatformImplementation.cpp
+@@ -55,7 +55,9 @@ public:
+ 
+         VARIABLE_IS_NOT_USED NEXUS_Error rc = NxClient_Join(NULL);
+         ASSERT(!rc);
++#if defined(DISPLAYINFO_BCM_VERSION_MAJOR) && (DISPLAYINFO_BCM_VERSION_MAJOR > 16)
+         NxClient_UnregisterAcknowledgeStandby(NxClient_RegisterAcknowledgeStandby());
++#endif
+         NEXUS_Platform_GetConfiguration(&_platformConfig);
+ 
+         UpdateTotalGpuRam(_totalGpuRam);
+@@ -418,16 +420,19 @@ private:
+             type = HDR_10PLUS;
+             break;
+         }
+-#else
++            default:
++                break;
++            }
++#elif defined(DISPLAYINFO_BCM_VERSION_MAJOR) && (DISPLAYINFO_BCM_VERSION_MAJOR > 16)
+         switch  (displaySettings.hdmiPreferences.drmInfoFrame.eotf) {
+         case NEXUS_VideoEotf_eHdr10: {
+             type = HDR_10;
+             break;
+         }
+-#endif
+         default:
+             break;
+         }
++#endif
+ 
+         // Read display width and height
+         NEXUS_DisplayCapabilities capabilities;

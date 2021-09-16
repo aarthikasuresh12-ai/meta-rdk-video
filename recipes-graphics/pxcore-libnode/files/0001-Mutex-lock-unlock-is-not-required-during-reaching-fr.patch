@@ -1,0 +1,49 @@
+From 78f2fd9e59db1c3f700626796f0161e5d048ed93 Mon Sep 17 00:00:00 2001
+From: SureshS <30907904+ssureshmsc@users.noreply.github.com>
+Date: Wed, 25 Sep 2019 12:59:43 -0400
+Subject: [PATCH] Mutex lock/unlock is not required during reaching from cache.
+ (#2043)
+
+---
+ src/rtFileDownloader.cpp | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/src/rtFileDownloader.cpp b/src/rtFileDownloader.cpp
+index a2a47ed..a41c77a 100644
+--- a/src/rtFileDownloader.cpp
++++ b/src/rtFileDownloader.cpp
+@@ -857,7 +857,6 @@ void rtFileDownloader::downloadFileAsByteRange(rtFileDownloadRequest* downloadRe
+         if(downloadRequest->deferCacheRead())
+         {
+             rtLogInfo("Reading from cache Start for %s\n", downloadRequest->fileUrl().cString());
+-            mFileCacheMutex.lock();
+             FILE *fp = downloadRequest->cacheFilePointer();
+ 
+             if(fp != NULL)
+@@ -886,7 +885,6 @@ void rtFileDownloader::downloadFileAsByteRange(rtFileDownloadRequest* downloadRe
+                 delete [] buffer;
+                 fclose(fp);
+             }
+-            mFileCacheMutex.unlock();
+             rtLogInfo("Reading from cache End for %s\n", downloadRequest->fileUrl().cString());
+         }
+       }
+@@ -1386,7 +1384,6 @@ void rtFileDownloader::downloadFile(rtFileDownloadRequest* downloadRequest)
+         if(downloadRequest->deferCacheRead())
+         {
+             rtLogInfo("Reading from cache Start for %s\n", downloadRequest->fileUrl().cString());
+-            mFileCacheMutex.lock();
+             FILE *fp = downloadRequest->cacheFilePointer();
+ 
+             if(fp != NULL)
+@@ -1415,7 +1412,6 @@ void rtFileDownloader::downloadFile(rtFileDownloadRequest* downloadRequest)
+                 delete [] buffer;
+                 fclose(fp);
+             }
+-            mFileCacheMutex.unlock();
+             rtLogInfo("Reading from cache End for %s\n", downloadRequest->fileUrl().cString());
+         }
+     }
+-- 
+2.7.4
+

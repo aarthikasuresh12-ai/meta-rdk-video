@@ -1,0 +1,30 @@
+Date: Jul 16, 2020 11:12 PM
+From: 602a1a0ca3f222365ce46b44dc5e2f9d88761af5 Jul 16, 2020 11:12 PM
+Subject: [PATCH] RDK-28334 : Integrate latest Westeros
+
+     Regulary, at the start of each sprint, integrate the latest changes in 
+     Westeros in order to keep RDK up to date, and to expose Westeros changes to RDK sprint testing.
+
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: jwanna001 <jeff_wannamaker@cable.comcast.com>
+---
+Index: git/westeros-sink/westeros-sink.h
+===================================================================
+--- git.orig/westeros-sink/westeros-sink.h
++++ git/westeros-sink/westeros-sink.h
+@@ -28,8 +28,13 @@
+ 
+ #define DEFAULT_WINDOW_X (0)
+ #define DEFAULT_WINDOW_Y (0)
++#if defined(SKY_BUILD)
++#define DEFAULT_WINDOW_WIDTH (1920)
++#define DEFAULT_WINDOW_HEIGHT (1080)
++#else
+ #define DEFAULT_WINDOW_WIDTH (1280)
+ #define DEFAULT_WINDOW_HEIGHT (720)
++#endif
+ 
+ #define WESTEROS_UNUSED(x) ((void)(x))
+

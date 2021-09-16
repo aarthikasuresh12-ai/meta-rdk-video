@@ -1,0 +1,26 @@
+Date: Sep 16, 2020 1:53 AM
+From: f7f9026ff7dea896e836e96fde868e953366f6b9 Sep 16, 2020 1:53 AM
+Subject: [PATCH] RDK-29359: Update thunder framework git hash
+
+     Updated Thunder core git hash
+
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: Venkataprasad Karna <Venkataprasad_Karna@comcast.com>
+---
+diff --git a/Tools/ProxyStubGenerator/StubGenerator.py b/Tools/ProxyStubGenerator/StubGenerator.py
+index 3621c33a..2bc10688 100755
+--- a/Tools/ProxyStubGenerator/StubGenerator.py
++++ b/Tools/ProxyStubGenerator/StubGenerator.py
+@@ -1375,6 +1375,10 @@ if __name__ == "__main__":
+                         os.path.dirname(source_file) if not OUTDIR else OUTDIR,
+                         PROXYSTUB_CPP_NAME % CreateName(os.path.basename(source_file)).split(".", 1)[0])
+ 
++                    out_dir = os.path.dirname(output_file)
++                    if not os.path.exists(out_dir):
++                        os.makedirs(out_dir)
++
+                     output = GenerateStubs(
+                         output_file, source_file,
+                         os.path.join("@" + os.path.dirname(os.path.realpath(__file__)), DEFAULT_DEFINITIONS_FILE),

@@ -1,0 +1,80 @@
+From ccae0b3ed439f53a91a20f144b00c41052bf057e Mon Sep 17 00:00:00 2001
+From: comcastmike <38290279+comcastmike@users.noreply.github.com>
+Date: Thu, 14 Feb 2019 17:58:39 -0500
+Subject: [PATCH] optimus updates for memory management (#1701)
+
+---
+ examples/pxScene2d/src/rcvrcore/optimus.js | 38 ++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/examples/pxScene2d/src/rcvrcore/optimus.js b/examples/pxScene2d/src/rcvrcore/optimus.js
+index 7709a03..fee2e10 100644
+--- a/examples/pxScene2d/src/rcvrcore/optimus.js
++++ b/examples/pxScene2d/src/rcvrcore/optimus.js
+@@ -101,6 +101,8 @@ function Application(props) {
+   this.createTime = 0;
+   this.uri = "";
+   this.type = ApplicationType.UNDEFINED;
++  this.expectedMemoryUsage = -1;
++  this.actualMemoryUsage = -1;
+   var _readyResolve = undefined;
+   var _readyReject = undefined;
+   this.ready = new Promise(function (resolve, reject) {
+@@ -332,6 +334,9 @@ function Application(props) {
+   if("serviceContext" in props) { 
+     serviceContext = props["serviceContext"]
+   }
++  if ("expectedMemoryUsage" in props) {
++    this.expectedMemoryUsage = props.expectedMemoryUsage;
++  }
+ 
+   this.log("cmd:",cmd,"uri:",uri,"w:",w,"h:",h);
+ 
+@@ -551,6 +556,9 @@ function Optimus() {
+    * @returns {Application}
+    */
+   this.createApplication = function(props){
++    //set the expected memory usage
++    props.expectedMemoryUsage = this.getExpectedMemoryUsage(props);
++    
+     var app = new Application(props);
+     applicationsArray.push(app);
+     return app;
+@@ -632,4 +640,34 @@ function Optimus() {
+       availableApplicationsArray = JSON.parse(availableApps);
+     }
+   };
++  this.getExpectedMemoryUsage = function(props){
++    
++    if(typeof(props) != "object")
++      return -1;
++     
++    if ("expectedMemoryUsage" in props)
++      return props.expectedMemoryUsage;
++
++    if ("launchParams" in props && "cmd" in props.launchParams){
++      if (props.launchParams.cmd === "WebApp")
++         return 130;
++      else if (props.launchParams.cmd === "spark")
++         return 90;
++      else if (props.launchParams.cmd === "sparkInstance")
++         return 90;
++      else
++         return 75;
++    }
++  };
++  this.getFreeID = function(starting_from){
++    var i=0;
++    
++    if(typeof(starting_from) == "number")
++      i = starting_from;
++    
++    while(this.getApplicationById(i.toString()) != null)
++      i++;
++    
++    return i.toString();
++  };
+ }
+-- 
+2.7.4
+

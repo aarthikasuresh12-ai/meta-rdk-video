@@ -1,0 +1,39 @@
+Date: Nov 30, 2018 8:18 PM
+
+From: 10274d102c5ca81bd46f8601e5e0da882f8946d7 Dec 1, 2018 3:28 AM
+
+Subject: [PATCH] DELIA-30067: updating spark version
+
+        updating spark version
+
+Source: COMCAST
+
+License: Apache-2.0
+
+Upstream-Status: Pending
+
+Signed-off-by: mfiess200 <michael_fiess@cable.comcast.com>
+---
+
+Index: git/remote/Makefile
+===================================================================
+--- git.orig/remote/Makefile
++++ git/remote/Makefile
+@@ -78,6 +78,8 @@ endif
+ CFLAGS+=-DRAPIDJSON_HAS_STDSTRING -Werror -Wall -Wextra -DRT_PLATFORM_LINUX -I../src -I. -fPIC -Wno-deprecated-declarations
+ CFLAGS+=-DRT_REMOTE_LOOPBACK_ONLY
+ CXXFLAGS+=-std=c++0x $(CFLAGS)
++CFLAGS_PRETTY+=-Werror -Wall -Wextra -I../src -I. -fPIC
++CXXFLAGS_PRETTY+=-std=c++0x $(CFLAGS_PRETTY)
+ LDFLAGS =-pthread -ldl $(LIBUUID) -Wl,-rpath=../../,--enable-new-dtags
+ OBJDIR=obj
+ 
+@@ -96,7 +98,7 @@ $(OBJDIR)/rpc_main.o: rtRemoteConfig.h
+ RT_REMOTE_CONFIG_GEN=$(OBJDIR)/rtRemoteConfigGen
+ $(RT_REMOTE_CONFIG_GEN): rtRemoteConfigGen.cpp
+ 	@[ -d $(OBJDIR) ] || mkdir -p $(OBJDIR)
+-	$(BUILD_CXX_PRETTY) $(CXXFLAGS) $< -o $@
++	$(BUILD_CXX_PRETTY) $(CXXFLAGS_PRETTY) $< -o $@
+ 
+ $(OBJDIR)/%.o: ../%.cpp
+ 	@[ -d $(OBJDIR) ] || mkdir -p $(OBJDIR)

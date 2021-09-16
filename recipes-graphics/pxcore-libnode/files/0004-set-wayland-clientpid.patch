@@ -1,0 +1,37 @@
+Date: Mar 24, 2021 10:16 AM
+From: 2525c96f5134d2478df43eac26ea70be7d0bc2c9 Mar 24, 2021 10:16 AM
+Subject: [PATCH] DELIA-48575: killall not restarting receiver
+
+     Make sure receiver not hanged and pid of child is populated
+
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: Madana Gopal Thirumalai <madanagopal_thirumalai@comcast.com>
+---
+diff --git a/examples/pxScene2d/src/pxWayland.cpp b/examples/pxScene2d/src/pxWayland.cpp
+index db0e94048..a1371c63a 100644
+--- a/examples/pxScene2d/src/pxWayland.cpp
++++ b/examples/pxScene2d/src/pxWayland.cpp
+@@ -625,7 +625,7 @@ void pxWayland::terminateClient()
+           if (clock_gettime(CLOCK_REALTIME, &ts) != -1)
+           {
+               ts.tv_sec += 10; // Wait 10 seconds for SIGTERM then use SIGKILL
+-              if (pthread_timedjoin_np(mClientPID, NULL, &ts))
++              if (mClientMonitorStarted && pthread_timedjoin_np(mClientPID, NULL, &ts))
+               {
+                   rtLogInfo("pxWayland::terminateClient: client pid %d still alive - killing with SIGKILL...", mClientPID);
+                   kill(mClientPID, SIGKILL);
+@@ -692,7 +692,11 @@ void pxWayland::clientStatus( WstCompositor *wctx, int status, int pid, int deta
+ {
+    (void)wctx;
+    if (userData && gUIThreadQueue)
++   {
+       gUIThreadQueue->addTask(onClientStatus, userData, new pxWaylandClientStatus(status, pid, detail));
++      pxWayland* pxw = (pxWayland*)userData;
++      pxw->mClientPID = ( ( status == WstClient_stoppedAbnormal ) || ( status == WstClient_stoppedNormal ) ) ? -1 : pid;
++   }
+ }
+ 
+ bool pxWayland::onRemoveTask(void* context, void* data)
+

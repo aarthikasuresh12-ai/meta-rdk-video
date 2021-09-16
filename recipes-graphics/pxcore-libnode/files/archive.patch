@@ -1,0 +1,43 @@
+Date: Nov 30, 2018 8:18 PM
+
+From: 10274d102c5ca81bd46f8601e5e0da882f8946d7 Dec 1, 2018 3:28 AM
+
+Subject: [PATCH] DELIA-30067: updating spark version
+
+	updating spark version
+     
+Source: COMCAST 
+
+License: Apache-2.0
+
+Upstream-Status: Pending
+
+Signed-off-by: mfiess200 <michael_fiess@cable.comcast.com>
+---
+
+Index: git/examples/pxScene2d/external/libnode-v6.9.0/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/make.py
+===================================================================
+--- git.orig/examples/pxScene2d/external/libnode-v6.9.0/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/make.py
++++ git/examples/pxScene2d/external/libnode-v6.9.0/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/make.py
+@@ -136,7 +136,7 @@ quiet_cmd_alink = AR($(TOOLSET)) $@
+ cmd_alink = rm -f $@ && $(AR.$(TOOLSET)) crs $@ $(filter %.o,$^)
+ 
+ quiet_cmd_alink_thin = AR($(TOOLSET)) $@
+-cmd_alink_thin = rm -f $@ && $(AR.$(TOOLSET)) crsT $@ $(filter %.o,$^)
++cmd_alink_thin = rm -f $@ && $(AR.$(TOOLSET)) crs $@ $(filter %.o,$^)
+ 
+ # Due to circular dependencies between libraries :(, we wrap the
+ # special "figure out circular dependencies" flags around the entire
+Index: git/examples/pxScene2d/external/libnode-v6.9.0/tools/gyp/pylib/gyp/generator/make.py
+===================================================================
+--- git.orig/examples/pxScene2d/external/libnode-v6.9.0/tools/gyp/pylib/gyp/generator/make.py
++++ git/examples/pxScene2d/external/libnode-v6.9.0/tools/gyp/pylib/gyp/generator/make.py
+@@ -138,7 +138,7 @@ quiet_cmd_alink = AR($(TOOLSET)) $@
+ cmd_alink = rm -f $@ && $(AR.$(TOOLSET)) crs $@ $(filter %.o,$^)
+ 
+ quiet_cmd_alink_thin = AR($(TOOLSET)) $@
+-cmd_alink_thin = rm -f $@ && $(AR.$(TOOLSET)) crsT $@ $(filter %.o,$^)
++cmd_alink_thin = rm -f $@ && $(AR.$(TOOLSET)) crs $@ $(filter %.o,$^)
+ 
+ # Due to circular dependencies between libraries :(, we wrap the
+ # special "figure out circular dependencies" flags around the entire

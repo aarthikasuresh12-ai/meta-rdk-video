@@ -1,0 +1,41 @@
+From dcd21dc04a41fa56cb4584876fe7175d3f6a6e08 Mon Sep 17 00:00:00 2001
+From: Alexandr Gavriliuc <Alexandr_Gavriliuc@comcast.com>
+Date: Fri, 29 Jan 2021 21:49:39 +0000
+Subject: [PATCH] patch
+
+---
+ examples/pxScene2d/src/pxWayland.cpp | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/examples/pxScene2d/src/pxWayland.cpp b/examples/pxScene2d/src/pxWayland.cpp
+index 9fc7ea384..6f4737071 100644
+--- a/examples/pxScene2d/src/pxWayland.cpp
++++ b/examples/pxScene2d/src/pxWayland.cpp
+@@ -616,11 +616,22 @@ void pxWayland::terminateClient()
+       // process ending.  If it hasn't ended, kill it
+       if ( mClientPID > 0 )
+       {
+-          rtLogInfo("pxWayland::terminateClient: client pid %d still alive - killing...", mClientPID);
++          rtLogInfo("pxWayland::terminateClient: client pid %d still alive - killing with SIGTERM...", mClientPID);
+           kill( mClientPID, SIGTERM);
+-          rtLogInfo("pxWayland::terminateClient: client pid %d killed", mClientPID);
++          rtLogInfo("pxWayland::terminateClient: client pid %d killed with SIGTERM", mClientPID);
+           mClientTerminated = true;
++          struct timespec ts;
++          if (clock_gettime(CLOCK_REALTIME, &ts) != -1)
++          {
++              ts.tv_sec += 10; // Wait 10 seconds for SIGTERM then use SIGKILL
++              if (pthread_timedjoin_np(mClientPID, NULL, &ts))
++              {
++                  rtLogInfo("pxWayland::terminateClient: client pid %d still alive - killing with SIGKILL...", mClientPID);
++                  kill(mClientPID, SIGKILL);
++                  rtLogInfo("pxWayland::terminateClient: client pid %d killed with SIGKILL", mClientPID);
++              }
++          }
+       }
+       pthread_join( mClientMonitorThreadId, NULL );
+    }
+ 
+-- 
+2.24.1
+

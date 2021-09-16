@@ -1,0 +1,32 @@
+Date: Thu, 20 Sep 2018 12:58:47 -0400
+From: 3321dc1fb5466f695b86f0105658426d77e1a261 Mon Sep 17 00:00:00 2001
+Subject: [PATCH] modify memory address space mapping
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: mfiess200 <michael_fiess@cable.comcast.com>
+
+---
+ .../libnode-v6.9.0/deps/v8/src/base/platform/platform-posix.cc      | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/examples/pxScene2d/external/libnode-v6.9.0/deps/v8/src/base/platform/platform-posix.cc b/examples/pxScene2d/external/libnode-v6.9.0/deps/v8/src/base/platform/platform-posix.cc
+index bb340ab..0fc5860 100644
+--- a/examples/pxScene2d/external/libnode-v6.9.0/deps/v8/src/base/platform/platform-posix.cc
++++ b/examples/pxScene2d/external/libnode-v6.9.0/deps/v8/src/base/platform/platform-posix.cc
+@@ -218,7 +218,11 @@ void* OS::GetRandomMmapAddr() {
+   // The range 0x20000000 - 0x60000000 is relatively unpopulated across a
+   // variety of ASLR modes (PAE kernel, NX compat mode, etc) and on macos
+   // 10.6 and 10.7.
+-  raw_addr += 0x20000000;
++  #if V8_TARGET_ARCH_IA32
++    raw_addr += 0x40000000;
++  #else
++    raw_addr += 0x20000000;
++  #endif
+ # endif
+ #endif
+   return reinterpret_cast<void*>(raw_addr);
+-- 
+1.9.1
+

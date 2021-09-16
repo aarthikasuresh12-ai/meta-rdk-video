@@ -1,0 +1,24 @@
+Date: Sep 14, 2020 11:13 PM
+From: 8500b32bed3ec58a6551247c1e39d54f01dffe13 Sep 14, 2020 11:13 PM
+Subject: [PATCH] DELIA-42952 : Add distro feature for disabling Spark
+
+      Add distro feature to disable building spark libs
+
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: mthiru270 <madanagopal_thirumalai@comcast.com>
+---
+diff --git a/src/rtScript.cpp b/src/rtScript.cpp
+index cd0e660..48c8038 100644
+--- a/src/rtScript.cpp
++++ b/src/rtScript.cpp
+@@ -198,8 +198,6 @@ rtError rtScript::init()
+         createScriptDuk(mScript);
+     #elif defined(RTSCRIPT_SUPPORT_NODE)
+         createScriptNode(mScript);
+-    #else
+-    #error "No Script Engine Supported"
+     #endif
+     
+     mScript->init();

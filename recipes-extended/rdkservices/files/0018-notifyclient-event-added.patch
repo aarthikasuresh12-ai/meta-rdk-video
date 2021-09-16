@@ -1,0 +1,24 @@
+From 29b921526cfd8d3da32eea76d7855189866f3b6d Mon Sep 17 00:00:00 2001
+From: Venkataprasad Karna <Venkataprasad_Karna@comcast.com>
+Date: Thu, 17 Dec 2020 19:37:39 +0000
+Subject: [PATCH] notifyclient event added
+
+---
+ interfaces/INetflix.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/interfaces/INetflix.h b/interfaces/INetflix.h
+index 91107ee..f272bf7 100644
+--- a/interfaces/INetflix.h
++++ b/interfaces/INetflix.h
+@@ -39,6 +39,7 @@ namespace Exchange {
+             // Signal changes on the subscribed namespace..
+             virtual void StateChange(const INetflix::state state) = 0;
+             virtual void Exit(const uint32_t exitCode) = 0;
++            virtual void NotifyClient(const string& eventName) = 0;
+         };
+ 
+         virtual void Register(INetflix::INotification* netflix) = 0;
+-- 
+2.24.0
+

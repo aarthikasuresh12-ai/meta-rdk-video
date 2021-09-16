@@ -1,0 +1,52 @@
+From 6ba4a1aa5a88e6e23794af207851122ae69ace85 Mon Sep 17 00:00:00 2001
+From: madanagopaltcomcast
+ <35588028+madanagopaltcomcast@users.noreply.github.com>
+Date: Thu, 19 Apr 2018 17:42:22 +0530
+Subject: [PATCH] defer scene termination event after scene dispose (#1052)
+
+* defer scene termination after scene dispose
+
+* Update pxScene2d.cpp
+---
+ examples/pxScene2d/src/pxScene2d.cpp | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/examples/pxScene2d/src/pxScene2d.cpp b/examples/pxScene2d/src/pxScene2d.cpp
+index 1e0bc9a..d8ab48e 100644
+--- a/examples/pxScene2d/src/pxScene2d.cpp
++++ b/examples/pxScene2d/src/pxScene2d.cpp
+@@ -1920,7 +1920,6 @@ rtError pxScene2d::dispose()
+     mDisposed = true;
+     rtObjectRef e = new rtMapObject;
+     mEmit.send("onClose", e);
+-    mEmit.send("onSceneTerminate", e);
+     for (unsigned int i=0; i<mInnerpxObjects.size(); i++)
+     {
+       pxObject* temp = (pxObject *) (mInnerpxObjects[i].getPtr());
+@@ -1933,6 +1932,12 @@ rtError pxScene2d::dispose()
+ 
+     if (mRoot)
+       mRoot->dispose(false);
++    #ifdef ENABLE_RT_NODE
++    script.pump();
++    #endif //ENABLE_RT_NODE
++    // send scene terminate after dispose to make sure, no cleanup can happen further on app side
++    // after clearing the sandbox
++    mEmit.send("onSceneTerminate", e);
+     mEmit->clearListeners();
+ 
+     mRoot     = NULL;
+@@ -1941,10 +1946,6 @@ rtError pxScene2d::dispose()
+     mFocusObj = NULL;
+ 
+     pxFontManager::clearAllFonts();
+-    #ifdef ENABLE_RT_NODE
+-    script.pump();
+-    #endif //ENABLE_RT_NODE
+-
+     return RT_OK;
+ }
+ 
+-- 
+1.9.1
+

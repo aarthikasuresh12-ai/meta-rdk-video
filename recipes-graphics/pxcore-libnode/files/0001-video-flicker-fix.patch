@@ -1,0 +1,187 @@
+From cf9b1ece54163293feeb292d4521d5b68e09336f Mon Sep 17 00:00:00 2001
+From: mfiess200 <michael_fiess@cable.comcast.com>
+Date: Wed, 29 May 2019 10:54:09 -0400
+Subject: [PATCH] video flicker fix
+
+---
+ examples/pxScene2d/src/pxWayland.cpp          | 22 ++++++++++++++++++++++
+ examples/pxScene2d/src/pxWayland.h            | 12 ++++++++++++
+ examples/pxScene2d/src/pxWaylandContainer.cpp | 19 ++++++++++++++++++-
+ examples/pxScene2d/src/pxWaylandContainer.h   |  5 +++++
+ 4 files changed, 57 insertions(+), 1 deletion(-)
+
+diff --git a/examples/pxScene2d/src/pxWayland.cpp b/examples/pxScene2d/src/pxWayland.cpp
+index 9fdfdaa..551ee96 100644
+--- a/examples/pxScene2d/src/pxWayland.cpp
++++ b/examples/pxScene2d/src/pxWayland.cpp
+@@ -72,6 +72,7 @@ pxWayland::pxWayland(bool useFbo, pxScene2d* sceneContainer)
+     mClientPID(0),
+     mWCtx(0),
+     mHasApi(false),
++    mAnimateVideo(false),
+     mAPI(),
+ #ifdef ENABLE_PX_WAYLAND_RPC
+     mRemoteObject(),
+@@ -411,6 +412,12 @@ void pxWayland::onDraw()
+      hints |= WstHints_applyTransform;
+      hints |= WstHints_holePunch;
+   }
++
++  if (mAnimateVideo)
++  {
++    hints |= WstHints_animating;
++  }
++
+   if ( !rotated ) hints |= WstHints_noRotation;
+   if ( memcmp( mLastMatrix.data(), m.data(), 16*sizeof(float) ) != 0 ) hints |= WstHints_animating;
+   mLastMatrix= m;
+@@ -428,6 +435,8 @@ void pxWayland::onDraw()
+      context.clear( mWidth, mHeight, mClearColor );
+   }
+ 
++  bool wasBlendEnabled = glIsEnabled(GL_BLEND);
++  glEnable(GL_BLEND);
+   WstCompositorComposeEmbedded( mWCtx,
+                                 mX,
+                                 mY,
+@@ -438,6 +447,11 @@ void pxWayland::onDraw()
+                                 hints,
+                                 &needHolePunch,
+                                 rects );
++  if (!wasBlendEnabled)
++  {
++    glDisable(GL_BLEND);
++  }
++
+   if ( drawWithFBO )
+   {
+      context.setFramebuffer( previousFrameBuffer );
+@@ -916,6 +930,9 @@ rtError pxWayland::drawToFbo(pxContextFramebufferRef& fbo)
+   context.setFramebuffer( fbo );
+   context.clear( mWidth, mHeight, mClearColor );
+ 
++  bool wasBlendEnabled = glIsEnabled(GL_BLEND);
++  glEnable(GL_BLEND);
++
+   WstCompositorComposeEmbedded( mWCtx,
+                                 0,
+                                 0,
+@@ -927,6 +944,11 @@ rtError pxWayland::drawToFbo(pxContextFramebufferRef& fbo)
+                                 &needHolePunch,
+                                 rects );
+ 
++  if (!wasBlendEnabled)
++  {
++    glDisable(GL_BLEND);
++  }
++
+   context.setFramebuffer( previousFrameBuffer );
+   context.popState();
+   
+diff --git a/examples/pxScene2d/src/pxWayland.h b/examples/pxScene2d/src/pxWayland.h
+index c7c55f2..8cc4e15 100644
+--- a/examples/pxScene2d/src/pxWayland.h
++++ b/examples/pxScene2d/src/pxWayland.h
+@@ -123,6 +123,17 @@ public:
+     mHasApi = v;
+     return RT_OK;
+   }
++
++  rtError animateVideo(bool& v) const
++  {
++    v=mAnimateVideo;
++    return RT_OK;
++  }
++  rtError setAnimateVideo(bool v)
++  {
++    mAnimateVideo = v;
++    return RT_OK;
++  }
+   
+   rtError api(rtValue& v) const
+   {
+@@ -215,6 +226,7 @@ protected:
+   float mClearColor[4];
+ 
+   bool mHasApi;
++  bool mAnimateVideo;
+   rtValue mAPI;
+ #ifdef ENABLE_PX_WAYLAND_RPC
+   rtObjectRef mRemoteObject;
+diff --git a/examples/pxScene2d/src/pxWaylandContainer.cpp b/examples/pxScene2d/src/pxWaylandContainer.cpp
+index 9e5286e..188331e 100644
+--- a/examples/pxScene2d/src/pxWaylandContainer.cpp
++++ b/examples/pxScene2d/src/pxWaylandContainer.cpp
+@@ -50,7 +50,7 @@ extern map<string, string> gWaylandAppsMap;
+ // #define UNUSED_PARAM(x) ((void)x)
+ 
+ pxWaylandContainer::pxWaylandContainer(pxScene2d* scene)
+-   : pxViewContainer(scene), mWayland(NULL),mClientPID(0),mFillColor(0),mHasApi(false),mBinary()
++   : pxViewContainer(scene), mWayland(NULL),mClientPID(0),mFillColor(0),mHasApi(false), mAnimateVideo(false), mBinary()
+ {
+   addListener("onClientStarted", get<rtFunctionRef>("onClientStarted"));
+   addListener("onClientStopped", get<rtFunctionRef>("onClientStopped"));
+@@ -289,6 +289,22 @@ rtError pxWaylandContainer::setHasApi(bool v)
+   return RT_OK;
+ }
+ 
++rtError pxWaylandContainer::animateVideo(bool& v) const
++{
++  v=mAnimateVideo;
++  return RT_OK;
++}
++
++rtError pxWaylandContainer::setAnimateVideo(bool v)
++{
++  mAnimateVideo = v;
++  if ( mWayland )
++  {
++    mWayland->setAnimateVideo(v);
++  }
++  return RT_OK;
++}
++
+ rtError pxWaylandContainer::api(rtValue& v) const
+ {
+   if ( mWayland )
+@@ -474,6 +490,7 @@ rtDefineProperty(pxWaylandContainer,api);
+ rtDefineProperty(pxWaylandContainer,remoteReady);
+ rtDefineProperty(pxWaylandContainer,server);
+ rtDefineProperty(pxWaylandContainer,hasApi);
++rtDefineProperty(pxWaylandContainer,animateVideo);
+ rtDefineMethod(pxWaylandContainer, suspend);
+ rtDefineMethod(pxWaylandContainer, resume);
+ rtDefineMethod(pxWaylandContainer, destroy);
+diff --git a/examples/pxScene2d/src/pxWaylandContainer.h b/examples/pxScene2d/src/pxWaylandContainer.h
+index 49ddb59..8a542df 100644
+--- a/examples/pxScene2d/src/pxWaylandContainer.h
++++ b/examples/pxScene2d/src/pxWaylandContainer.h
+@@ -31,6 +31,7 @@ class pxWaylandContainer: public pxViewContainer, pxWaylandEvents {
+   rtReadOnlyProperty(clientPID, clientPID, int32_t);
+   rtProperty(fillColor, fillColor, setFillColor, uint32_t);
+   rtProperty(hasApi, hasApi, setHasApi, bool);
++  rtProperty(animateVideo, animateVideo, setAnimateVideo, bool);
+   rtReadOnlyProperty(api, api, rtValue);
+   rtReadOnlyProperty(remoteReady, remoteReady, rtValue);
+   rtMethod1ArgAndReturn("suspend", suspend, rtValue, bool);
+@@ -73,6 +74,9 @@ public:
+   rtError hasApi(bool& v) const;
+   rtError setHasApi(bool v);
+ 
++  rtError animateVideo(bool& v) const;
++  rtError setAnimateVideo(bool v);
++
+   rtError api(rtValue& v) const;
+   rtError remoteReady(rtValue& v) const;
+ 
+@@ -89,6 +93,7 @@ private:
+   int32_t mClientPID;
+   uint32_t mFillColor;
+   bool mHasApi;
++  bool mAnimateVideo;
+   rtValue mAPI;  
+   rtObjectRef mRemoteReady;
+   rtString mBinary;
+-- 
+1.9.1
+

@@ -1,0 +1,24 @@
+Date: Dec 18, 2020 2:14 AM
+From: 424fd3bb592e32b24457b1933d91368a80413801 Dec 18, 2020 2:14 AM
+Subject: [PATCH] DELIA-45068: Avoid kill process id 0 in pxWayland terminateclient
+
+      fix reconnect reason on Receiver restart
+
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: Renjith Warier <renjith_warier@comcast.com>
+---
+diff --git a/examples/pxScene2d/src/pxWayland.cpp b/examples/pxScene2d/src/pxWayland.cpp
+index 18c8edb4b..715ea6409 100644
+--- a/examples/pxScene2d/src/pxWayland.cpp
++++ b/examples/pxScene2d/src/pxWayland.cpp
+@@ -613,7 +616,7 @@ void pxWayland::terminateClient()
+ 
+       // Destroying compositor above should result in client
+       // process ending.  If it hasn't ended, kill it
+-      if ( mClientPID >= 0 )
++      if ( mClientPID > 0 )
+       {
+           rtLogInfo("pxWayland::terminateClient: client pid %d still alive - killing...", mClientPID);
+           kill( mClientPID, SIGTERM);

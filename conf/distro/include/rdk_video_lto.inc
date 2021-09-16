@@ -1,0 +1,8 @@
+LTO_pn-pxcore-libnode = ""
+LTO_pn-netsrvmgr = ""
+LTO_pn-tr69hostif = ""
+LTO_pn-pxcore-standalone = ""
+LTO_pn-servicemanager = ""
+LTO_pn-ledmgr = ""
+LTO_pn-ledmgr-headers = ""
+LTO_pn-wpeframework-clientlibraries = ""

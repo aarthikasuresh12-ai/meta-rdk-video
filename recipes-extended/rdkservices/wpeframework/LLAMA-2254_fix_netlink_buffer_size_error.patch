@@ -1,0 +1,71 @@
+From: Ben Gray <ben.gray@sky.uk>
+Date: Fri Aug 6 2021
+Source: COMCAST
+License: GPLV2
+Upstream-Status: Pending
+Signed-off-by: Nikita Poltorapavlo <npoltorapavlo@productengine.com>
+Subject: [PATCH] LLAMA-2254: High %CPU observed for WPEFramework
+
+
+--- a/Source/core/SocketPort.h	2021-07-30 10:51:54.160807999 +0000
++++ b/Source/core/SocketPort.h	2021-08-06 09:18:11.889410000 +0000
+@@ -113,6 +113,10 @@
+         {
+             return (m_SocketType);
+         }
++        inline SOCKET Socket() const
++        {
++            return m_Socket;
++        }
+         inline bool IsListening() const
+         {
+             return ((m_State & (SocketPort::SHUTDOWN | SocketPort::EXCEPTION | SocketPort::OPEN | SocketPort::LINK | SocketPort::ACCEPT)) == (SocketPort::OPEN | SocketPort::ACCEPT));
+--- a/Source/core/Netlink.cpp	2021-07-30 10:51:54.156806000 +0000
++++ b/Source/core/Netlink.cpp	2021-08-06 09:19:19.090994000 +0000
+@@ -236,6 +237,34 @@
+         return (result);
+     }
+ 
++    // Called right after socket is created
++    /* virtual */ bool SocketNetlink::Initialize()
++    {
++        if (!SocketDatagram::Initialize())
++            return false;
++
++        // For netlink sockets set decent sized kernel buffers, the default SocketPort code shrinks
++        // the kernel buffers to the same size as local buffers (for some reason), and this can
++        // cause ENOBUFS errors when reading the socket.
++        const SOCKET socket = Socket();
++        if (socket != INVALID_SOCKET)
++        {
++            int val = 80 * 1024;
++            if (::setsockopt(socket, SOL_SOCKET, SO_RCVBUF, &val, sizeof(int)) != 0)
++                TRACE_L1("Error setting SO_RCVBUF buffer size on netlink socket. Error %d", __ERRORRESULT__);
++
++	    val = 80 * 1024;
++	    if (::setsockopt(socket, SOL_SOCKET, SO_SNDBUF, &val, sizeof(int)) != 0)
++                TRACE_L1("Error setting SO_SNDBUF buffer size on netlink socket. Error %d", __ERRORRESULT__);
++
++            val = 1;
++            if (::setsockopt(socket, SOL_NETLINK, NETLINK_NO_ENOBUFS, &val, sizeof(int)) != 0)
++                TRACE_L1("Error setting NETLINK_NO_ENOBUFS flag on netlink socket. Error %d", __ERRORRESULT__);
++        }
++
++        return true;
++    }
++
+     // Signal a state change, Opened, Closed or Accepted
+     /* virtual */ void SocketNetlink::StateChange()
+     {
+--- a/Source/core/Netlink.h	2021-07-30 10:51:54.156806000 +0000
++++ b/Source/core/Netlink.h	2021-08-06 09:40:53.589919997 +0000
+@@ -394,6 +394,9 @@
+ 
+         virtual uint16_t Deserialize(const uint8_t dataFrame[], const uint16_t receivedSize) = 0;
+ 
++    protected:
++        virtual bool Initialize() override;
++
+     private:
+         // Methods to extract and insert data into the socket buffers
+         virtual uint16_t SendData(uint8_t* dataFrame, const uint16_t maxSendSize) override;

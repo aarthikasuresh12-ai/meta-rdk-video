@@ -1,0 +1,99 @@
+From 657752366d2262be88f7108b5f62154403769366 Mon Sep 17 00:00:00 2001
+From: madanagopalt <madanagopal123@gmail.com>
+Date: Wed, 18 Apr 2018 23:29:26 +0530
+Subject: [PATCH] Websocket cleanup on app exit (#1015)
+
+* emit close event on websockets
+
+* emit close event on websockets
+
+* Fix for removing listeners registered on socket
+
+handle null checks for websockets after call close (#1091)
+---
+ .../pxScene2d/src/node_modules/ws/lib/WebSocket.js     |  8 ++++++++
+ examples/pxScene2d/src/rcvrcore/AppSceneContext.js     | 12 ++++++------
+ examples/pxScene2d/src/rcvrcore/ws_wrap.js             | 18 ++++++++++++++++--
+ 3 files changed, 30 insertions(+), 8 deletions(-)
+
+diff --git a/examples/pxScene2d/src/node_modules/ws/lib/WebSocket.js b/examples/pxScene2d/src/node_modules/ws/lib/WebSocket.js
+index bb09e85..1e1272c 100644
+--- a/examples/pxScene2d/src/node_modules/ws/lib/WebSocket.js
++++ b/examples/pxScene2d/src/node_modules/ws/lib/WebSocket.js
+@@ -136,6 +136,14 @@ WebSocket.prototype.close = function close(code, data) {
+ };
+ 
+ /**
++ * emit the client close callback event
++ *
++ */
++WebSocket.prototype.closeimmediate = function closeimmediate(code, data) {
++  cleanupWebsocketResources.call(this, true);
++};
++
++/**
+  * Pause the client stream
+  *
+  * @api public
+diff --git a/examples/pxScene2d/src/rcvrcore/AppSceneContext.js b/examples/pxScene2d/src/rcvrcore/AppSceneContext.js
+index b411090..435ea8a 100644
+--- a/examples/pxScene2d/src/rcvrcore/AppSceneContext.js
++++ b/examples/pxScene2d/src/rcvrcore/AppSceneContext.js
+@@ -91,6 +91,12 @@ if( fullPath !== null)
+   this.loadPackage(fullPath);
+ 
+ this.innerscene.on('onSceneTerminate', function (e) {
++    if (null != this.webSocketManager)
++    {
++       this.webSocketManager.clearConnections();
++       delete this.webSocketManager;
++    }
++    this.webSocketManager = null;
+     //clear the timers and intervals on close
+     var ntimers = this.timers.length;
+     for (var i=0; i<ntimers; i++)
+@@ -156,12 +162,6 @@ this.innerscene.on('onSceneTerminate', function (e) {
+     if (null != this.sceneWrapper)
+       this.sceneWrapper.close();
+     this.sceneWrapper = null;
+-    if (null != this.webSocketManager)
+-    {
+-       this.webSocketManager.clearConnections();
+-       delete this.webSocketManager;
+-    }
+-    this.webSocketManager = null;
+     this.rpcController = null;
+     if (this.accessControl) {
+       this.accessControl.destroy();
+diff --git a/examples/pxScene2d/src/rcvrcore/ws_wrap.js b/examples/pxScene2d/src/rcvrcore/ws_wrap.js
+index 3b752a3..de748c7 100644
+--- a/examples/pxScene2d/src/rcvrcore/ws_wrap.js
++++ b/examples/pxScene2d/src/rcvrcore/ws_wrap.js
+@@ -29,8 +29,22 @@ WebSocketManager.prototype.clearConnection = function(client) {
+ WebSocketManager.prototype.clearConnections = function() {
+   var connectionLength = this.connections.length;
+   for (var i = 0; i < connectionLength; i++) {
+-    this.connections[i].close();
+-    delete this.connections[i];
++    if ((null != this.connections[i]) && (undefined != this.connections[i])) {
++      // make sure we close the socket connection and don't wait for process exit to determine it
++      this.connections[i].close();
++      // make sure we call listeners of close now, else it is taking some seconds to get landed
++      this.connections[i].closeimmediate();
++      // make sure we remove all listeners registered for websocket
++      // this is holding javascript variables reference, causing leaks
++      // having check here, don't know who is setting this value to undefined
++      if ((null != this.connections[i]) && (undefined != this.connections[i])) {
++        this.connections[i].removeAllListeners('open');
++        this.connections[i].removeAllListeners('error');
++        this.connections[i].removeAllListeners('message');
++        this.connections[i].removeAllListeners('close');
++        delete this.connections[i];
++      }
++    }
+   };
+   this.connections.splice(0, this.connections.length);
+   delete this.connections;
+-- 
+1.9.1
+

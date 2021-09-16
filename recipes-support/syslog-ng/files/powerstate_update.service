@@ -1,0 +1,7 @@
+[Unit]
+Description=Power state log update service
+After=pwrmgr.service power-state-monitor.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '/lib/rdk/update_syslog_config.sh'

@@ -1,0 +1,110 @@
+Date: Thu, 20 Sep 2018 12:58:47 -0400
+From: 3321dc1fb5466f695b86f0105658426d77e1a261 Mon Sep 17 00:00:00 2001
+Subject: [PATCH] modify memory address space mapping
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: mfiess200 <michael_fiess@cable.comcast.com>
+
+---
+ .../libnode-v10.15.3/deps/v8/src/base/platform/platform-posix.cc    | 76 ++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
+
+diff --git a/examples/pxScene2d/external/libnode-v10.15.3/deps/v8/src/base/platform/platform-posix.cc b/examples/pxScene2d/external/libnode-v10.15.3/deps/v8/src/base/platform/platform-posix.cc
+index 8b9e85c..c4ef1d8 100755
+--- a/examples/pxScene2d/external/libnode-v10.15.3/deps/v8/src/base/platform/platform-posix.cc
++++ b/examples/pxScene2d/external/libnode-v10.15.3/deps/v8/src/base/platform/platform-posix.cc
+@@ -218,6 +218,81 @@ void OS::SetRandomMmapSeed(int64_t seed) {
+ 
+ // static
+ void* OS::GetRandomMmapAddr() {
++#if V8_TARGET_ARCH_IA32
++  #if V8_OS_NACL
++  // TODO(bradchen): restore randomization once Native Client gets
++  // smarter about using mmap address hints.
++  // See http://code.google.com/p/nativeclient/issues/3341
++  return NULL;
++#endif
++#if defined(ADDRESS_SANITIZER) || defined(MEMORY_SANITIZER) || \
++    defined(THREAD_SANITIZER)
++  // Dynamic tools do not support custom mmap addresses.
++  return NULL;
++#endif
++  uintptr_t raw_addr;
++  platform_random_number_generator.Pointer()->NextBytes(&raw_addr,
++                                                        sizeof(raw_addr));
++#if V8_TARGET_ARCH_X64
++  // Currently available CPUs have 48 bits of virtual addressing.  Truncate
++  // the hint address to 46 bits to give the kernel a fighting chance of
++  // fulfilling our placement request.
++  raw_addr &= V8_UINT64_C(0x3ffffffff000);
++#elif V8_TARGET_ARCH_PPC64
++#if V8_OS_AIX
++  // AIX: 64 bits of virtual addressing, but we limit address range to:
++  //   a) minimize Segment Lookaside Buffer (SLB) misses and
++  raw_addr &= V8_UINT64_C(0x3ffff000);
++  // Use extra address space to isolate the mmap regions.
++  raw_addr += V8_UINT64_C(0x400000000000);
++#elif V8_TARGET_BIG_ENDIAN
++  // Big-endian Linux: 44 bits of virtual addressing.
++  raw_addr &= V8_UINT64_C(0x03fffffff000);
++#else
++  // Little-endian Linux: 48 bits of virtual addressing.
++  raw_addr &= V8_UINT64_C(0x3ffffffff000);
++#endif
++#elif V8_TARGET_ARCH_S390X
++  // Linux on Z uses bits 22-32 for Region Indexing, which translates to 42 bits
++  // of virtual addressing.  Truncate to 40 bits to allow kernel chance to
++  // fulfill request.
++  raw_addr &= V8_UINT64_C(0xfffffff000);
++#elif V8_TARGET_ARCH_S390
++  // 31 bits of virtual addressing.  Truncate to 29 bits to allow kernel chance
++  // to fulfill request.
++  raw_addr &= 0x1ffff000;
++#else
++  raw_addr &= 0x3ffff000;
++
++# ifdef __sun
++  // For our Solaris/illumos mmap hint, we pick a random address in the bottom
++  // half of the top half of the address space (that is, the third quarter).
++  // Because we do not MAP_FIXED, this will be treated only as a hint -- the
++  // system will not fail to mmap() because something else happens to already
++  // be mapped at our random address. We deliberately set the hint high enough
++  // to get well above the system's break (that is, the heap); Solaris and
++  // illumos will try the hint and if that fails allocate as if there were
++  // no hint at all. The high hint prevents the break from getting hemmed in
++  // at low values, ceding half of the address space to the system heap.
++  raw_addr += 0x80000000;
++#elif V8_OS_AIX
++  // The range 0x30000000 - 0xD0000000 is available on AIX;
++  // choose the upper range.
++  raw_addr += 0x90000000;
++# else
++  // The range 0x20000000 - 0x60000000 is relatively unpopulated across a
++  // variety of ASLR modes (PAE kernel, NX compat mode, etc) and on macos
++  // 10.6 and 10.7.
++  #if V8_TARGET_ARCH_IA32
++    raw_addr += 0x40000000;
++  #else
++    raw_addr += 0x20000000;
++  #endif
++# endif
++#endif
++  return reinterpret_cast<void*>(raw_addr);
++#else
++
+   uintptr_t raw_addr;
+   {
+     LockGuard<Mutex> guard(rng_mutex.Pointer());
+@@ -292,6 +367,7 @@ void* OS::GetRandomMmapAddr() {
+ #endif
+ #endif
+   return reinterpret_cast<void*>(raw_addr);
++#endif
+ }
+ 
+ // TODO(bbudge) Move Cygwin and Fuschia stuff into platform-specific files.
+-- 
+2.7.4
+
+

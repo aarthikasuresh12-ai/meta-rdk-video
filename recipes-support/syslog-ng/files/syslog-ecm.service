@@ -1,0 +1,19 @@
+[Unit]
+Description=System Logger Daemon
+Documentation=man:syslog-ng(8)
+After=disk-check.service previous-log-backup.service ecmlink.service
+Requires=syslog-ng.service ecmlink.service
+DefaultDependencies=no
+
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=/bin/sh -c "/bin/cp /etc/syslog-ng/syslog-ng-active.conf /tmp/syslog-ng.conf"
+ExecStartPre=/bin/sh -c "/bin/dmesg -c >> /opt/logs/startup_stdout_log.txt"
+ExecStartPre=/bin/sh -c "/bin/cat /tmp/logs/applications.log >> /opt/logs/applications.log ; /bin/cat /dev/null > /tmp/logs/applications.log"
+ExecStart= /bin/sh -c "/usr/local/sbin/syslog-ng-ctl reload   -c /tmp/lib/syslog-ng/syslog-ng.ctl"
+
+[Install]
+WantedBy=multi-user.target
+

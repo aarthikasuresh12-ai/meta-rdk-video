@@ -1,0 +1,55 @@
+Date: Oct 02, 2020  1:00 PM
+From: 51333037650ecee44191492b541106efa573cc35 Feb 12, 2020 09:06 PM
+Subject: [PATCH] pxWayland Unregister Compositor crash
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: binbar366 <binu_inbaraj@comcast.com>
+
+---
+ examples/pxScene2d/src/pxWayland.cpp | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/examples/pxScene2d/src/pxWayland.cpp b/examples/pxScene2d/src/pxWayland.cpp
+index 9fc7ea384..97cef4d82 100644
+--- a/examples/pxScene2d/src/pxWayland.cpp
++++ b/examples/pxScene2d/src/pxWayland.cpp
+@@ -125,12 +125,14 @@ pxWayland::~pxWayland()
+ 
+   if ( mWCtx )
+   {
++     WstCompositor *wctx= mWCtx;
++     mWCtx= NULL;
+      rtLogInfo("removing wayland callbacks before destroying");
+-     WstCompositorSetInvalidateCallback(mWCtx, NULL, NULL);
+-     WstCompositorSetHidePointerCallback(mWCtx, NULL, NULL);
+-     WstCompositorSetClientStatusCallback(mWCtx, NULL, NULL);
++     WstCompositorSetInvalidateCallback(wctx, NULL, NULL);
++     WstCompositorSetHidePointerCallback(wctx, NULL, NULL);
++     WstCompositorSetClientStatusCallback(wctx, NULL, NULL);
+      terminateClient();
+-     WstCompositorDestroy(mWCtx);
++     WstCompositorDestroy(wctx);
+      //Adding mClientTerminated flag check because SIGKILL has to be sent to
+      //the Process only when it got SIGTERM from terminateClient().
+      if (mClientTerminated && (mClientPID > 0) && (0 == kill(mClientPID, 0)))
+@@ -143,7 +145,6 @@ pxWayland::~pxWayland()
+        mClientTerminated = false;
+      }
+      mClientPID= -1;
+-     mWCtx = NULL;
+   }
+   if (gUIThreadQueue)
+   {
+@@ -594,7 +595,7 @@ void pxWayland::launchAndMonitorClient()
+ 
+    mClientMonitorStarted= true;
+ 
+-   if ( !WstCompositorLaunchClient( mWCtx, mCmd.cString() ) )
++   if ( mWCtx && !WstCompositorLaunchClient( mWCtx, mCmd.cString() ) )
+    {
+       rtLogError( "pxWayland::launchAndMonitorClient: WstCompositorLaunchClient failed for (%s)", mCmd.cString() );
+       const char *detail= WstCompositorGetLastErrorDetail( mWCtx );
+-- 
+2.24.1
+

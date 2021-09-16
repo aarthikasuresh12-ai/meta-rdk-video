@@ -1,0 +1,25 @@
+Date: Jan 14, 2021 11:53 AM
+
+From: 4464334c823d34461f1c67e23e01bd0789d6c14b Feb 28, 2019 9:03 AM
+
+Subject: remove the directory creation of /srv
+
+Source: COMCAST
+
+License: LGPL-2.1-or-later
+
+Upstream-Status: Pending
+
+Signed-off-by: dwolav200 <david_wolaver@cable.comcast.com>
+---
+
+diff --git a/tmpfiles.d/home.conf b/tmpfiles.d/home.conf
+index 9f25b83392..8fa7d31ccf 100644
+--- a/tmpfiles.d/home.conf
++++ b/tmpfiles.d/home.conf
+@@ -8,4 +8,4 @@
+ # See tmpfiles.d(5) for details
+ 
+ Q /home 0755 - - -
+-q /srv 0755 - - -
++

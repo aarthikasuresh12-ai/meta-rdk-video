@@ -1,0 +1,27 @@
+Date: Thu, 20 Sep 2018 12:58:47 -0400
+From: 500cd31cb86badc76ceb9728c8bd97c1aef93451 Mon Sep 17 00:00:00 2001
+Subject: [PATCH] temp enable localstorage wpe
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Signed-off-by: mfiess200 <michael_fiess@cable.comcast.com>
+
+---
+ examples/pxScene2d/src/rcvrcore/optimus.js | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/examples/pxScene2d/src/rcvrcore/optimus.js b/examples/pxScene2d/src/rcvrcore/optimus.js
+index 41cac5c..2c492f2 100644
+--- a/examples/pxScene2d/src/rcvrcore/optimus.js
++++ b/examples/pxScene2d/src/rcvrcore/optimus.js
+@@ -705,6 +705,7 @@ function Application(props) {
+           if (localStorage){
+             _browser.localStorageEnabled = localStorage;
+           }
++          _browser.localStorageEnabled = true;
+ 
+           _browser.url = uri;
+           _this.log("launched WebApp uri:" + uri);
+-- 
+2.7.4
+

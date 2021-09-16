@@ -1,0 +1,20 @@
+[Unit]
+Description=wpeframework
+Before=xre-receiver.service
+After=lighttpd.service iarmbusd.service pwrmgr.service irmgr.service dsmgr.service sysmgr.service authservice.service @EXTRA_AFTER@
+
+[Service]
+PIDFile=/var/run/WPEFramework.pid
+EnvironmentFile=-/etc/wpeframework/WPEFramework.env
+Environment="LD_LIBRARY_PATH=/usr/lib:/media/apps/netflix/usr/lib:/tmp/netflix/usr/lib:/media/apps/libcobalt/usr/lib:/tmp/libcobalt/usr/lib"
+Environment="XDG_RUNTIME_DIR=/tmp"
+Environment="XDG_DATA_HOME=/opt/QT/home"
+Environment="LD_PRELOAD=/usr/lib/libwayland-client.so.0:/usr/lib/libwayland-egl.so.0"
+Environment="RDKSHELL_EASTER_EGG_FILE=/etc/rdkshell_eastereggs.conf"
+ExecStart=-/usr/bin/WPEFramework -b
+ExecStop=/bin/kill $MAINPID
+Restart=always
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target

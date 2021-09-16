@@ -1,0 +1,25 @@
+From cae1dcc9faa3ee5f752b7ed0d047e8856d29e034 Mon Sep 17 00:00:00 2001
+From: mfiess200 <michael_fiess@cable.comcast.com>
+Date: Fri, 8 Feb 2019 17:28:16 -0500
+Subject: [PATCH] remove cors debug print
+
+---
+ src/rtCORS.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/rtCORS.cpp b/src/rtCORS.cpp
+index db2c3c1..4635011 100644
+--- a/src/rtCORS.cpp
++++ b/src/rtCORS.cpp
+@@ -51,7 +51,7 @@ rtCORS::rtCORS(const rtString& origin)
+     }
+   }
+ 
+-  rtLogInfo("%s : %s, origin '%s'", __FUNCTION__, mEnabled?"enabled":"disabled", mOrigin.cString());
++  rtLogDebug("%s : %s, origin '%s'", __FUNCTION__, mEnabled?"enabled":"disabled", mOrigin.cString());
+ }
+ 
+ rtCORS::~rtCORS()
+-- 
+1.9.1
+

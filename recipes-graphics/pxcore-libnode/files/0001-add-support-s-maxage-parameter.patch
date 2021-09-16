@@ -1,0 +1,50 @@
+Date: Nov 9, 2020 1:56 PM
+
+From: a8fb36201e8e3fd17234e8fc3b1dcfc519f033cf Mon Sep 17 00:00:00 2001
+
+Subject: [PATCH] DELIA-47055: add s-maxage support
+
+        caching enhancements
+
+Source: COMCAST
+
+License: Apache-2.0
+
+Upstream-Status: Pending
+
+Signed-off-by: mthiru270 <madanagopal_thirumalai@comcast.com>
+---
+ src/rtHttpCache.cpp | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/src/rtHttpCache.cpp b/src/rtHttpCache.cpp
+index 5574a0e..f03d412 100644
+--- a/src/rtHttpCache.cpp
++++ b/src/rtHttpCache.cpp
+@@ -379,11 +379,21 @@ void rtHttpCacheData::setExpirationDate()
+   if (mHeaderMap.end() != mHeaderMap.find("Cache-Control"))
+   {
+     string cacheControl = mHeaderMap["Cache-Control"].cString();
+-    size_t pos = cacheControl.find("max-age");
++    size_t pos = cacheControl.find("s-maxage");
++    uint32_t ageValueIndex = -1;
++    if (string::npos != pos)
++    {
++      ageValueIndex = 9;
++    }
++    else
++    {
++      pos = cacheControl.find("max-age");
++      ageValueIndex = 8;
++    }
+     if (string::npos != pos)
+     {
+       foundMaxAge = true;
+-      string maxAge = cacheControl.substr(pos+8);
++      string maxAge = cacheControl.substr(pos+ageValueIndex);
+       long int maxAgeInt = 0;
+       stringstream stream(maxAge);
+       stream >> maxAgeInt;
+-- 
+1.9.1
+

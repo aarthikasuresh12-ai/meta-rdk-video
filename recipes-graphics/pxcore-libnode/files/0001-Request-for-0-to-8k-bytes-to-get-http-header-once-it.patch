@@ -1,0 +1,34 @@
+From 9663c150e6b78afdc51d26b778430e2ddb469142 Mon Sep 17 00:00:00 2001
+From: SureshS <30907904+ssureshmsc@users.noreply.github.com>
+Date: Wed, 30 Oct 2019 17:30:17 -0400
+Subject: [PATCH] Request for (0  to 8k) bytes to get http header, once it got
+ success request for (8k+1 to BYTE_RANGE_SPLIT-1)bytes. (#2096)
+
+Increment multipleIntervals one more because already one iteration made before determinding multipleIntervals. (#2105)
+---
+ src/rtFileDownloader.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/rtFileDownloader.cpp b/src/rtFileDownloader.cpp
+index a2a47ed..7531924 100644
+--- a/src/rtFileDownloader.cpp
++++ b/src/rtFileDownloader.cpp
+@@ -1122,6 +1122,7 @@ bool rtFileDownloader::downloadByteRangeFromNetwork(rtFileDownloadRequest* downl
+             }
+             else if(iLoop == 1)
+             {
++               startRange = 0;
+                byteRange = rtString::toString(8192) + "-" + rtString::toString(startRange + downloadRequest->byteRangeIntervals()-1);
+             }
+             else
+@@ -1237,6 +1238,7 @@ bool rtFileDownloader::downloadByteRangeFromNetwork(rtFileDownloadRequest* downl
+             rtLogError("Http header doesn't have Content-Range. Url(%s)\n", downloadRequest->fileUrl().cString());
+ 
+          multipleIntervals = (downloadRequest->actualFileSize() >= downloadRequest->byteRangeIntervals()) ? (downloadRequest->actualFileSize() / downloadRequest->byteRangeIntervals()) : 0;
++         multipleIntervals++; // Increment one more because already one iteration made before determinding multipleIntervals.
+          rtLogInfo("File(%s) multipleIntervals (%d) fileSize(%ld)\n", downloadRequest->fileUrl().cString(), multipleIntervals, downloadRequest->actualFileSize());
+       }
+       startRange += downloadRequest->byteRangeIntervals();
+-- 
+2.7.4
+

@@ -1,0 +1,63 @@
+From c9520581c2041145850a41b15650437fa65bed9d Mon Sep 17 00:00:00 2001
+From: mfiess <michael_fiess@cable.comcast.com>
+Date: Tue, 14 Aug 2018 11:18:15 -0400
+Subject: [PATCH] texture memory 65mb
+
+---
+ examples/pxScene2d/src/pxContext.h                 | 2 +-
+ examples/pxScene2d/src/pxContextGL.cpp             | 9 +++++++++
+ examples/pxScene2d/src/rcvrcore/utils/FileUtils.js | 2 ++
+ 3 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/examples/pxScene2d/src/pxContext.h b/examples/pxScene2d/src/pxContext.h
+index e4b7f0b..32ebb1c 100644
+--- a/examples/pxScene2d/src/pxContext.h
++++ b/examples/pxScene2d/src/pxContext.h
+@@ -44,7 +44,7 @@
+ #define DEFAULT_EJECT_TEXTURE_AGE 5
+ 
+ #ifndef ENABLE_DFB
+-  #define PXSCENE_DEFAULT_TEXTURE_MEMORY_LIMIT_IN_BYTES (80 * 1024 * 1024)   // GL
++  #define PXSCENE_DEFAULT_TEXTURE_MEMORY_LIMIT_IN_BYTES (65 * 1024 * 1024)   // GL
+   #define PXSCENE_DEFAULT_TEXTURE_MEMORY_LIMIT_THRESHOLD_PADDING_IN_BYTES (5 * 1024 * 1024)
+ #else
+   #define PXSCENE_DEFAULT_TEXTURE_MEMORY_LIMIT_IN_BYTES (15 * 1024 * 1024)   // DFB .. Shoul be 40 ?
+diff --git a/examples/pxScene2d/src/pxContextGL.cpp b/examples/pxScene2d/src/pxContextGL.cpp
+index d0474d2..82b9221 100644
+--- a/examples/pxScene2d/src/pxContextGL.cpp
++++ b/examples/pxScene2d/src/pxContextGL.cpp
+@@ -2853,6 +2853,15 @@ bool pxContext::isTextureSpaceAvailable(pxTextureRef texture, bool allowGarbageC
+     }
+     return false;
+   }
++  else if (allowGarbageCollect && (textureSize + currentTextureMemorySize) > maxTextureMemoryInBytes)
++  {
++#ifdef RUNINMAIN
++    rtLogInfo("gc for texture memory");
++    script.collectGarbage();
++#else
++    uv_async_send(&gcTrigger);
++#endif
++  }
+   return true;
+ }
+ 
+diff --git a/examples/pxScene2d/src/rcvrcore/utils/FileUtils.js b/examples/pxScene2d/src/rcvrcore/utils/FileUtils.js
+index 3c309d4..733b14a 100644
+--- a/examples/pxScene2d/src/rcvrcore/utils/FileUtils.js
++++ b/examples/pxScene2d/src/rcvrcore/utils/FileUtils.js
+@@ -53,9 +53,11 @@ function loadFile(fileUri) {
+       };
+       if (fileUri.substring(0, 5) == "https") {
+         req = https.get(options, httpCallback);
++        process._tickCallback();
+       }
+       else {
+         req = http.get(options, httpCallback);
++        process._tickCallback();
+       }
+       req.on('error', function (err) {
+         log.error("Error: FAILED to read file[" + fileUri + "] from web service");
+-- 
+1.9.1
+

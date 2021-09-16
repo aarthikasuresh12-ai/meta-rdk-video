@@ -1,0 +1,64 @@
+Date: Jan 31, 2019 7:00 AM
+
+From: 4464334c823d34461f1c67e23e01bd0789d6c14b Feb 28, 2019 9:03 AM
+
+Subject: [PATCH] RDKALL-1314: Upgrade syslog-ng version to 3.8.1
+
+        moved syslog-ng packge overrides for RDKV from meta-rdk-ext to meta-rdk-video
+        cover logging sanity test cases
+
+Source: COMCAST
+
+License: LGPL-2.1-or-later
+
+Upstream-Status: Pending
+
+Signed-off-by: mselva006c <mani_selvaraj@comcast.com>
+---
+
+diff --git a/Makefile.am b/Makefile.am
+index dbd3386c0..9aa70843d 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -514,7 +514,8 @@ dist_systemunit_DATA = \
+ 	units/systemd-udevd-kernel.socket \
+ 	units/system-update.target \
+ 	units/initrd-switch-root.target \
+-	units/machines.target
++	units/machines.target \
++	units/systemd-setup-dgram-qlen.service
+ 
+ dist_systemunit_DATA += \
+ 	$(dist_systemunit_DATA_busnames)
+diff --git a/units/syslog.socket b/units/syslog.socket
+index e6e9cf852..457c4e879 100644
+--- a/units/syslog.socket
++++ b/units/syslog.socket
+@@ -15,6 +15,9 @@ Before=sockets.target shutdown.target
+ # Don't allow logging until the very end
+ Conflicts=shutdown.target
+ 
++# Increase max_dgram_qlen to a more reasonable value
++Wants=systemd-setup-dgram-qlen.service
++
+ [Socket]
+ ListenDatagram=/run/systemd/journal/syslog
+ SocketMode=0666
+diff --git a/units/systemd-setup-dgram-qlen.service b/units/systemd-setup-dgram-qlen.service
+new file mode 100644
+index 000000000..dab08f6f9
+--- /dev/null
++++ b/units/systemd-setup-dgram-qlen.service
+@@ -0,0 +1,12 @@
++[Unit]
++Description=Increase datagram queue length
++DefaultDependencies=no
++Before=syslog.socket
++ConditionPathIsReadWrite=/proc/sys/net/unix/max_dgram_qlen
++
++[Service]
++Type=oneshot
++ExecStartPre=/sbin/sysctl -w net.core.rmem_max=1048576
++ExecStart=/sbin/sysctl -w net.unix.max_dgram_qlen=512
++StandardOutput=null
++RemainAfterExit=yes
