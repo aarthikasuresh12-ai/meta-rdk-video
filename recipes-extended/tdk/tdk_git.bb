@@ -55,6 +55,7 @@ do_install_append () {
         install -D -p -m 755 ${D}${bindir}/gen_multiple_events ${D}${TDK_TARGETDIR}/
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             install -D -p -m 755 ${D}${bindir}/mediapipelinetests ${D}${TDK_TARGETDIR}/
+            install -D -p -m 755 ${D}${bindir}/Essos_TDKTestApp ${D}${TDK_TARGETDIR}/
         fi
         install -D -p -m 755 ${D}${libdir}/*.so* ${D}${TDK_TARGETDIR}/lib/
         rm -rf ${D}${libdir}/
@@ -70,6 +71,7 @@ do_install_append () {
         install -D -p -m 755 ${D}${bindir}/gen_multiple_events ${D}${TDK_TARGETDIR}/
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             install -D -p -m 755 ${D}${bindir}/mediapipelinetests ${D}${TDK_TARGETDIR}/
+            install -D -p -m 755 ${D}${bindir}/Essos_TDKTestApp ${D}${TDK_TARGETDIR}/
         fi
         install -m 0644 ${S}/tdk.service ${D}${systemd_unitdir}/system/tdk.service
         install -m 755 ${S}/tdkstartup.sh ${D}${base_libdir}/rdk/
@@ -81,6 +83,7 @@ do_install_append () {
         rm -rf ${D}${bindir}/gen_multiple_events
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             rm -rf ${D}${bindir}/mediapipelinetests
+            rm -rf ${D}${bindir}/Essos_TDKTestApp
         fi
     elif [ "${TDK_HWPerf_OPENSOURCE_TOOLS}" = "TRUE" ]; then
         install -d ${D}${base_libdir}/rdk/
@@ -92,6 +95,7 @@ do_install_append () {
         ln -sf ${bindir}/gen_multiple_events ${D}${TDK_TARGETDIR}/
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             ln -sf ${bindir}/mediapipelinetests ${D}${TDK_TARGETDIR}/
+            ln -sf ${bindir}/Essos_TDKTestApp ${D}${TDK_TARGETDIR}/
         fi
         install -m 0644 ${S}/tdk.service ${D}${systemd_unitdir}/system/tdk.service
         install -m 755 ${S}/tdkstartup.sh ${D}${base_libdir}/rdk/
@@ -108,6 +112,7 @@ do_install_append () {
         ln -sf ${bindir}/gen_multiple_events ${D}${TDK_TARGETDIR}/
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             ln -sf ${bindir}/mediapipelinetests ${D}${TDK_TARGETDIR}/
+            ln -sf ${bindir}/Essos_TDKTestApp ${D}${TDK_TARGETDIR}/
         fi
         install -m 0644 ${S}/tdk.service ${D}${systemd_unitdir}/system/tdk.service
         install -m 755 ${S}/tdkstartup.sh ${D}${base_libdir}/rdk/
