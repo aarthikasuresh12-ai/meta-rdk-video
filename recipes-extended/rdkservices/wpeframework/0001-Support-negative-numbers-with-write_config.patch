@@ -2,7 +2,7 @@ Date: Thu, 5 Aug 2021 16:07:32 +0000
 From: 6c13054fae84e233b3eb55bf5311ada67ca91cfc Mon Sep 17 00:00:00 2001
 Subject: [PATCH] Support negative numbers with write_config
 Source: COMCAST
-License: GPLV2
+License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
 

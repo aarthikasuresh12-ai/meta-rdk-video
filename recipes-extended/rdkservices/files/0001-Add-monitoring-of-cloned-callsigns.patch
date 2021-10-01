@@ -2,7 +2,7 @@ Date: Thu, 15 Jul 2021 15:17:05 +0000
 From: 8f27d9730bcc52e4c3a2a86c8d8d2f7bc93abee1 Mon Sep 17 00:00:00 2001
 Subject: Add monitoring of cloned callsigns
 Source: COMCAST
-License: GPLV2
+License: Apache-2.0
 Upstream-Status: None
 Signed-off-by: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
 

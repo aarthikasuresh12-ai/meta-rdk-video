@@ -2,7 +2,7 @@ Date: Mon, 24 May 2021 15:42:41 -0400
 From: f9d91975d9fed648c995aee8246d2b33a2641ae3 Mon Sep 17 00:00:00 2001
 Subject: [PATCH] Add option to configure persistentpathpostfix
 Source: COMCAST
-License: GPLV2
+License: Apache-2.0
 Upstream-Status: https://github.com/rdkcentral/Thunder/pull/603
 Signed-off-by: Ievgen Mutavchi <Ievgen_Mutavchi@comcast.com>
 
