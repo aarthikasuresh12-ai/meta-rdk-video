@@ -103,7 +103,7 @@ do_install_append() {
         if ${@bb.utils.contains("MACHINE_FEATURES", "platformserver", "true", "false", d)}
         then
            extra_after=""
-        elif ${@bb.utils.contains("PREFERRED_PROVIDER_virtual/egl", "broadcom-refsw", "true", "false", d)}
+        elif ${@bb.utils.contains("PREFERRED_PROVIDER_virtual/egl", "broadcom-refsw", "true", bb.utils.contains("PREFERRED_PROVIDER_virtual/egl", "broadcom-ursr", "true", "false", d), d)}
         then
            extra_after="nxserver.service"
         fi
