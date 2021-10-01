@@ -145,11 +145,9 @@ do_install() {
            echo "SD_CARD_TYPE=EMMC" >> ${D}${sysconfdir}/device.properties
            install -m 0644 ${S}/../systemd_units/system-health-check.service ${D}${systemd_unitdir}/system
            install -m 0644 ${S}/../systemd_units/system-health-check.timer ${D}${systemd_unitdir}/system
-           install -m 0644 ${S}/../systemd_units/check_wpa_supplicant_conf.service ${D}${systemd_unitdir}/system
         else
            # we dont want to install this script for all platforms yet
            rm -rf ${D}${base_libdir}/rdk/system-health-check.sh
-           rm -rf ${D}${base_libdir}/rdk/recover_wpa_supplicant_conf.sh
         fi
 
         if [ "${FORCE_MTLS}" = "true" ]; then
@@ -401,7 +399,6 @@ SYSTEMD_SERVICE_${PN} += "update-reboot-info.path"
 SYSTEMD_SERVICE_${PN} += "update-reboot-info.service"
 SYSTEMD_SERVICE_${PN} += "gstreamer-cleanup.service"
 SYSTEMD_SERVICE_${PN} += "path-fail-notifier@.service"
-SYSTEMD_SERVICE_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'storage_emmc', 'check_wpa_supplicant_conf.service', '',d)}"
 
 SYSTEMD_SERVICE_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'storage_emmc', 'system-health-check.timer system-health-check.service', '',d)}"
 
