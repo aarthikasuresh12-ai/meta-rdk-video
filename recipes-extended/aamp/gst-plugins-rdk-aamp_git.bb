@@ -8,9 +8,10 @@ SRCREV_FORMAT = "gstplug-rdk-aamp"
 
 DEPENDS += "curl aamp"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'gstreamer1', 'gstreamer1.0  gstreamer1.0-plugins-base', 'gstreamer gst-plugins-base', d)}"
+DEPENDS +=  "${@bb.utils.contains('DISTRO_FEATURES', 'rdk_svp', 'gst-svp-ext', '', d)}"
 NO_RECOMMENDATIONS = "1"
 
-AAMP_GST_PLUG_IN_RELEASE_TAG_NAME = "3.5.2.0"
+AAMP_GST_PLUG_IN_RELEASE_TAG_NAME = "3.5.3.0"
 
 SRC_URI = "${CMF_GIT_ROOT}/rdk/components/generic/gst-plugins-rdk-aamp;protocol=${CMF_GIT_PROTOCOL};branch=${AAMP_GST_PLUG_IN_RELEASE_TAG_NAME};nobranch=1;name=gstplug-rdk-aamp"
 
