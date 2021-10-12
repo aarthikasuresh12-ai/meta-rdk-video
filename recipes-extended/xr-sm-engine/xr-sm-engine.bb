@@ -17,10 +17,10 @@ FILES_${PN} += "${includedir}/xrpSMEngine.h \
 
 XLOG_MODULE_NAME="XRSM"
 
-INHERIT_COMCAST_BREAKPAD := "${@bb.utils.contains('BBLAYERS', '${RDKROOT}/meta-rdk-comcast', 'comcast-breakpad', '',d)}"
+INHERIT_BREAKPAD_WRAPPER := "${@bb.utils.contains('BBLAYERS', '${RDKROOT}/meta-rdk', 'breakpad-wrapper', '',d)}"
 INHERIT_RDKXLOGGER := "${@bb.utils.contains('BBLAYERS', '${RDKROOT}/meta-rdk-voice-sdk', 'rdkx-logger', '',d)}"
 
-inherit autotools pkgconfig coverity ${INHERIT_COMCAST_BREAKPAD} ${INHERIT_RDKXLOGGER}
+inherit autotools pkgconfig coverity ${INHERIT_BREAKPAD_WRAPPER} ${INHERIT_RDKXLOGGER}
 
 INCLUDE_DIRS = ""
 

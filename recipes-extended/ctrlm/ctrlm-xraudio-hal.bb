@@ -10,11 +10,11 @@ SRCREV_${PN} = "${AUTOREV}"
 
 S = "${WORKDIR}/git"
 
-INHERIT_COMCAST_BREAKPAD := "${@bb.utils.contains('BBLAYERS', '${RDKROOT}/meta-rdk-comcast', 'comcast-breakpad', '',d)}"
+INHERIT_BREAKPAD_WRAPPER := "${@bb.utils.contains('BBLAYERS', '${RDKROOT}/meta-rdk', 'breakpad-wrapper', '',d)}"
 INHERIT_RDKX_LOGGER      := "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', 'rdkx-logger', '', d)}"
 INHERIT_VSDK_UTILS       := "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', 'vsdk-utils', '', d)}"
 
-inherit coverity autotools ${INHERIT_VSDK_UTILS} ${INHERIT_COMCAST_BREAKPAD} ${INHERIT_RDKX_LOGGER}
+inherit coverity autotools ${INHERIT_VSDK_UTILS} ${INHERIT_BREAKPAD_WRAPPER} ${INHERIT_RDKX_LOGGER}
 
 XLOG_MODULE_NAME="XRAUDIO"
 
