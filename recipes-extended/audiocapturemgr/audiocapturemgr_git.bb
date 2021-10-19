@@ -11,9 +11,11 @@ PV = "${RDK_RELEASE}"
 SRCREV_audiocapturemgr = "${AUTOREV}"
 
 SRCREV_FORMAT = "audiocapturemgr"
-DEPENDS = "virtual/media-utils iarmbus iarmmgrs"
+DEPENDS = "virtual/media-utils iarmbus iarmmgrs libunpriv"
 DEPENDS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' safec', " ", d)}"
 DEPENDS += "safec-common-wrapper"
+LDFLAGS_append = "-lprivilege"
+CXXFLAGS += " -DDROP_ROOT_PRIV"
 
 S = "${WORKDIR}/git"
 EXTRA_OECONF = " --enable-testapp "

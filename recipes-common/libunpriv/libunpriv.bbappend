@@ -1,6 +1,7 @@
-DEPENDS += "wdmp-c rfc"
-LDFLAGS += "-lwdmp-c -lrfcapi"
+DEPENDS += "wdmp-c cimplog rfc"
+LDFLAGS += "-lwdmp-c -lcimplog -lrfcapi"
 CPPFLAGS_append = " -I${STAGING_INCDIR}/wdmp-c \
+                    -I${STAGING_INCDIR}/cimplog \
                     -D_RDK_VIDEO_PRIV_CAPS_ \
                   "
 

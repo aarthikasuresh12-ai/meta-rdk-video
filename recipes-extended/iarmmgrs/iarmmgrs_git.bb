@@ -18,7 +18,7 @@ DEPENDS_append = " safec-common-wrapper"
 
 PARALLEL_MAKE = ""
 DEPENDS="qtbase curl yajl dbus iarmbus rdk-logger hdmicecheader devicesettings virtual/devicesettings-hal \
-         virtual/iarmmgrs-hal iarmmgrs-hal-headers openssl systemd directfb libsyswrapper rfc"
+         virtual/iarmmgrs-hal iarmmgrs-hal-headers openssl systemd directfb libsyswrapper rfc libunpriv"
 DEPENDS_append_client = " virtual/mfrlib"
 RDEPENDS_${PN}_client_morty += " virtual/mfrlib"
 RDEPENDS_${PN}_dunfell += "${VIRTUAL-RUNTIME_mfrlib} devicesettings"
@@ -79,7 +79,7 @@ CFLAGS += "-D_ENABLE_RESET_LOGIC -D_ENABLE_WAKEUP_KEY -DENABLE_SD_NOTIFY"
 # green peak header files which is now residing @ rf4ce. Reference:
 # JIRA: XRE-6537.
 #
-LDFLAGS += " -lpthread -lglib-2.0 -ldbus-1 -lIARMBus -lsystemd -lsecure_wrapper"
+LDFLAGS += " -lpthread -lglib-2.0 -ldbus-1 -lIARMBus -lsystemd -lsecure_wrapper -lprivilege"
 CFLAGS += "-std=c++11 -fPIC -D_REENTRANT -Wall -I./include ${INCLUDE_DIRS}"
 
 CFLAGS_append_client = " -DMEDIA_CLIENT"
