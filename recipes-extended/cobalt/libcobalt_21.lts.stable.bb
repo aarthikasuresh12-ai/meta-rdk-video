@@ -17,8 +17,8 @@ SRC_URI += "file://0001-Fix-deadlock-on-audio-node-destruction.patch"
 
 SRCREV_cobalt = "21.lts.5"
 SRCREV_depottools = "913305037df7027dc118253b7c2d3655d181c612"
-# Sep 1, 2021
-SRCREV_starboard = "f6419b3d519b055b36c8113330b04397b51da4d0"
+# Oct 19, 2021
+SRCREV_starboard = "8aea326f41020186ddae2244624f17339e9da17e"
 SRCREV_FORMAT = "cobalt_depottools_starboard"
 
 do_fetch[vardeps] += " SRCREV_FORMAT SRCREV_cobalt SRCREV_depottools SRCREV_starboard"
