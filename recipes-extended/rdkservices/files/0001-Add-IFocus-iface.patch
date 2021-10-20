@@ -2,7 +2,7 @@ Date: Wed, 7 Jul 2021 18:22:04 +0000
 From: 68868b83b627e92e6992b6eed7462d468a535204 Mon Sep 17 00:00:00 2001
 Subject: [PATCH] Add IFocus iface
 Source: COMCAST
-License: GPLV2
+License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
 
