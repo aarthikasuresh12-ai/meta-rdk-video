@@ -74,6 +74,7 @@ PACKAGECONFIG ?= " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'wifimanager', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'enable_maintenance_manager', 'maintenancemanager', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'fireboltmediaplayer', 'fireboltmediaplayer', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'dlnasupport', ' dlna', '', d)} \
 "
 EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'rdkshell', ' -DPLUGIN_RDKSHELL=ON ', ' -DPLUGIN_RDKSHELL=OFF ', d)}"
 EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'rdkshell_disable_autostart', ' -DPLUGIN_RDKSHELL_AUTOSTART=false ', ' -DPLUGIN_RDKSHELL_AUTOSTART=true ', d)}"
@@ -136,6 +137,7 @@ PACKAGECONFIG[ocicontainer]         = "-DPLUGIN_OCICONTAINER=ON, -DPLUGIN_OCICON
 PACKAGECONFIG[usbaccess]            = "-DPLUGIN_USBACCESS=ON,-DPLUGIN_USBACCESS=OFF,"
 PACKAGECONFIG[erm]                  = "-DBUILD_ENABLE_ERM=ON,-DBUILD_ENABLE_ERM=OFF,"
 PACKAGECONFIG[fireboltmediaplayer]  = "-DPLUGIN_FIREBOLTMEDIAPLAYER=ON,-DPLUGIN_FIREBOLTMEDIAPLAYER=OFF, aamp, aamp"
+PACKAGECONFIG[dlna] = "-DPLUGIN_DLNA_SERVICE=ON, -DPLUGIN_DLNA_SERVICE=OFF,xupnp-rpc,xupnp-rpc"
 
 MONITOR_PLUGIN_ARGS                ?= " \
                                        -DPLUGIN_WEBKITBROWSER_MEMORYLIMIT=614400 \
