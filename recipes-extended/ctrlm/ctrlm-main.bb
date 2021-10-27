@@ -95,6 +95,12 @@ EXTRA_OECONF_append = "${@bb.utils.contains('THUNDER', 'true', ' --enable-thunde
 THUNDER_SECURITY   ?= "true"
 EXTRA_OECONF_append = "${@bb.utils.contains('THUNDER_SECURITY', 'true', ' --enable-thunder-security', '', d)}"
 
+# Memory Lock Implementation
+MEMORY_LOCK        ?= "false"
+CXXFLAGS_append     = "${@bb.utils.contains('MEMORY_LOCK', 'true', ' -DMEMORY_LOCK', '', d)}"
+LDFLAGS_append      = "${@bb.utils.contains('MEMORY_LOCK', 'true', ' -lclnl', '', d)}"
+DEPENDS_append      = "${@bb.utils.contains('MEMORY_LOCK', 'true', ' clnl', '', d)}"
+
 LDFLAGS_append ="${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', ' -lxr-voice-sdk -lxrsr -lxrsv -lxraudio-hal -lrdkx-logger -lxr-timestamp', '', d)}"
 LDFLAGS_append ="${@bb.utils.contains('DISTRO_FEATURES_RDK', 'comcast-gperftools-heapcheck-wp', ' -lxr-fdc', '', d)}"
 LDFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' `pkg-config --libs libsafec`', '', d)}"
