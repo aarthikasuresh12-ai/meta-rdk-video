@@ -11,7 +11,7 @@ SRCREV_netsrvmgr = "${AUTOREV}"
 
 S = "${WORKDIR}/git"
 
-CXXFLAGS +=" -DYOCTO_BUILD"
+#CXXFLAGS +=" -DYOCTO_BUILD"
 CXXFLAGS += "-I${STAGING_INCDIR}/rdk/iarmbus -DENABLE_SD_NOTIFY -I${STAGING_INCDIR}/rdk/iarmmgrs-hal"
 CFLAGS += "-I${STAGING_INCDIR}/rdk/iarmbus -DENABLE_SD_NOTIFY -I${STAGING_INCDIR}/rdk/iarmmgrs-hal"
 LDFLAGS += "-lsystemd -lsqlite3 -lsecure_wrapper"
