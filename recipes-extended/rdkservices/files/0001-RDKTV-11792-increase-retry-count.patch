@@ -1,0 +1,62 @@
+From 3ed56443d9cf298bf27c3c781cbe503a6fbc552e Mon Sep 17 00:00:00 2001
+From: Nikita Poltorapavlo <Nikita_Poltorapavlo2@cable.comcast.com>
+Date: Wed, 27 Oct 2021 17:02:47 +0300
+Source: COMCAST
+License: GPLV2
+Upstream-Status: Pending
+Subject: [PATCH] RDKTV-11792: increase retry count
+
+Reason for change: Internet precondition is never met
+if the network connection is not up in first 200s.
+Test Procedure: Start with network off, connect
+after 5-6 min.
+Risks: Low
+Signed-off-by: Nikita Poltorapavlo <npoltorapavlo@productengine.com>
+---
+ LocationSync/LocationSync.config       | 2 +-
+ LocationSync/LocationSyncPlugin.json   | 2 +-
+ LocationSync/doc/LocationSyncPlugin.md | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/LocationSync/LocationSync.config b/LocationSync/LocationSync.config
+index ea7584a4..1478bcc8 100644
+--- a/LocationSync/LocationSync.config
++++ b/LocationSync/LocationSync.config
+@@ -4,7 +4,7 @@ set (preconditions Network)
+ 
+ map()
+     kv(interval 10)
+-    kv(retries 20)
++    kv(retries 60)
+     kv(source ${PLUGIN_LOCATIONSYNC_URI})
+ end()
+ ans(configuration)
+diff --git a/LocationSync/LocationSyncPlugin.json b/LocationSync/LocationSyncPlugin.json
+index 36243aa9..681e771a 100644
+--- a/LocationSync/LocationSyncPlugin.json
++++ b/LocationSync/LocationSyncPlugin.json
+@@ -23,7 +23,7 @@
+                     "retries": {
+                         "type": "number",
+                         "size": 8,
+-                        "description": "Maximum number of request reties to the Location Server (default:20)."
++                        "description": "Maximum number of request reties to the Location Server (default:60)."
+                     },
+                     "source": {
+                         "type": "string",
+diff --git a/LocationSync/doc/LocationSyncPlugin.md b/LocationSync/doc/LocationSyncPlugin.md
+index 3e6a3edd..db9cdb39 100644
+--- a/LocationSync/doc/LocationSyncPlugin.md
++++ b/LocationSync/doc/LocationSyncPlugin.md
+@@ -78,7 +78,7 @@ The table below lists configuration options of the plugin.
+ | autostart | boolean | Determines if the plugin shall be started automatically along with the framework |
+ | configuration | object | <sup>*(optional)*</sup>  |
+ | configuration?.interval | number | <sup>*(optional)*</sup> Maximum time duration between each request to the Location Server (default: 10) |
+-| configuration?.retries | number | <sup>*(optional)*</sup> Maximum number of request reties to the Location Server (default:20) |
++| configuration?.retries | number | <sup>*(optional)*</sup> Maximum number of request reties to the Location Server (default:60) |
+ | configuration?.source | string | <sup>*(optional)*</sup> URI of the Location Server (default:"http://jsonip.metrological.com/?maf=true") |
+ 
+ <a name="head.Methods"></a>
+-- 
+2.25.1
+

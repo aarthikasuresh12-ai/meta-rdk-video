@@ -22,6 +22,7 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://0001-Add-monitoring-of-cloned-callsigns.patch \
            file://rdkservices.ini \
            file://0001-support-for-focus-events.patch \
+           file://0001-RDKTV-11792-increase-retry-count.patch \
           "
 
 # Oct 28, 2021
