@@ -78,6 +78,7 @@ SRC_URI += "file://archive.patch \
             file://0001-reconnectReason_fix.patch \
             file://DELIA-50375.patch \
             file://0001-updates-for-structure-initialization.patch \
+            file://DELIA-52784.patch \
             "
 
 SRC_URI += "file://0001-disable-extra-main.patch "
