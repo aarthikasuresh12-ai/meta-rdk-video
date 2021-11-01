@@ -135,6 +135,9 @@ do_install_append () {
     install -m 755 ${S}/SystemUtil_stub/scripts/Rdk_browser2.sh ${D}${TDK_TARGETDIR}/
     install -m 755 ${S}/SystemUtil_stub/scripts/Ledmgr_testrunner.sh ${D}${TDK_TARGETDIR}/
     install -m 755 ${S}/IARMBUS_stub/scripts/RunAppInBackground.sh ${D}${TDK_TARGETDIR}/
+    if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
+        install -m 755 ${S}/FireboltCompliance_Validation/scripts/RunWesterosTest.sh ${D}${TDK_TARGETDIR}/
+    fi
 }
 
 do_install_append_client() {
