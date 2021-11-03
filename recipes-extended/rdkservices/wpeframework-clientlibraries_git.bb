@@ -5,7 +5,7 @@ PR = "r0"
 
 require include/thunder.inc
 
-SRC_URI = "git://github.com/rdkcentral/ThunderClientLibraries.git;protocol=git;branch=R2 \
+SRC_URI = "git://github.com/rdkcentral/ThunderClientLibraries.git;protocol=git;branch=R2;name=wpeframework-clientlibraries \
            file://0001-RDK-28534-Security-Agent-Utility-and-Logging-ClientLibs.patch \
            file://0021-move-the-SOC-specific-svp-transformation-to-gst-svp.patch \
            file://0001-link-secapi-crypto.patch \
@@ -19,7 +19,7 @@ SRC_URI = "git://github.com/rdkcentral/ThunderClientLibraries.git;protocol=git;b
            "
 
 # Jul 27, 2021
-SRCREV = "8c413c265c4e6b73f63b067d81aa580960817274"
+SRCREV_wpeframework-clientlibraries = "8c413c265c4e6b73f63b067d81aa580960817274"
 
 
 # ----------------------------------------------------------------------------
