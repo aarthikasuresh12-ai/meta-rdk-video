@@ -23,7 +23,7 @@ DEPENDS_append_client = " virtual/mfrlib"
 RDEPENDS_${PN}_client_morty += " virtual/mfrlib"
 RDEPENDS_${PN}_dunfell += "${VIRTUAL-RUNTIME_mfrlib} devicesettings"
 
-inherit pkgconfig
+inherit pkgconfig breakpad-logmapper
 
 CFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec',  ' `pkg-config --cflags libsafec`', '-fPIC', d)}"
 CXXLAGS_append_client = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec',  ' `pkg-config --cflags libsafec`', '-fPIC', d)}"
@@ -168,4 +168,6 @@ FILES_${PN} += "${libdir}/*"
 FILES_SOLIBSDEV = ""
 SOLIBS = ".so"
 INSANE_SKIP_${PN} += "dev-so"
-
+# Breakpad processname and logfile mapping
+BREAKPAD_LOGMAPPER_PROCLIST = "dsMgrMain,IARMDaemonMain,pwrMgrMain,irMgrMain,deepSleepMgrMain,mfrMgrMain,sysMgrMain"
+BREAKPAD_LOGMAPPER_LOGLIST = "uimgr_log.txt"

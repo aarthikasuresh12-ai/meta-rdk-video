@@ -21,7 +21,7 @@ export RDK_FSROOT_PATH = '${STAGING_DIR_TARGET}'
 
 LDFLAGS += "-lprivilege"
 
-inherit autotools pkgconfig systemd
+inherit autotools pkgconfig systemd breakpad-logmapper
 
 do_install_append() {
    install -d ${D}${systemd_unitdir}/system
@@ -29,3 +29,6 @@ do_install_append() {
 }
 
 SYSTEMD_SERVICE_${PN} = "ledmgr.service"
+# Breakpad processname and logfile mapping
+BREAKPAD_LOGMAPPER_PROCLIST = "ledmgr"
+BREAKPAD_LOGMAPPER_LOGLIST = "uimgr_log.txt"

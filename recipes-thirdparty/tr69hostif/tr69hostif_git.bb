@@ -22,7 +22,7 @@ DEPENDS_append_client = " tr69agent-headers netsrvmgr"
 DEPENDS += "safec-common-wrapper"
 DEPENDS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' safec', " ", d)}"
 
-inherit pkgconfig
+inherit pkgconfig breakpad-logmapper
 
 CXXFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' `pkg-config --cflags libsafec`', ' -fPIC', d)}"
 CXXFLAGS_append_client = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' `pkg-config --cflags libsafec`', ' -fPIC', d)}"
@@ -155,4 +155,6 @@ FILES_${PN} += "${sysconfdir}/*"
 PACKAGE_BEFORE_PN += "${PN}-conf"
 
 FILES_${PN}-conf = "${sysconfdir}/rfcdefaults/tr69hostif.ini"
-
+# Breakpad processname and logfile mapping
+BREAKPAD_LOGMAPPER_PROCLIST = "tr69hostif"
+BREAKPAD_LOGMAPPER_LOGLIST = "tr69hostif.log"

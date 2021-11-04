@@ -21,7 +21,7 @@ S = "${WORKDIR}/git"
 EXTRA_OECONF = " --enable-testapp "
 export RDK_FSROOT_PATH = '${STAGING_DIR_TARGET}'
 
-inherit autotools pkgconfig systemd
+inherit autotools pkgconfig systemd breakpad-logmapper
 
 CXXFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec',  ' `pkg-config --cflags libsafec`', '-fPIC', d)}"
 CXXFLAGS_append_client = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec',  ' `pkg-config --cflags libsafec`', '-fPIC', d)}"
@@ -36,3 +36,6 @@ do_install_append() {
 
 FILES_${PN} += "${systemd_unitdir}/system/*"
 SYSTEMD_SERVICE_${PN} = "audiocapturemgr.service"
+# Breakpad processname and logfile mapping
+BREAKPAD_LOGMAPPER_PROCLIST = "audiocapturemgr"
+BREAKPAD_LOGMAPPER_LOGLIST = "audiocapturemgr.log"
