@@ -8,7 +8,7 @@ PV = "3.0+git${SRCPV}"
 S = "${WORKDIR}/git"
 inherit cmake pkgconfig
 
-SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main \
+SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=sprint/2107 \
            file://0001-Fix-DisplayInfo-build-with-SDK-14.4.patch \
            file://0002-RDK-28534-Comcast-Security-Agent-changes.patch \
            file://index.html \
@@ -24,8 +24,8 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://0001-support-for-focus-events.patch \
           "
 
-# Oct 20, 2021
-SRCREV = "ea713e70b3d824d7a45f1432ec4fc696e0833b9c"
+# Oct 12, 2021
+SRCREV = "42986a436c18e3e87b3cb5d957a00e059532c3bd"
 
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
