@@ -16,8 +16,8 @@ SRC_URI += "${CMF_GIT_ROOT}/rdk/components/generic/cobalt;protocol=${CMF_GIT_PRO
 
 SRCREV_cobalt = "21.lts.6"
 SRCREV_depottools = "913305037df7027dc118253b7c2d3655d181c612"
-# Oct 19, 2021
-SRCREV_starboard = "8aea326f41020186ddae2244624f17339e9da17e"
+# Nov 19, 2021
+SRCREV_starboard = "c32bcd7760adb143ad041818800c65cc35abddf3"
 SRCREV_FORMAT = "cobalt_depottools_starboard"
 
 do_fetch[vardeps] += " SRCREV_FORMAT SRCREV_cobalt SRCREV_depottools SRCREV_starboard"
