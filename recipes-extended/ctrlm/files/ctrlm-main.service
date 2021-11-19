@@ -1,15 +1,13 @@
 [Unit]
 Description=Control Manager Main Service
-After=ctrlm-hal-rf4ce.service iarmbusd.service securemount.service tr69hostif.service dsmgr.service
+After=iarmbusd.service securemount.service tr69hostif.service dsmgr.service
 Requires=iarmbusd.service dsmgr.service
-Wants=ctrlm-hal-rf4ce.service tr69hostif.service
-ConditionPathExists=!/usr/bin/rf4ceMgr
-
+Wants=tr69hostif.service
 
 [Service]
 Type=notify
 EnvironmentFile=/etc/device.properties
-ExecStart=/usr/bin/controlMgr 
+ExecStart=/usr/bin/controlMgr
 RestartSec=5s
 Restart=always
 
