@@ -13,7 +13,12 @@ RDEPENDS_${PN}_append = " devicesettings"
 PROVIDES = "ctrlm"
 RPROVIDES_${PN} = "ctrlm"
 
-inherit autotools pkgconfig pythonnative
+
+inherit autotools pkgconfig pythonnative syslog-ng-config-gen
+SYSLOG-NG_FILTER = "ctrlm"
+SYSLOG-NG_SERVICE_ctrlm = "ctrlm-hal-rf4ce.service ctrlm-main.service"
+SYSLOG-NG_DESTINATION_ctrlm = "ctrlm_log.txt"
+SYSLOG-NG_LOGRATE_ctrlm = "medium"
 
 SRC_URI        = "${CMF_GIT_ROOT}/rdk/components/generic/control;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};name=ctrlm-main"
 SRC_URI_append = " file://${PN}.service"

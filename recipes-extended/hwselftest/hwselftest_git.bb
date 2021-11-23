@@ -21,7 +21,11 @@ DEPENDS = "libwebsockets nopoll jansson net-snmp devicesettings iarmbus iarmmgrs
 RDEPENDS_${PN} += "jquery devicesettings bash"
 RDEPENDS_${PN}_append_dunfell = " mfr-library"
 
-inherit autotools pkgconfig systemd
+inherit autotools pkgconfig systemd syslog-ng-config-gen
+SYSLOG-NG_FILTER = "hwselftest"
+SYSLOG-NG_SERVICE_hwselftest = "hwselftest.service hwselftest-runner.service"
+SYSLOG-NG_DESTINATION_hwselftest = "hwselftest.log"
+SYSLOG-NG_LOGRATE_hwselftest = "low"
 
 
 do_install_append() {

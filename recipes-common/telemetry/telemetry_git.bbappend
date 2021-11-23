@@ -1,3 +1,8 @@
+inherit syslog-ng-config-gen
+SYSLOG-NG_FILTER = "telemetry2_0"
+SYSLOG-NG_SERVICE_telemetry2_0 = "telemetry2_0.service"
+SYSLOG-NG_DESTINATION_telemetry2_0 = "telemetry2_0.txt.0"
+SYSLOG-NG_LOGRATE_telemetry2_0 = "high"
 
 CFLAGS += " -DENABLE_RDKV_SUPPORT "
 

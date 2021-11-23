@@ -23,7 +23,12 @@ DEPENDS_append_client = " virtual/mfrlib"
 RDEPENDS_${PN}_client_morty += " virtual/mfrlib"
 RDEPENDS_${PN}_dunfell += "${VIRTUAL-RUNTIME_mfrlib} devicesettings"
 
-inherit pkgconfig breakpad-logmapper
+inherit pkgconfig breakpad-logmapper syslog-ng-config-gen
+SYSLOG-NG_FILTER = "uimgr"
+SYSLOG-NG_SERVICE_uimgr += "irmgr.service dsmgr.service pwrmgr.service mfrmgr.service sysmgr.service"
+#The log rate and destination are mentioned at iarmbus_git.bb, to avoid duplication of variables set we have commented the below variables.
+#SYSLOG-NG_DESTINATION_uimgr = "uimgr_log.txt"
+#SYSLOG-NG_LOGRATE_uimgr = "very-high"
 
 CFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec',  ' `pkg-config --cflags libsafec`', '-fPIC', d)}"
 CXXLAGS_append_client = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec',  ' `pkg-config --cflags libsafec`', '-fPIC', d)}"

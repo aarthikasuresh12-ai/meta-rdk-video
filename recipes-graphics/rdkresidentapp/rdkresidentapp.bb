@@ -6,7 +6,11 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=3cc4d276e918f48b04eb2faf952d0537"
 
 DEPENDS = "wpeframework"
 RDEPENDS_${PN} += "bash"
-inherit systemd
+inherit systemd syslog-ng-config-gen
+SYSLOG-NG_FILTER = "residentapp"
+SYSLOG-NG_SERVICE_residentapp = "residentapp.service"
+SYSLOG-NG_DESTINATION_residentapp = "residentapp.log"
+SYSLOG-NG_LOGRATE_residentapp = "low"
 
 S = "${WORKDIR}/git"
 

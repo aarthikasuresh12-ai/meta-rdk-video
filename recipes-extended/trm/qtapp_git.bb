@@ -12,7 +12,11 @@ S = "${WORKDIR}/git/qtapp/srv"
 
 DEPENDS = "trm-common qtwebsockets jansson"
 
-inherit systemd qmake5 coverity
+inherit systemd qmake5 coverity syslog-ng-config-gen
+SYSLOG-NG_FILTER = "trm"
+SYSLOG-NG_SERVICE_trm = "trm-srv.service"
+SYSLOG-NG_DESTINATION_trm = "trm.log"
+SYSLOG-NG_LOGRATE_trm = "medium"
 
 export TRM_NUMBER_OF_TUNERS ?= "4"
 

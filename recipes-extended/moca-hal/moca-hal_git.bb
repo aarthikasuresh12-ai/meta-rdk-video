@@ -10,7 +10,11 @@ SRC_URI = "${CMF_GIT_ROOT}/rdk/components/generic/mocahal;protocol=${CMF_GIT_PRO
 SRCREV = "${AUTOREV}"
 S = "${WORKDIR}/git"
 DEPENDS="systemd rfc "
-inherit autotools systemd pkgconfig coverity
+inherit autotools systemd pkgconfig coverity syslog-ng-config-gen
+SYSLOG-NG_FILTER_hybrid = "moca-status"
+SYSLOG-NG_SERVICE_moca-status_hybrid = "moca-status.service"
+SYSLOG-NG_DESTINATION_moca-status_hybrid = "mocaStatus.log"
+SYSLOG-NG_LOGRATE_moca-status_hybrid = "medium"
 
 SYSTEMD_SERVICE_${PN} += "moca-status.service"
 FILES_${PN} += "${systemd_unitdir}/system/moca-status.service"

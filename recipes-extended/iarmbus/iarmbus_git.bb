@@ -23,7 +23,12 @@ DEPENDS="libxml2 dbus glib-2.0"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'directfb', 'directfb', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)}"
 
-inherit autotools pkgconfig systemd coverity
+inherit autotools pkgconfig systemd coverity syslog-ng-config-gen
+SYSLOG-NG_FILTER = "uimgr"
+SYSLOG-NG_SERVICE_uimgr = "iarmbusd.service"
+SYSLOG-NG_DESTINATION_uimgr = "uimgr_log.txt"
+SYSLOG-NG_LOGRATE_uimgr = "very-high"
+
 
 DEPENDS += "safec-common-wrapper"
 DEPENDS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' safec', " ", d)}"
