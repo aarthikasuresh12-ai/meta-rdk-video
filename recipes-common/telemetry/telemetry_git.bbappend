@@ -1,4 +1,6 @@
 
+CFLAGS += " -DENABLE_RDKV_SUPPORT "
+
 do_install_append () {
 
     install -d ${D}${systemd_unitdir}/system
