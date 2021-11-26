@@ -22,7 +22,7 @@ S = "${WORKDIR}/git"
 
 DEPENDS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' safec', " ", d)}"
 
-inherit systemd autotools pkgconfig coverity
+inherit systemd autotools pkgconfig coverity breakpad-logmapper
 
 
 CFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec',  ' `pkg-config --cflags libsafec`', '-fPIC', d)}"
@@ -56,4 +56,6 @@ FILES_${PN} += "${systemd_unitdir}/system/cecdaemon.path"
 FILES_${PN} += "${systemd_unitdir}/system/cecdaemon-precheck.service"
 FILES_${PN} += "${base_libdir}/rdk/cecdaemon_starter.sh"
 #FILES_${PN} += "${systemd_unitdir}/system/cecdevmgr.service"
-
+# Breakpad processname and logfile mapping
+BREAKPAD_LOGMAPPER_PROCLIST = "CecDaemonMain"
+BREAKPAD_LOGMAPPER_LOGLIST = "cec_log.txt"
