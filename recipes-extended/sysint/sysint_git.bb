@@ -29,6 +29,7 @@ BIND_ENABLED = "${@bb.utils.contains('DISTRO_FEATURES', 'bind', 'true', 'false',
 FORCE_MTLS = "${@bb.utils.contains('DISTRO_FEATURES', 'mtls_only', 'true', 'false', d)}"
 ENABLE_MAINTENANCE="${@bb.utils.contains('DISTRO_FEATURES', 'enable_maintenance_manager', 'true', 'false', d)}"
 WIFI_ENABLED="${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'true', 'false', d)}"
+ENABLE_SOFTWARE_OPTOUT="${@bb.utils.contains('DISTRO_FEATURES', 'enable_software_optout', 'true', 'false', d)}"
 
 DUNFELL_BUILD = "${@bb.utils.contains('DISTRO_FEATURES', 'dunfell', 'true', 'false', d)}"
 do_install() {
@@ -220,6 +221,10 @@ do_install() {
         fi
         if [ "${ENABLE_MAINTENANCE}" = "true" ]; then
            echo "ENABLE_MAINTENANCE=true" >> ${D}${sysconfdir}/device.properties
+           # Software optout works only with Maintenance Manager
+           if [ "${ENABLE_SOFTWARE_OPTOUT}" = "true" ]; then
+               echo "ENABLE_SOFTWARE_OPTOUT=true" >> ${D}${sysconfdir}/device.properties
+           fi
         fi
 }
 
