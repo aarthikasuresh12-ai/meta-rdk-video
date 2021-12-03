@@ -18,7 +18,7 @@ Index: git/westeros-sink/westeros-sink.h
  
  #define DEFAULT_WINDOW_X (0)
  #define DEFAULT_WINDOW_Y (0)
-+#if defined(SKY_BUILD)
++#if defined(MODE_1080P)
 +#define DEFAULT_WINDOW_WIDTH (1920)
 +#define DEFAULT_WINDOW_HEIGHT (1080)
 +#else
