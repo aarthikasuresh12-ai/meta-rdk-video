@@ -8,10 +8,6 @@ LIC_FILES_CHKSUM = "file://${LICENSE_LOCATION};md5=09b658f7398abbac507b10feada73
 PV = "1.0+gitr${SRCPV}"
 SRCREV = "${AUTOREV}"
 
-CMF_GIT_ROOT ?= "git://code.rdkcentral.com/r"
-CMF_GIT_PROTOCOL ?= "https"
-CMF_GIT_MASTER_BRANCH ?= "master"
-
 SRC_URI = "${CMF_GIT_ROOT}/components/opensource/waymetric;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_MASTER_BRANCH};name=waymetric"
 SRCREV_FORMAT = "waymetric"
 
@@ -21,6 +17,6 @@ DEPENDS = "wayland virtual/egl"
 
 INSANE_SKIP_${PN} = "ldflags"
 
-inherit autotools pkgconfig
+inherit autotools pkgconfig coverity
 
 acpaths = "-I cfg"
