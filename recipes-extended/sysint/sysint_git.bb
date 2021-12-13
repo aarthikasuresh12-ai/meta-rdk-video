@@ -336,11 +336,6 @@ do_install_append_client() {
 
 	# Remove script to get mocaIndex for syssnmpagent
         rm -f ${D}${base_libdir}/rdk/getMocaIndex.sh
-
-        # donot run this script if device is wifi enabled.
-        if [ "${WIFI_ENABLED}" = "true" ]; then
-           sed -i "/\#\!\/bin\/sh/a exit 0" ${D}/lib/rdk/triggerDhcpLease.sh
-        fi
 }
 
 do_install_append_mediaclient() {
