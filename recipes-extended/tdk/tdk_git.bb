@@ -2,10 +2,10 @@ SUMMARY = "Test Development Kit for RDK stack"
 SECTION = "console/utils"
 
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=144656b5f63d5b7027ea915d43528451"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=4d143a9ba9a6853832bd72db78d75a84"
 
 PV = "${RDK_RELEASE}"
-SRC_URI = "${CMF_GIT_ROOT}/rdk/tools/tdk;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};name=tdk"
+SRC_URI = "${CMF_GIT_ROOT}/rdkv/tools/tdkv;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};name=tdk"
 SRCREV_tdk = "${AUTOREV}"
 SRCREV_FORMAT = "tdk"
 

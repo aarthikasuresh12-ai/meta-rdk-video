@@ -4,7 +4,7 @@ SECTION = "console/utils"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COREBASE}/../generic/tdk/generic/LICENSE;md5=160f54cb11e918adefb9060de75d725d"
 
-SRC_URI = "${CMF_GIT_ROOT}/rdk/tools/tdk;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};name=tdk"
+SRC_URI = "${CMF_GIT_ROOT}/rdkv/tools/tdkv;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};name=tdk"
 SRCREV_tdk = "${AUTOREV}"
 
 SRC_URI += " \
