@@ -17,6 +17,7 @@ inherit autotools pkgconfig pythonnative
 
 SRC_URI        = "${CMF_GIT_ROOT}/rdk/components/generic/control;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};name=ctrlm-main"
 SRC_URI_append = " file://${PN}.service"
+SRC_URI_append = " file://1_rf4ce.conf"
 SRC_URI_append = " file://ctrlm-hal-rf4ce.service"
 SRC_URI_append = " file://restart_ctrlm.sh"
 SRC_URI_append = " file://ctrlm_db_dump.sh"
@@ -32,6 +33,7 @@ FILES_${PN} += "${systemd_unitdir}/system/${PN}.service \
                 /usr/local/bin/ctrlm_db_dump.sh \
                 /usr/local/bin/ctrlm_sig_quit.sh \
                "
+FILES_${PN} += "${@bb.utils.contains('EXTRA_OECONF', '--enable-rf4ce', '${systemd_unitdir}/system/ctrlm-main.service.d/1_rf4ce.conf', '', d)}"
 
 SYSTEMD_PACKAGES += " ${PN}"
 SYSTEMD_SERVICE_${PN}  = "${PN}.service"
@@ -136,8 +138,12 @@ EXTRA_OECONF_append = " GIT_BRANCH=${CMF_GIT_BRANCH}"
 
 do_install_append() {
     install -d ${D}${systemd_unitdir}/system
-    
     install -m 0644 ${THISDIR}/files/${PN}.service ${D}${systemd_unitdir}/system/
+
+    if ${@bb.utils.contains('EXTRA_OECONF', '--enable-rf4ce', 'true', 'false', d)}; then
+       install -d ${D}${systemd_unitdir}/system/ctrlm-main.service.d/
+       install -m 0644 ${THISDIR}/files/1_rf4ce.conf ${D}${systemd_unitdir}/system/ctrlm-main.service.d/
+    fi
 
     if [ "${CTRLM_GENERIC}" = "true" ]; then
        install -m 0644 ${THISDIR}/files/ctrlm-hal-rf4ce.service ${D}${systemd_unitdir}/system/
@@ -151,6 +157,6 @@ do_install_append() {
 
 addtask clean_oem_config before do_configure
 
-do_clean_oem_config() { 
+do_clean_oem_config() {
     rm -f ${CTRLM_CONFIG_CPC_ADD} ${CTRLM_CONFIG_CPC_SUB} ${CTRLM_CONFIG_OEM_ADD} ${CTRLM_CONFIG_OEM_SUB}
 }
