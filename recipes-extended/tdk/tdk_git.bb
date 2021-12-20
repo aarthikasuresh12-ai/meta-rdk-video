@@ -23,6 +23,7 @@ EXTRA_OECONF += "${ENABLE_GST1}"
 
 EXTRA_OECONF += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk',' --enable-fireboltcompliance', '', d)}"
 EXTRA_OECONF += "--enable-xupnp"
+EXTRA_OECONF += " --enable-westeroshal"
 
 DEPENDS += "iarmbus devicesettings rdk-logger jsoncpp jsonrpc"
 DEPENDS_append_client = " iarmmgrs servicemanager netsrvmgr moca-hal"
