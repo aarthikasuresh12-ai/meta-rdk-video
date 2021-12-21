@@ -46,3 +46,10 @@ USERADD_PACKAGES = "${PN}"
 GROUPADD_PARAM_${PN} = "-g 1200 blercu"
 USERADD_PARAM_${PN} = "-u 1200 -g blercu -G input -d /nonexistent -r -s /bin/nologin blercu"
 
+inherit syslog-ng-config-gen
+
+SYSLOG-NG_FILTER = "sky-messages"
+SYSLOG-NG_SERVICE_sky-messages = "sky-bluetoothrcu.service"
+#The log rate and destination are mentioned at sky-dropbear.bb, to avoid duplication of variables set we have commented the below variables.
+#SYSLOG-NG_DESTINATION_sky-messages = "sky-messages.log"
+#SYSLOG-NG_LOGRATE_sky-messages = "low"
