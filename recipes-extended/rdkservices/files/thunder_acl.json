@@ -32,6 +32,10 @@
             "url": "*://[0:0:0:0:0:0:0:1]:*",
             "role": "local"
         },
+        {
+            "url": "*://rdkwiki.com",
+            "role": "privileged"
+        },
         {                            
             "url": "*://platco.thor.local:*",
             "role": "privileged"                  
