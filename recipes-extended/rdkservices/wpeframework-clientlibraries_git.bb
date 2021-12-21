@@ -16,6 +16,7 @@ SRC_URI = "git://github.com/rdkcentral/ThunderClientLibraries.git;protocol=git;b
            file://0001-IPersistent_API_Cobalt.patch \
            file://0008-added-opencdm_gstreamer_transform_caps-method.patch \
            file://0009-DELIA-51340.patch \
+           file://opencdm_system_supports_server_certificate.patch \
            "
 
 # Jul 20, 2022
