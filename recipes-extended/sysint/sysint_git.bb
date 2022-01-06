@@ -148,7 +148,6 @@ do_install() {
         install -m 0644 ${S}/../systemd_units/minidump-secure-upload.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/minidump-upload.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/minidump-secure-upload.path ${D}${systemd_unitdir}/system
-        install -m 0644 ${S}/../systemd_units/dropbear.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/disk-threshold-check.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/disk-threshold-check.timer ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/reboot-reason-logger.service ${D}${systemd_unitdir}/system
@@ -321,6 +320,7 @@ do_install_append_hybrid() {
         install -m 0644 ${S}/../systemd_units/lightsleep.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/lightsleep.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/htmldiag-pre.service ${D}${systemd_unitdir}/system
+        install -m 0644 ${S}/../systemd_units/dropbear.service ${D}${systemd_unitdir}/system
 
         if [ -f ${D}${base_libdir}/rdk/iptables_init_xi ]; then
             rm -f ${D}${base_libdir}/rdk/iptables_init_xi
@@ -362,6 +362,7 @@ do_install_append_client() {
 	install -m 0644 ${S}/../systemd_units/ntp-event.service ${D}${systemd_unitdir}/system
 	install -m 0644 ${S}/../systemd_units/ntp-event.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/ntp-time-checker.service ${D}${systemd_unitdir}/system
+	install -m 0644 ${S}/../systemd_units/dropbear_mediaclient.service ${D}${systemd_unitdir}/system/dropbear.service
         if [ "${WIFI_ENABLED}" = "false" ] ; then
           install -m 0644 ${S}/../systemd_units/eth-connection-stats.service ${D}${systemd_unitdir}/system
           install -m 0644 ${S}/../systemd_units/eth-connection-stats.timer ${D}${systemd_unitdir}/system
