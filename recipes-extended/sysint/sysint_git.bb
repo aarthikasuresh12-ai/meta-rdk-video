@@ -107,6 +107,13 @@ do_install() {
 	install -d ${D}${systemd_unitdir}/system ${D}${sysconfdir}
         if [ "${ENABLE_MAINTENANCE}" = "false" ]; then
 	       install -m 0644 ${S}/../systemd_units/dcm-log.service ${D}${systemd_unitdir}/system
+
+               if ${@bb.utils.contains('DISTRO_FEATURES', 'syslog-ng', 'true', 'false', d)}; then
+                   install -D -m 0644 ${S}/../systemd_units/after_syslog.conf ${D}${systemd_unitdir}/system/dcm-log.service.d/dcm-log.conf
+               else
+                   install -D -m 0644 ${S}/../systemd_units/after_dumplog.conf ${D}${systemd_unitdir}/system/dcm-log.service.d/dcm-log.conf
+               fi
+
                install -m 0644 ${S}/../systemd_units/rfc-config.service ${D}${systemd_unitdir}/system
 	       install -m 0644 ${S}/../systemd_units/swupdate.service ${D}${systemd_unitdir}/system
         fi
@@ -116,6 +123,9 @@ do_install() {
 	    install -m 0644 ${S}/../systemd_units/dump-log.service ${D}${systemd_unitdir}/system
 	    install -m 0644 ${S}/../systemd_units/dump-log.timer ${D}${systemd_unitdir}/system
             install -D -m 0644 ${S}/../systemd_units/vitalprocess-info.conf ${D}${systemd_unitdir}/system/vitalprocess-info.service.d/vitalprocess-info.conf
+            install -D -m 0644 ${S}/../systemd_units/after_dumplog.conf ${D}${systemd_unitdir}/system/reboot-reason-logger.service.d/reboot-reason-logger.conf
+        else
+            install -D -m 0644 ${S}/../systemd_units/after_syslog.conf ${D}${systemd_unitdir}/system/reboot-reason-logger.service.d/reboot-reason-logger.conf
 	fi
         install -m 0644 ${S}/../systemd_units/vitalprocess-info.timer ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/vitalprocess-info.service ${D}${systemd_unitdir}/system
