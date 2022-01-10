@@ -25,8 +25,8 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://0001-RDKTV-11792-increase-retry-count.patch \
           "
 
-# Jan 04, 2022
-SRCREV = "929d4f989e99a956503927e9e6d529e9597051e2"
+# Jan 10, 2022
+SRCREV = "66188536a1167e4546b617945abed020c3ecedd6"
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
 
