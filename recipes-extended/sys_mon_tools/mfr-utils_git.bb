@@ -21,6 +21,8 @@ RDEPENDS_mfr-utils_dunfell = "mfr-library"
 SRCREV_FORMAT ?= "mfr-utils"
 do_fetch[vardeps] += "SRCREV_FORMAT"
 
+CFLAGS += "-DHDCP_2X_SUPPORT"
+
 do_install() {
         install -d ${D}${bindir}  
         install -m 0755 ${B}/mfr_util ${D}${bindir}
