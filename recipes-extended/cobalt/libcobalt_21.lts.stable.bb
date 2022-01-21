@@ -14,14 +14,14 @@ SRC_URI  = "git://cobalt.googlesource.com/cobalt.git;protocol=https;name=cobalt;
 SRC_URI += "git://cobalt.googlesource.com/depot_tools.git;protocol=https;destsuffix=depot_tools;name=depottools"
 SRC_URI += "${CMF_GIT_ROOT}/rdk/components/generic/cobalt;protocol=${CMF_GIT_PROTOCOL};destsuffix=starboard;name=starboard;branch=master"
 
-SRCREV_cobalt = "21.lts.6"
+PR = "7"
+SRCREV_cobalt = "21.lts.${PR}"
 SRCREV_depottools = "913305037df7027dc118253b7c2d3655d181c612"
 # Dec 10, 2021
 SRCREV_starboard = "4cc5283de476e4818fe34d5bec12b40aab3b2354"
 SRCREV_FORMAT = "cobalt_depottools_starboard"
 
 do_fetch[vardeps] += " SRCREV_FORMAT SRCREV_cobalt SRCREV_depottools SRCREV_starboard"
-PR = "6"
 S = "${WORKDIR}/git"
 
 DEPENDS += "virtual/egl essos wpeframework-clientlibraries gstreamer1.0 gstreamer1.0-plugins-base python-native ninja-native bison-native openssl-native"
