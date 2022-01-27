@@ -16,21 +16,24 @@ SRCREV_FORMAT = "sysintgeneric_sysintdevice"
 
 S = "${WORKDIR}/git/device"
 inherit systemd syslog-ng-config-gen
-SYSLOG-NG_FILTER = " systemd dropbear gstreamer-cleanup card-provision-check dibbler rfc-config update-device-details ping-telemetry applications vitalprocess-info iptables mount_log "
-SYSLOG-NG_FILTER_append_client = " ConnectionStats reboot-reason systemd_timesyncd"
+SYSLOG-NG_FILTER = " systemd dropbear gstreamer-cleanup card-provision-check dibbler rfc-config update-device-details ping-telemetry applications vitalprocess-info iptables mount_log reboot-reason"
+SYSLOG-NG_FILTER_append_client = " ConnectionStats systemd_timesyncd"
 SYSLOG-NG_SERVICE_ConnectionStats_client = "network-connection-stats.service eth-connection-stats.service"
 SYSLOG-NG_DESTINATION_ConnectionStats_client = "ConnectionStats.txt"
 SYSLOG-NG_LOGRATE_ConnectionStats_client = "low"
 SYSLOG-NG_SERVICE_systemd_timesyncd_client = "systemd-timesyncd.service"
 SYSLOG-NG_DESTINATION_systemd_timesyncd_client = "ntp.log"
 SYSLOG-NG_LOGRATE_systemd_timesyncd_client = "medium"
-SYSLOG-NG_FILTER_append_hybrid = " network-statistics discover-xi-client "
+SYSLOG-NG_FILTER_append_hybrid = " network-statistics discover-xi-client lightsleep"
 SYSLOG-NG_SERVICE_discover-xi-client_hybrid = "discover-xi-client.service"
 SYSLOG-NG_DESTINATION_discover-xi-client_hybrid = "discoverV4Client.log"
 SYSLOG-NG_LOGRATE_discover-xi-client_hybrid = "low"
 SYSLOG-NG_SERVICE_network-statistics_hybrid = "network-statistics.service"
 SYSLOG-NG_DESTINATION_network-statistics_hybrid = "upstream_stats.log"
 SYSLOG-NG_LOGRATE_network-statistics_hybrid = "low"
+SYSLOG-NG_SERVICE_lightsleep_hybrid = "power-state-monitor.service"
+SYSLOG-NG_DESTINATION_lightsleep_hybrid = "lightsleep.log"
+SYSLOG-NG_LOGRATE_lightsleep_hybrid = "low"
 SYSLOG-NG_SERVICE_applications_append_hybrid = " udhcp.service "
 SYSLOG-NG_SERVICE_dropbear = "dropbear.service"
 SYSLOG-NG_DESTINATION_dropbear = "dropbear.log"
@@ -68,9 +71,9 @@ SYSLOG-NG_LOGRATE_vitalprocess-info = "high"
 SYSLOG-NG_SERVICE_mount_log += " disk-check.service "
 SYSLOG-NG_DESTINATION_mount_log = "mount_log.txt"
 SYSLOG-NG_LOGRATE_mount_log = "low"
-SYSLOG-NG_SERVICE_reboot-reason_client = "reboot-reason-logger.service update-reboot-info.service"
-SYSLOG-NG_DESTINATION_reboot-reason_client = "rebootreason.log"
-SYSLOG-NG_LOGRATE_reboot-reason_client = "low"
+SYSLOG-NG_SERVICE_reboot-reason = "reboot-reason-logger.service update-reboot-info.service"
+SYSLOG-NG_DESTINATION_reboot-reason = "rebootreason.log"
+SYSLOG-NG_LOGRATE_reboot-reason = "low"
 
 do_compile[noexec] = "1"
 
@@ -109,9 +112,9 @@ do_install() {
 	       install -m 0644 ${S}/../systemd_units/dcm-log.service ${D}${systemd_unitdir}/system
 
                if ${@bb.utils.contains('DISTRO_FEATURES', 'syslog-ng', 'true', 'false', d)}; then
-                   install -D -m 0644 ${S}/../systemd_units/after_syslog.conf ${D}${systemd_unitdir}/system/dcm-log.service.d/dcm-log.conf
+                   install -D -m 0644 ${WORKDIR}/after_syslog-ng.conf ${D}${systemd_unitdir}/system/dcm-log.service.d/dcm-log.conf
                else
-                   install -D -m 0644 ${S}/../systemd_units/after_dumplog.conf ${D}${systemd_unitdir}/system/dcm-log.service.d/dcm-log.conf
+                   install -D -m 0644 ${WORKDIR}/after_dumplog.conf ${D}${systemd_unitdir}/system/dcm-log.service.d/dcm-log.conf
                fi
 
                install -m 0644 ${S}/../systemd_units/rfc-config.service ${D}${systemd_unitdir}/system
@@ -123,9 +126,9 @@ do_install() {
 	    install -m 0644 ${S}/../systemd_units/dump-log.service ${D}${systemd_unitdir}/system
 	    install -m 0644 ${S}/../systemd_units/dump-log.timer ${D}${systemd_unitdir}/system
             install -D -m 0644 ${S}/../systemd_units/vitalprocess-info.conf ${D}${systemd_unitdir}/system/vitalprocess-info.service.d/vitalprocess-info.conf
-            install -D -m 0644 ${S}/../systemd_units/after_dumplog.conf ${D}${systemd_unitdir}/system/reboot-reason-logger.service.d/reboot-reason-logger.conf
+            install -D -m 0644 ${WORKDIR}/after_dumplog.conf ${D}${systemd_unitdir}/system/reboot-reason-logger.service.d/reboot-reason-logger.conf
         else
-            install -D -m 0644 ${S}/../systemd_units/after_syslog.conf ${D}${systemd_unitdir}/system/reboot-reason-logger.service.d/reboot-reason-logger.conf
+            install -D -m 0644 ${WORKDIR}/after_syslog-ng.conf ${D}${systemd_unitdir}/system/reboot-reason-logger.service.d/reboot-reason-logger.conf
 	fi
         install -m 0644 ${S}/../systemd_units/vitalprocess-info.timer ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/vitalprocess-info.service ${D}${systemd_unitdir}/system
