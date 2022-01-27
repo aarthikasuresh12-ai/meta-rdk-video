@@ -164,6 +164,8 @@ do_install() {
         install -m 0644 ${S}/../systemd_units/mount-failure-count.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/update-reboot-info.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/update-reboot-info.service ${D}${systemd_unitdir}/system
+        install -m 0644 ${S}/../systemd_units/restart-parodus.path ${D}${systemd_unitdir}/system
+        install -m 0644 ${S}/../systemd_units/restart-parodus.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/update-rf4ce-details.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/ping-telemetry.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/ping-telemetry.timer ${D}${systemd_unitdir}/system
@@ -472,6 +474,8 @@ SYSTEMD_SERVICE_${PN} += "ping-telemetry.timer"
 SYSTEMD_SERVICE_${PN} += "oops-dump.service"
 SYSTEMD_SERVICE_${PN} += "update-reboot-info.path"
 SYSTEMD_SERVICE_${PN} += "update-reboot-info.service"
+SYSTEMD_SERVICE_${PN} += "restart-parodus.path"
+SYSTEMD_SERVICE_${PN} += "restart-parodus.service"
 SYSTEMD_SERVICE_${PN} += "gstreamer-cleanup.service"
 SYSTEMD_SERVICE_${PN} += "path-fail-notifier@.service"
 
