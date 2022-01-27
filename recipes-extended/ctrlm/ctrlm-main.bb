@@ -28,6 +28,8 @@ SRC_URI_append = " file://restart_ctrlm.sh"
 SRC_URI_append = " file://ctrlm_db_dump.sh"
 SRC_URI_append = " file://ctrlm_sig_quit.sh"
 
+RECIPEDIR := "${THISDIR}/files"
+
 SRCREV_ctrlm-main = "${AUTOREV}"
 SRCREV_FORMAT = "ctrlm-main"
 
@@ -143,21 +145,21 @@ EXTRA_OECONF_append = " GIT_BRANCH=${CMF_GIT_BRANCH}"
 
 do_install_append() {
     install -d ${D}${systemd_unitdir}/system
-    install -m 0644 ${WORKDIR}/${PN}.service ${D}${systemd_unitdir}/system/
+    install -m 0644 ${RECIPEDIR}/${PN}.service ${D}${systemd_unitdir}/system/
 
     if ${@bb.utils.contains('EXTRA_OECONF', '--enable-rf4ce', 'true', 'false', d)}; then
        install -d ${D}${systemd_unitdir}/system/ctrlm-main.service.d/
-       install -m 0644 ${WORKDIR}/1_rf4ce.conf ${D}${systemd_unitdir}/system/ctrlm-main.service.d/
+       install -m 0644 ${RECIPEDIR}/1_rf4ce.conf ${D}${systemd_unitdir}/system/ctrlm-main.service.d/
     fi
 
     if [ "${CTRLM_GENERIC}" = "true" ]; then
-       install -m 0644 ${WORKDIR}/ctrlm-hal-rf4ce.service ${D}${systemd_unitdir}/system/
+       install -m 0644 ${RECIPEDIR}/ctrlm-hal-rf4ce.service ${D}${systemd_unitdir}/system/
     fi
 
     install -d ${D}/usr/local/bin
-    install -m 0744 ${WORKDIR}/restart_ctrlm.sh ${D}/usr/local/bin
-    install -m 0744 ${WORKDIR}/ctrlm_db_dump.sh ${D}/usr/local/bin
-    install -m 0744 ${WORKDIR}/ctrlm_sig_quit.sh ${D}/usr/local/bin
+    install -m 0744 ${RECIPEDIR}/restart_ctrlm.sh ${D}/usr/local/bin
+    install -m 0744 ${RECIPEDIR}/ctrlm_db_dump.sh ${D}/usr/local/bin
+    install -m 0744 ${RECIPEDIR}/ctrlm_sig_quit.sh ${D}/usr/local/bin
 }
 
 addtask clean_oem_config before do_configure
