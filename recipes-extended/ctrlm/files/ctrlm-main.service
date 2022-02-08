@@ -7,8 +7,10 @@ Wants=tr69hostif.service
 [Service]
 Type=notify
 EnvironmentFile=/etc/device.properties
+ExecStartPre=/bin/systemctl set-environment CTRLM_RESTART_DELAY=5
 ExecStart=/usr/bin/controlMgr
-RestartSec=5s
+ExecStopPost=/bin/sh -c '/bin/sleep $CTRLM_RESTART_DELAY'
+RestartSec=100ms
 Restart=always
 
 [Install]
