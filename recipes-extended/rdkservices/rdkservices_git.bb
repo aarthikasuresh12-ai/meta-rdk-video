@@ -60,7 +60,7 @@ WPEFRAMEWORK_LOCATIONSYNC_URI ?= "http://jsonip.metrological.com/?maf=true"
 
 PACKAGECONFIG ?= " \
     ${WPE_SNAPSHOT} \
-    activitymonitor avinput continuewatching controlservice datacapture devicediagnostics \
+    activitymonitor avinput continuewatching controlservice voicecontrol datacapture devicediagnostics \
     displaysettings framerate hdcpprofile hdmicec hdmiinput loggingpreferences \
     messenger network remoteactionmapping screencapture securityagent stateobserver \
     systemservices timer tracecontrol userpreferences warehouse monitor locationsync texttospeech persistent_store\
@@ -85,6 +85,7 @@ PACKAGECONFIG[avinput]              = "-DPLUGIN_AVINPUT=ON,-DPLUGIN_AVINPUT=OFF,
 PACKAGECONFIG[bluetoothcontrol]     = "-DPLUGIN_BLUETOOTH=ON -DPLUGIN_BLUETOOTH_AUTOSTART=true,-DPLUGIN_BLUETOOTH=OFF,,bluez5"
 PACKAGECONFIG[continuewatching]     = "-DPLUGIN_CONTINUEWATCHING=ON,-DPLUGIN_CONTINUEWATCHING=OFF,"
 PACKAGECONFIG[controlservice]       = "-DPLUGIN_CONTROLSERVICE=ON,-DPLUGIN_CONTROLSERVICE=OFF,"
+PACKAGECONFIG[voicecontrol]         = "-DPLUGIN_VOICECONTROL=ON,-DPLUGIN_VOICECONTROL=OFF,"
 PACKAGECONFIG[datacapture]          = "-DPLUGIN_DATACAPTURE=ON, -DPLUGIN_DATACAPTURE=OFF,"
 PACKAGECONFIG[devicediagnostics]    = "-DPLUGIN_DEVICEDIAGNOSTICS=ON,-DPLUGIN_DEVICEDIAGNOSTICS=OFF,"
 PACKAGECONFIG[deviceinfo]           = "-DPLUGIN_DEVICEINFO=ON,-DPLUGIN_DEVICEINFO=OFF,"
