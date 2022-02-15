@@ -3,10 +3,12 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=f1dffbfd5c2eb52e0302eb6296cc3711"
 HOMEPAGE = "https://github.com/rdkcentral/Thunder"
 
+THUNDER_RELEASE_TAG_NAME = "R2-v1.9"
+
 SRC_URI = "git://github.com/rdkcentral/Thunder.git;protocol=git;branch=R2;name=thunder"
 
-# Nov 24, 2021
-SRCREV_thunder = "54c2404197f16255cc47543e2d861e2c8137ee51"
+# Mar 05, 2022
+SRCREV_thunder = "${THUNDER_RELEASE_TAG_NAME}"
 
 PACKAGECONFIG ??= ""
 PACKAGECONFIG[debug]            = "-DCMAKE_BUILD_TYPE=Debug,-DCMAKE_BUILD_TYPE=Release,"
