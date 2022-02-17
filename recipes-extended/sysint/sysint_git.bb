@@ -16,7 +16,7 @@ SRCREV_FORMAT = "sysintgeneric_sysintdevice"
 
 S = "${WORKDIR}/git/device"
 inherit systemd syslog-ng-config-gen
-SYSLOG-NG_FILTER = " systemd dropbear gstreamer-cleanup card-provision-check dibbler rfc-config update-device-details ping-telemetry applications vitalprocess-info iptables mount_log reboot-reason"
+SYSLOG-NG_FILTER = " systemd dropbear gstreamer-cleanup card-provision-check dibbler rfc-config update-device-details ping-telemetry applications vitalprocess-info iptables mount_log swupdate reboot-reason"
 SYSLOG-NG_FILTER_append_client = " ConnectionStats systemd_timesyncd"
 SYSLOG-NG_SERVICE_ConnectionStats_client = "network-connection-stats.service eth-connection-stats.service"
 SYSLOG-NG_DESTINATION_ConnectionStats_client = "ConnectionStats.txt"
@@ -74,6 +74,8 @@ SYSLOG-NG_LOGRATE_mount_log = "low"
 SYSLOG-NG_SERVICE_reboot-reason = "reboot-reason-logger.service update-reboot-info.service"
 SYSLOG-NG_DESTINATION_reboot-reason = "rebootreason.log"
 SYSLOG-NG_LOGRATE_reboot-reason = "low"
+SYSLOG-NG_PROGRAM_swupdate = "swupdate"
+SYSLOG-NG_DESTINATION_swupdate = "swupdate.log"
 
 do_compile[noexec] = "1"
 
