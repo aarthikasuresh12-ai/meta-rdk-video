@@ -6,7 +6,7 @@ PR = "r0"
 require include/thunder.inc
 DEPENDS = "wpeframework wpeframework-tools-native"
 
-SRC_URI = "git://github.com/rdkcentral/ThunderInterfaces.git;protocol=git;branch=R2 \
+SRC_URI = "git://github.com/rdkcentral/ThunderInterfaces.git;protocol=git;branch=R2;name=wpeframework-interfaces \
            file://0018-notifyclient-event-added.patch \
            file://0020-Adding-the-VoiceCommand-API-for-Netflix-plugin.patch \
            file://0001-RDK-31882-Add-GstCaps-parsing-in-OCDM-wpeframework-interfaces.patch \
@@ -14,7 +14,7 @@ SRC_URI = "git://github.com/rdkcentral/ThunderInterfaces.git;protocol=git;branch
            "
 
 # Nov 1, 2021
-SRCREV = "b844fff77f56b75b598768262613ed58a4f24b11"
+SRCREV_wpeframework-interfaces = "b844fff77f56b75b598768262613ed58a4f24b11"
 
 # ----------------------------------------------------------------------------
 
