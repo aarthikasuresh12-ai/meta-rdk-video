@@ -4,4 +4,5 @@ RDEPENDS_packagegroup-tdk += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_fi
   gstreamer1.0-plugins-base-videotestsrc \
   gstreamer1.0-plugins-base-audiotestsrc \
   gstreamer1.0-plugins-base-test \
+  aamp-bin \
   ', '', d)}"
