@@ -1,0 +1,29 @@
+Date: Sat, 19 Mar 2022 01:21:22 +0000
+From: db2c5778b682a2680513de6359c23f6967435053 Mon Sep 17 00:00:00 2001
+Subject: [PATCH] Fix crash on unfreeze from preloaded state
+Source: COMCAST
+License: GPLV2
+Upstream-Status: Pending
+Signed-off-by:  Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+
+---
+ src/cobalt/browser/browser_module.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/cobalt/browser/browser_module.cc b/src/cobalt/browser/browser_module.cc
+index 5bea38e55c..3162e41c81 100644
+--- a/src/cobalt/browser/browser_module.cc
++++ b/src/cobalt/browser/browser_module.cc
+@@ -1830,7 +1830,8 @@ void BrowserModule::UnfreezeInternal(SbTimeMonotonic timestamp) {
+ // Set the Stub resource provider to media module and to web module
+ // at Concealed state.
+ #if SB_API_VERSION >= 13
+-  media_module_->Resume(GetResourceProvider());
++  if (media_module_)
++    media_module_->Resume(GetResourceProvider());
+ #endif  // SB_API_VERSION >= 13
+ 
+   FOR_EACH_OBSERVER(LifecycleObserver, lifecycle_observers_,
+-- 
+2.25.1
+

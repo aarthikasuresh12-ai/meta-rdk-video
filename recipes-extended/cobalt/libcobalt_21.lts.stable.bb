@@ -12,13 +12,13 @@ TOOLCHAIN = "gcc"
 
 SRC_URI  = "git://cobalt.googlesource.com/cobalt.git;protocol=https;name=cobalt;branch=21.lts.stable"
 SRC_URI += "git://cobalt.googlesource.com/depot_tools.git;protocol=https;destsuffix=depot_tools;name=depottools"
-SRC_URI += "${CMF_GIT_ROOT}/rdk/components/generic/cobalt;protocol=${CMF_GIT_PROTOCOL};destsuffix=starboard;name=starboard;branch=master"
+SRC_URI += "${CMF_GIT_ROOT}/rdk/components/generic/cobalt;protocol=${CMF_GIT_PROTOCOL};destsuffix=starboard;name=starboard;branch=21.lts.stable"
 
 PR = "7"
 SRCREV_cobalt = "21.lts.${PR}"
 SRCREV_depottools = "913305037df7027dc118253b7c2d3655d181c612"
-# Dec 10, 2021
-SRCREV_starboard = "4cc5283de476e4818fe34d5bec12b40aab3b2354"
+# Jan 27, 2021
+SRCREV_starboard = "58c868e66440b5d2158b0a754b66499ea9a0755e"
 SRCREV_FORMAT = "cobalt_depottools_starboard"
 
 do_fetch[vardeps] += " SRCREV_FORMAT SRCREV_cobalt SRCREV_depottools SRCREV_starboard"

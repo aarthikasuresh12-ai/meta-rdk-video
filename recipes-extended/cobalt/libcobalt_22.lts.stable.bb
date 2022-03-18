@@ -9,20 +9,19 @@ LIC_FILES_CHKSUM = " \
 "
 
 # Disable by default
-DEFAULT_PREFERENCE = "-1"
 DEFAULT_PREFERENCE_morty = "-1"
 TOOLCHAIN = "gcc"
 
 SRC_URI  = "git://cobalt.googlesource.com/cobalt.git;protocol=https;name=cobalt;branch=22.lts.stable"
 SRC_URI += "git://cobalt.googlesource.com/depot_tools.git;protocol=https;destsuffix=depot_tools;name=depottools"
-SRC_URI += "${CMF_GIT_ROOT}/rdk/components/generic/cobalt;protocol=${CMF_GIT_PROTOCOL};destsuffix=starboard;name=starboard;branch=22.lts.dev"
+SRC_URI += "${CMF_GIT_ROOT}/rdk/components/generic/cobalt;protocol=${CMF_GIT_PROTOCOL};destsuffix=starboard;name=starboard;branch=master"
+SRC_URI += "file://0001-Fix-crash-on-unfreeze-from-preloaded-state.patch"
 
-PR = "1"
+PR = "3"
 SRCREV_cobalt = "22.lts.${PR}"
 SRCREV_depottools = "913305037df7027dc118253b7c2d3655d181c612"
-# Jan 03, 2022
-SRCREV_starboard = "5ad9279bc813934b04d45c79d4e3940fdad69348"
-
+# March 29, 2022
+SRCREV_starboard = "6a16d9f214bd024720a8ced50b9f202c08dcb8b1"
 
 SRCREV_FORMAT = "cobalt_depottools_starboard"
 
