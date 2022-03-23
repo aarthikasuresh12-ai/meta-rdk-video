@@ -8,23 +8,20 @@ Signed-off-by: mfiess200 <michael_fiess@cable.comcast.com>
 
 
 ---
- RDKShell/RDKShell.cpp | 55 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
-
-Index: git/RDKShell/RDKShell.cpp
-===================================================================
---- git.orig/RDKShell/RDKShell.cpp
-+++ git/RDKShell/RDKShell.cpp
-@@ -28,6 +28,7 @@
- #include <unistd.h>
+diff --git a/RDKShell/RDKShell.cpp b/RDKShell/RDKShell.cpp
+index 6c099e1..93ecb97 100755
+--- a/RDKShell/RDKShell.cpp
++++ b/RDKShell/RDKShell.cpp
+@@ -29,6 +29,7 @@
  #include <rdkshell/compositorcontroller.h>
  #include <rdkshell/application.h>
+ #include <rdkshell/logger.h>
 +#include <interfaces/IFocus.h>
  #include <interfaces/IMemory.h>
  #include <interfaces/IBrowser.h>
  #include <rdkshell/logger.h>
-@@ -421,6 +422,13 @@ namespace WPEFramework {
-             }*/
+@@ -545,6 +546,13 @@ namespace WPEFramework {
+             return exist;
          }
  
 +        std::string toLower(const std::string& clientName)
@@ -37,7 +34,7 @@ Index: git/RDKShell/RDKShell.cpp
          void RDKShell::MonitorClients::StateChange(PluginHost::IShell* service)
          {
              if (service)
-@@ -4826,9 +4834,57 @@ namespace WPEFramework {
+@@ -5320,9 +5328,56 @@ namespace WPEFramework {
          bool RDKShell::setFocus(const string& client)
          {
              bool ret = false;
@@ -46,7 +43,6 @@ Index: git/RDKShell/RDKShell.cpp
 +            CompositorController::getFocused(previousFocusedClient);
              ret = CompositorController::setFocus(client);
              gRdkShellMutex.unlock();
-+
 +            std::string clientLower = toLower(client);
 +
 +            if (previousFocusedClient != clientLower)
@@ -94,4 +90,3 @@ Index: git/RDKShell/RDKShell.cpp
 +            }
              return ret;
          }
- 

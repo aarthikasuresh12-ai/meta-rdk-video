@@ -6,8 +6,8 @@ TOOLCHAIN = "gcc"
 
 SRC_URI = "${CMF_GIT_ROOT}/rdk/components/generic/cobalt;protocol=${CMF_GIT_PROTOCOL};branch=master"
 
-# Oct 19, 2021
-SRCREV = "8aea326f41020186ddae2244624f17339e9da17e"
+# Dec 10, 2021
+SRCREV = "4cc5283de476e4818fe34d5bec12b40aab3b2354"
 
 S = "${WORKDIR}/git/plugin"
 

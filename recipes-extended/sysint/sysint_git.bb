@@ -15,7 +15,68 @@ SRCREV_sysintdevice = "${AUTOREV}"
 SRCREV_FORMAT = "sysintgeneric_sysintdevice"
 
 S = "${WORKDIR}/git/device"
-inherit systemd
+inherit systemd syslog-ng-config-gen
+SYSLOG-NG_FILTER = " systemd dropbear gstreamer-cleanup card-provision-check dibbler rfc-config update-device-details ping-telemetry applications vitalprocess-info iptables mount_log swupdate reboot-reason"
+SYSLOG-NG_FILTER_append_client = " ConnectionStats systemd_timesyncd"
+SYSLOG-NG_SERVICE_ConnectionStats_client = "network-connection-stats.service eth-connection-stats.service"
+SYSLOG-NG_DESTINATION_ConnectionStats_client = "ConnectionStats.txt"
+SYSLOG-NG_LOGRATE_ConnectionStats_client = "low"
+SYSLOG-NG_SERVICE_systemd_timesyncd_client = "systemd-timesyncd.service"
+SYSLOG-NG_DESTINATION_systemd_timesyncd_client = "ntp.log"
+SYSLOG-NG_LOGRATE_systemd_timesyncd_client = "medium"
+SYSLOG-NG_FILTER_append_hybrid = " network-statistics discover-xi-client lightsleep"
+SYSLOG-NG_SERVICE_discover-xi-client_hybrid = "discover-xi-client.service"
+SYSLOG-NG_DESTINATION_discover-xi-client_hybrid = "discoverV4Client.log"
+SYSLOG-NG_LOGRATE_discover-xi-client_hybrid = "low"
+SYSLOG-NG_SERVICE_network-statistics_hybrid = "network-statistics.service"
+SYSLOG-NG_DESTINATION_network-statistics_hybrid = "upstream_stats.log"
+SYSLOG-NG_LOGRATE_network-statistics_hybrid = "low"
+SYSLOG-NG_SERVICE_lightsleep_hybrid = "power-state-monitor.service"
+SYSLOG-NG_DESTINATION_lightsleep_hybrid = "lightsleep.log"
+SYSLOG-NG_LOGRATE_lightsleep_hybrid = "low"
+SYSLOG-NG_SERVICE_applications_append_hybrid = " udhcp.service "
+SYSLOG-NG_SERVICE_dropbear = "dropbear.service"
+SYSLOG-NG_DESTINATION_dropbear = "dropbear.log"
+SYSLOG-NG_LOGRATE_dropbear = "medium"
+SYSLOG-NG_SERVICE_systemd = "init.scope"
+SYSLOG-NG_DESTINATION_systemd = "system.log"
+SYSLOG-NG_LOGRATE_systemd = "high"
+SYSLOG-NG_SERVICE_gstreamer-cleanup = "gstreamer-cleanup.service"
+SYSLOG-NG_DESTINATION_gstreamer-cleanup = "gst-cleanup.log"
+SYSLOG-NG_LOGRATE_gstreamer-cleanup = "low"
+SYSLOG-NG_SERVICE_card-provision-check = "card-provision-check.service"
+SYSLOG-NG_DESTINATION_card-provision-check = "card-provision-check.log"
+SYSLOG-NG_LOGRATE_card-provision-check = "low"
+SYSLOG-NG_SERVICE_dibbler = "dibbler.service"
+SYSLOG-NG_DESTINATION_dibbler = "dibbler.log"
+SYSLOG-NG_LOGRATE_dibbler = "medium"
+SYSLOG-NG_SERVICE_rfc-config = "rfc-config.service"
+SYSLOG-NG_DESTINATION_rfc-config = "rfcscript.log"
+SYSLOG-NG_LOGRATE_rfc-config = "low"
+SYSLOG-NG_SERVICE_update-device-details = "update-device-details.service"
+SYSLOG-NG_DESTINATION_update-device-details = "device-details.log"
+SYSLOG-NG_LOGRATE_update-device-details = "low"
+SYSLOG-NG_SERVICE_iptables = "iptables.service"
+SYSLOG-NG_DESTINATION_iptables = "iptables.log"
+SYSLOG-NG_LOGRATE_iptables = "low"
+SYSLOG-NG_SERVICE_ping-telemetry = "ping-telemetry.service"
+SYSLOG-NG_DESTINATION_ping-telemetry = "ping_telemetry.log"
+SYSLOG-NG_LOGRATE_ping-telemetry = "low"
+SYSLOG-NG_SERVICE_applications_append_client = " zram.service "
+SYSLOG-NG_DESTINATION_applications = "applications.log"
+SYSLOG-NG_LOGRATE_applications = "low"
+SYSLOG-NG_SERVICE_vitalprocess-info = "vitalprocess-info.service"
+SYSLOG-NG_DESTINATION_vitalprocess-info = "top_log.txt"
+SYSLOG-NG_LOGRATE_vitalprocess-info = "high"
+SYSLOG-NG_SERVICE_mount_log += " disk-check.service "
+SYSLOG-NG_DESTINATION_mount_log = "mount_log.txt"
+SYSLOG-NG_LOGRATE_mount_log = "low"
+SYSLOG-NG_SERVICE_reboot-reason = "reboot-reason-logger.service update-reboot-info.service"
+SYSLOG-NG_DESTINATION_reboot-reason = "rebootreason.log"
+SYSLOG-NG_LOGRATE_reboot-reason = "low"
+SYSLOG-NG_PROGRAM_swupdate = "swupdate"
+SYSLOG-NG_DESTINATION_swupdate = "swupdate.log"
+
 do_compile[noexec] = "1"
 
 DEPENDS += "crashupload"
@@ -29,6 +90,7 @@ BIND_ENABLED = "${@bb.utils.contains('DISTRO_FEATURES', 'bind', 'true', 'false',
 FORCE_MTLS = "${@bb.utils.contains('DISTRO_FEATURES', 'mtls_only', 'true', 'false', d)}"
 ENABLE_MAINTENANCE="${@bb.utils.contains('DISTRO_FEATURES', 'enable_maintenance_manager', 'true', 'false', d)}"
 WIFI_ENABLED="${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'true', 'false', d)}"
+ENABLE_SOFTWARE_OPTOUT="${@bb.utils.contains('DISTRO_FEATURES', 'enable_software_optout', 'true', 'false', d)}"
 
 DUNFELL_BUILD = "${@bb.utils.contains('DISTRO_FEATURES', 'dunfell', 'true', 'false', d)}"
 do_install() {
@@ -50,13 +112,26 @@ do_install() {
 	install -d ${D}${systemd_unitdir}/system ${D}${sysconfdir}
         if [ "${ENABLE_MAINTENANCE}" = "false" ]; then
 	       install -m 0644 ${S}/../systemd_units/dcm-log.service ${D}${systemd_unitdir}/system
+
+               if ${@bb.utils.contains('DISTRO_FEATURES', 'syslog-ng', 'true', 'false', d)}; then
+                   install -D -m 0644 ${WORKDIR}/after_syslog-ng.conf ${D}${systemd_unitdir}/system/dcm-log.service.d/dcm-log.conf
+               else
+                   install -D -m 0644 ${WORKDIR}/after_dumplog.conf ${D}${systemd_unitdir}/system/dcm-log.service.d/dcm-log.conf
+               fi
+
                install -m 0644 ${S}/../systemd_units/rfc-config.service ${D}${systemd_unitdir}/system
 	       install -m 0644 ${S}/../systemd_units/swupdate.service ${D}${systemd_unitdir}/system
         fi
 	install -m 0644 ${S}/../systemd_units/log-rdk-start.service ${D}${systemd_unitdir}/system
 	install -m 0644 ${S}/../systemd_units/previous-log-backup.service ${D}${systemd_unitdir}/system
-	install -m 0644 ${S}/../systemd_units/dump-log.service ${D}${systemd_unitdir}/system
-	install -m 0644 ${S}/../systemd_units/dump-log.timer ${D}${systemd_unitdir}/system
+	if ${@bb.utils.contains('DISTRO_FEATURES', 'syslog-ng', 'false', 'true', d)}; then
+	    install -m 0644 ${S}/../systemd_units/dump-log.service ${D}${systemd_unitdir}/system
+	    install -m 0644 ${S}/../systemd_units/dump-log.timer ${D}${systemd_unitdir}/system
+            install -D -m 0644 ${S}/../systemd_units/vitalprocess-info.conf ${D}${systemd_unitdir}/system/vitalprocess-info.service.d/vitalprocess-info.conf
+            install -D -m 0644 ${WORKDIR}/after_dumplog.conf ${D}${systemd_unitdir}/system/reboot-reason-logger.service.d/reboot-reason-logger.conf
+        else
+            install -D -m 0644 ${WORKDIR}/after_syslog-ng.conf ${D}${systemd_unitdir}/system/reboot-reason-logger.service.d/reboot-reason-logger.conf
+	fi
         install -m 0644 ${S}/../systemd_units/vitalprocess-info.timer ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/vitalprocess-info.service ${D}${systemd_unitdir}/system
 	install -m 0644 ${S}/../systemd_units/logrotate.service ${D}${systemd_unitdir}/system
@@ -75,7 +150,6 @@ do_install() {
         install -m 0644 ${S}/../systemd_units/minidump-secure-upload.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/minidump-upload.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/minidump-secure-upload.path ${D}${systemd_unitdir}/system
-        install -m 0644 ${S}/../systemd_units/dropbear.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/disk-threshold-check.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/disk-threshold-check.timer ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/reboot-reason-logger.service ${D}${systemd_unitdir}/system
@@ -220,6 +294,10 @@ do_install() {
         fi
         if [ "${ENABLE_MAINTENANCE}" = "true" ]; then
            echo "ENABLE_MAINTENANCE=true" >> ${D}${sysconfdir}/device.properties
+           # Software optout works only with Maintenance Manager
+           if [ "${ENABLE_SOFTWARE_OPTOUT}" = "true" ]; then
+               echo "ENABLE_SOFTWARE_OPTOUT=true" >> ${D}${sysconfdir}/device.properties
+           fi
         fi
 }
 
@@ -244,6 +322,7 @@ do_install_append_hybrid() {
         install -m 0644 ${S}/../systemd_units/lightsleep.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/lightsleep.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/htmldiag-pre.service ${D}${systemd_unitdir}/system
+        install -m 0644 ${S}/../systemd_units/dropbear.service ${D}${systemd_unitdir}/system
 
         if [ -f ${D}${base_libdir}/rdk/iptables_init_xi ]; then
             rm -f ${D}${base_libdir}/rdk/iptables_init_xi
@@ -285,6 +364,7 @@ do_install_append_client() {
 	install -m 0644 ${S}/../systemd_units/ntp-event.service ${D}${systemd_unitdir}/system
 	install -m 0644 ${S}/../systemd_units/ntp-event.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/ntp-time-checker.service ${D}${systemd_unitdir}/system
+	install -m 0644 ${S}/../systemd_units/dropbear_mediaclient.service ${D}${systemd_unitdir}/system/dropbear.service
         if [ "${WIFI_ENABLED}" = "false" ] ; then
           install -m 0644 ${S}/../systemd_units/eth-connection-stats.service ${D}${systemd_unitdir}/system
           install -m 0644 ${S}/../systemd_units/eth-connection-stats.timer ${D}${systemd_unitdir}/system
@@ -331,11 +411,6 @@ do_install_append_client() {
 
 	# Remove script to get mocaIndex for syssnmpagent
         rm -f ${D}${base_libdir}/rdk/getMocaIndex.sh
-
-        # donot run this script if device is wifi enabled.
-        if [ "${WIFI_ENABLED}" = "true" ]; then
-           sed -i "/\#\!\/bin\/sh/a exit 0" ${D}/lib/rdk/triggerDhcpLease.sh
-        fi
 }
 
 do_install_append_mediaclient() {
@@ -363,7 +438,7 @@ SYSTEMD_SERVICE_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_mainte
 SYSTEMD_SERVICE_${PN} += "log-rdk-start.service"
 SYSTEMD_SERVICE_${PN} += "previous-log-backup.service"
 SYSTEMD_SERVICE_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_maintenance_manager', '', 'swupdate.service',d)}"
-SYSTEMD_SERVICE_${PN} += "dump-log.timer"
+SYSTEMD_SERVICE_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'syslog-ng', '', 'dump-log.timer',d)}"
 SYSTEMD_SERVICE_${PN} += "vitalprocess-info.timer"
 SYSTEMD_SERVICE_${PN} += "logrotate.timer"
 SYSTEMD_SERVICE_${PN} += "scheduled-reboot.service"

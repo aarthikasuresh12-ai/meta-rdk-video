@@ -11,7 +11,7 @@ RDEPENDS_${PN} += "qtwebsockets libstdc++ glibc dbus qtbase libudev bluetooth-mg
 
 SRC_URI = "${CMF_GIT_ROOT}/rdk/components/generic/blercudaemon;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};nobranch=1;name=blercudaemon"
 SRCREV_FORMAT = "blercudaemon"
-SRCREV_blercudaemon = "7cc2b04d980d24a1474d1a96b72e01969a21556b"
+SRCREV_blercudaemon = "44ca2ab3fe1f8ca20d11377234a88a744e85877c"
 
 SRC_URI_append = " file://0001-AMLOGIC-279-Start-RCU-Daemon-after-btmgr.patch;patchdir=${WORKDIR}/git"
 
@@ -46,3 +46,10 @@ USERADD_PACKAGES = "${PN}"
 GROUPADD_PARAM_${PN} = "-g 1200 blercu"
 USERADD_PARAM_${PN} = "-u 1200 -g blercu -G input -d /nonexistent -r -s /bin/nologin blercu"
 
+inherit syslog-ng-config-gen
+
+SYSLOG-NG_FILTER = "sky-messages"
+SYSLOG-NG_SERVICE_sky-messages = "sky-bluetoothrcu.service"
+#The log rate and destination are mentioned at sky-dropbear.bb, to avoid duplication of variables set we have commented the below variables.
+#SYSLOG-NG_DESTINATION_sky-messages = "sky-messages.log"
+#SYSLOG-NG_LOGRATE_sky-messages = "low"

@@ -15,7 +15,12 @@ CXXFLAGS +=" -DYOCTO_BUILD"
 DEPENDS += "safec-common-wrapper"
 DEPENDS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' safec', " ", d)}"
 
-inherit pkgconfig
+inherit pkgconfig syslog-ng-config-gen
+SYSLOG-NG_FILTER = "netsrvmgr"
+SYSLOG-NG_SERVICE_netsrvmgr = "netsrvmgr.service"
+SYSLOG-NG_DESTINATION_netsrvmgr = "netsrvmgr.log"
+SYSLOG-NG_LOGRATE_netsrvmgr = "high"
+
 CXXFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' `pkg-config --cflags libsafec`', ' -fPIC', d)}"
 CXXFLAGS_append_client = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' `pkg-config --cflags libsafec`', ' -fPIC', d)}"
 

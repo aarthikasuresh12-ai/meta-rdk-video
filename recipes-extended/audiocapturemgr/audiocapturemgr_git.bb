@@ -21,7 +21,12 @@ S = "${WORKDIR}/git"
 EXTRA_OECONF = " --enable-testapp "
 export RDK_FSROOT_PATH = '${STAGING_DIR_TARGET}'
 
-inherit autotools pkgconfig systemd breakpad-logmapper
+inherit autotools pkgconfig systemd breakpad-logmapper syslog-ng-config-gen
+SYSLOG-NG_FILTER = "audiocapturemgr"
+SYSLOG-NG_SERVICE_audiocapturemgr = "audiocapturemgr.service"
+SYSLOG-NG_DESTINATION_audiocapturemgr = "audiocapturemgr.log"
+SYSLOG-NG_LOGRATE_audiocapturemgr = "medium"
+
 
 CXXFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec',  ' `pkg-config --cflags libsafec`', '-fPIC', d)}"
 CXXFLAGS_append_client = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec',  ' `pkg-config --cflags libsafec`', '-fPIC', d)}"

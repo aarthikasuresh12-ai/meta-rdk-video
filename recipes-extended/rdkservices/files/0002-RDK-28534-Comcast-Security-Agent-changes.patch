@@ -67,7 +67,7 @@ index 34d937f..dff676e 100644
          , _accessControlList(nullptr)
      {
 -        _context.FromString(_token);
-+        _context.URL.FromString(_token);
++        _context.URL = _token;
  
          if ( (_context.URL.IsSet() == true) && (acl != nullptr) ) {
              _accessControlList = acl->FilterMapFromURL(_context.URL.Value());

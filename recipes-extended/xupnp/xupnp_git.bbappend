@@ -11,6 +11,15 @@ LDFLAGS += "-lsystemd"
 
 RDEPENDS_${PN} = "iarm-event-sender"
 
+inherit syslog-ng-config-gen
+SYSLOG-NG_FILTER = "xupnp xcal-device"
+SYSLOG-NG_SERVICE_xupnp = "xupnp.service"
+SYSLOG-NG_DESTINATION_xupnp = "xdiscovery.log"
+SYSLOG-NG_LOGRATE_xupnp = "medium"
+SYSLOG-NG_SERVICE_xcal-device = "xcal-device.service"
+SYSLOG-NG_DESTINATION_xcal-device = "xdevice.log"
+SYSLOG-NG_LOGRATE_xcal-device = "medium"
+
 do_install_append() {
         install -d ${D}${systemd_unitdir}/system ${D}${sysconfdir} ${D}${sysconfdir}/Xupnp
         install -m 0644 ${S}/conf/systemd/xupnp.service ${D}${systemd_unitdir}/system/xupnp.service

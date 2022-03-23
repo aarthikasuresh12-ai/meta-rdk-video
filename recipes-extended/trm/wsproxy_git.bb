@@ -26,7 +26,12 @@ OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 EXTRA_QMAKEVARS_PRE += "DEFINES+=USE_TRM_YOCTO_BUILD"
 EXTRA_QMAKEVARS_PRE += " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', 'DEFINES+=USE_SAFEC_API', '', d)}"
 
-inherit systemd coverity pkgconfig
+inherit systemd coverity pkgconfig syslog-ng-config-gen
+SYSLOG-NG_FILTER = "trm"
+SYSLOG-NG_SERVICE_trm = "wsproxy.service"
+#The log rate and destination are mentioned at qtapp_git.bb, to avoid duplication of variables set we have commented the below variables.
+#SYSLOG-NG_DESTINATION_trm = "trm.log"
+#SYSLOG-NG_LOGRATE_trm = "medium"
 
 do_install() {
 	install -d ${D}${bindir}

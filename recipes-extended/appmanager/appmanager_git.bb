@@ -24,7 +24,11 @@ do_compile[noexec] = "1"
 
 RDEPENDS_${PN}-dev = ""
 
-inherit systemd coverity
+inherit systemd coverity syslog-ng-config-gen
+SYSLOG-NG_FILTER = "appmanager"
+SYSLOG-NG_SERVICE_appmanager = "appmanager.service"
+SYSLOG-NG_DESTINATION_appmanager = "appmanager.log"
+SYSLOG-NG_LOGRATE_appmanager = "low"
 
 do_install(){
 	

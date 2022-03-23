@@ -1,0 +1,56 @@
+Date: Feb 16, 2022 21:23 PM
+From: 4e541869ceb2ceeab99513a5831f8b2b1d4ad083 Feb 16, 2022 21:25 PM
+Subject: Memory is not validated properly
+Source: COMCAST
+License: Pending
+Upstream-Status: Pending
+Signed-off-by: Arun Vijay S <asathy881@cable.comcast.com>
+
+diff --git a/Source/core/Proxy.h b/Source/core/Proxy.h
+index f793c1dc..90cfa427 100644
+--- a/Source/core/Proxy.h
++++ b/Source/core/Proxy.h
+@@ -588,6 +588,7 @@ namespace Core {
+         {
+             ASSERT(a_Index < m_Current);
+             ASSERT(m_List != nullptr);
++            ASSERT(m_List[a_Index] != nullptr);
+
+             // Remember the item on the location, It should be a relaes and an add for
+             // the new one, To optimize for speed, just copy the count.
+@@ -595,6 +596,7 @@ namespace Core {
+ 
+             // If it is taken out, release the reference that we took during the add
+             m_List[a_Index]->Release();
++            m_List[a_Index] = nullptr;
+
+             // Delete one element.
+             Core::InterlockedDecrement(m_Current);
+@@ -614,9 +616,11 @@ namespace Core {
+         {
+             ASSERT(a_Index < m_Current);
+             ASSERT(m_List != nullptr);
++            ASSERT(m_List[a_Index] != nullptr);
+
+             // If it is taken out, release the reference that we took during the add
+             m_List[a_Index]->Release();
++            m_List[a_Index] = nullptr;
+
+             // Delete one element.
+             Core::InterlockedDecrement(m_Current);
+@@ -1134,7 +1138,7 @@ namespace Core {
+         inline typename Core::TypeTraits::enable_if<ProxyContainerType<A, B, C>::TraitIsInitialized::value, bool>::type
+             __IsInitialized() const
+         {
+-            reurn (ELEMENT::IsInitialized());
++            return (ELEMENT::IsInitialized());
+         }
+ 
+         template <typename A, typename B, typename C>
+@@ -1522,4 +1526,4 @@ namespace Core {
+ }
+ } // namespace Core
+ 
+-#endif // __INFRAPROXY_H
+\ No newline at end of file
++#endif // __INFRAPROXY_H

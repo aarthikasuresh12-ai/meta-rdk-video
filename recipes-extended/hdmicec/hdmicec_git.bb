@@ -22,8 +22,11 @@ S = "${WORKDIR}/git"
 
 DEPENDS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' safec', " ", d)}"
 
-inherit systemd autotools pkgconfig coverity breakpad-logmapper
-
+inherit systemd autotools pkgconfig coverity breakpad-logmapper syslog-ng-config-gen
+SYSLOG-NG_FILTER = "cec"
+SYSLOG-NG_SERVICE_cec = "cecdaemon.service cecdevmgr.service"
+SYSLOG-NG_DESTINATION_cec = "cec_log.txt"
+SYSLOG-NG_LOGRATE_cec = "medium"
 
 CFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec',  ' `pkg-config --cflags libsafec`', '-fPIC', d)}"
 

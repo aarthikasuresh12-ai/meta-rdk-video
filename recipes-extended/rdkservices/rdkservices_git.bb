@@ -25,9 +25,8 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://0001-RDKTV-11792-increase-retry-count.patch \
           "
 
-# Nov 23, 2021
-SRCREV = "8d643aedbde05c9f695f222f7c7e4b22bed5fce4"
-
+# March 18, 2022
+SRCREV = "139c3e8e551ce9c1c4260b16ae5ca6efeab1a4f8"
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
 
@@ -61,7 +60,7 @@ WPEFRAMEWORK_LOCATIONSYNC_URI ?= "http://jsonip.metrological.com/?maf=true"
 
 PACKAGECONFIG ?= " \
     ${WPE_SNAPSHOT} \
-    activitymonitor avinput continuewatching controlservice datacapture devicediagnostics \
+    activitymonitor avinput continuewatching controlservice voicecontrol datacapture devicediagnostics \
     displaysettings framerate hdcpprofile hdmicec hdmiinput loggingpreferences \
     messenger network remoteactionmapping screencapture securityagent stateobserver \
     systemservices timer tracecontrol userpreferences warehouse monitor locationsync texttospeech persistent_store\
@@ -75,6 +74,7 @@ PACKAGECONFIG ?= " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'wifimanager', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'enable_maintenance_manager', 'maintenancemanager', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'fireboltmediaplayer', 'fireboltmediaplayer', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'dlnasupport', ' dlna', '', d)} \
 "
 EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'rdkshell', ' -DPLUGIN_RDKSHELL=ON ', ' -DPLUGIN_RDKSHELL=OFF ', d)}"
 EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'rdkshell_disable_autostart', ' -DPLUGIN_RDKSHELL_AUTOSTART=false ', ' -DPLUGIN_RDKSHELL_AUTOSTART=true ', d)}"
@@ -85,6 +85,7 @@ PACKAGECONFIG[avinput]              = "-DPLUGIN_AVINPUT=ON,-DPLUGIN_AVINPUT=OFF,
 PACKAGECONFIG[bluetoothcontrol]     = "-DPLUGIN_BLUETOOTH=ON -DPLUGIN_BLUETOOTH_AUTOSTART=true,-DPLUGIN_BLUETOOTH=OFF,,bluez5"
 PACKAGECONFIG[continuewatching]     = "-DPLUGIN_CONTINUEWATCHING=ON,-DPLUGIN_CONTINUEWATCHING=OFF,"
 PACKAGECONFIG[controlservice]       = "-DPLUGIN_CONTROLSERVICE=ON,-DPLUGIN_CONTROLSERVICE=OFF,"
+PACKAGECONFIG[voicecontrol]         = "-DPLUGIN_VOICECONTROL=ON,-DPLUGIN_VOICECONTROL=OFF,"
 PACKAGECONFIG[datacapture]          = "-DPLUGIN_DATACAPTURE=ON, -DPLUGIN_DATACAPTURE=OFF,"
 PACKAGECONFIG[devicediagnostics]    = "-DPLUGIN_DEVICEDIAGNOSTICS=ON,-DPLUGIN_DEVICEDIAGNOSTICS=OFF,"
 PACKAGECONFIG[deviceinfo]           = "-DPLUGIN_DEVICEINFO=ON,-DPLUGIN_DEVICEINFO=OFF,"
@@ -137,6 +138,7 @@ PACKAGECONFIG[ocicontainer]         = "-DPLUGIN_OCICONTAINER=ON, -DPLUGIN_OCICON
 PACKAGECONFIG[usbaccess]            = "-DPLUGIN_USBACCESS=ON,-DPLUGIN_USBACCESS=OFF,"
 PACKAGECONFIG[erm]                  = "-DBUILD_ENABLE_ERM=ON,-DBUILD_ENABLE_ERM=OFF,"
 PACKAGECONFIG[fireboltmediaplayer]  = "-DPLUGIN_FIREBOLTMEDIAPLAYER=ON,-DPLUGIN_FIREBOLTMEDIAPLAYER=OFF, aamp, aamp"
+PACKAGECONFIG[dlna] = "-DPLUGIN_DLNA_SERVICE=ON, -DPLUGIN_DLNA_SERVICE=OFF,xupnp-rpc,xupnp-rpc"
 
 MONITOR_PLUGIN_ARGS                ?= " \
                                        -DPLUGIN_WEBKITBROWSER_MEMORYLIMIT=614400 \

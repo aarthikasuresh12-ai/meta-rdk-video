@@ -15,7 +15,11 @@ S = "${WORKDIR}/git/diag"
 DEPENDS = "jansson iarmbus trm-common safec-common-wrapper"
 DEPENDS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' safec', '', d)}"
 
-inherit autotools systemd pkgconfig
+inherit autotools systemd pkgconfig syslog-ng-config-gen
+SYSLOG-NG_FILTER = "trmmgr"
+SYSLOG-NG_SERVICE_trmmgr = "trmmgr.service"
+SYSLOG-NG_DESTINATION_trmmgr = "trmmgr.log"
+SYSLOG-NG_LOGRATE_trmmgr = "medium"
 
 CXXFLAGS_prepend = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec',  ' `pkg-config --cflags libsafec` ', '-fPIC', d)}"
 CXXFLAGS_prepend_client = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec',  ' `pkg-config --cflags libsafec` ', '-fPIC', d)}"

@@ -2,10 +2,10 @@ SUMMARY = "Test Development Kit for RDK stack"
 SECTION = "console/utils"
 
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=33517675b36eb550eab76df1ded404c2"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=4d143a9ba9a6853832bd72db78d75a84"
 
 PV = "${RDK_RELEASE}"
-SRC_URI = "${CMF_GIT_ROOT}/rdk/tools/tdk;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};name=tdk"
+SRC_URI = "${CMF_GIT_ROOT}/rdkv/tools/tdkv;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};name=tdk"
 SRCREV_tdk = "${AUTOREV}"
 SRCREV_FORMAT = "tdk"
 
@@ -23,8 +23,9 @@ EXTRA_OECONF += "${ENABLE_GST1}"
 
 EXTRA_OECONF += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk',' --enable-fireboltcompliance', '', d)}"
 EXTRA_OECONF += "--enable-xupnp"
+EXTRA_OECONF += " --enable-westeroshal"
 
-DEPENDS += "iarmbus devicesettings rdk-logger jsoncpp jsonrpc"
+DEPENDS += "iarmbus devicesettings rdk-logger jsoncpp jsonrpc westeros"
 DEPENDS_append_client = " iarmmgrs servicemanager netsrvmgr moca-hal"
 DEPENDS_append_hybrid = " iarmmgrs servicemanager xupnp virtual/dtcpmgr"
 
@@ -57,6 +58,7 @@ do_install_append () {
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             install -D -p -m 755 ${D}${bindir}/mediapipelinetests ${D}${TDK_TARGETDIR}/
             install -D -p -m 755 ${D}${bindir}/Essos_TDKTestApp ${D}${TDK_TARGETDIR}/
+            install -D -p -m 755 ${D}${bindir}/Westeros_TDKTestApp ${D}${TDK_TARGETDIR}/
         fi
         install -D -p -m 755 ${D}${libdir}/*.so* ${D}${TDK_TARGETDIR}/lib/
         rm -rf ${D}${libdir}/
@@ -73,6 +75,7 @@ do_install_append () {
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             install -D -p -m 755 ${D}${bindir}/mediapipelinetests ${D}${TDK_TARGETDIR}/
             install -D -p -m 755 ${D}${bindir}/Essos_TDKTestApp ${D}${TDK_TARGETDIR}/
+            install -D -p -m 755 ${D}${bindir}/Westeros_TDKTestApp ${D}${TDK_TARGETDIR}/
         fi
         install -m 0644 ${S}/tdk.service ${D}${systemd_unitdir}/system/tdk.service
         install -m 755 ${S}/tdkstartup.sh ${D}${base_libdir}/rdk/
@@ -85,6 +88,7 @@ do_install_append () {
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             rm -rf ${D}${bindir}/mediapipelinetests
             rm -rf ${D}${bindir}/Essos_TDKTestApp
+            rm -rf ${D}${bindir}/Westeros_TDKTestApp
         fi
     elif [ "${TDK_HWPerf_OPENSOURCE_TOOLS}" = "TRUE" ]; then
         install -d ${D}${base_libdir}/rdk/
@@ -97,6 +101,7 @@ do_install_append () {
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             ln -sf ${bindir}/mediapipelinetests ${D}${TDK_TARGETDIR}/
             ln -sf ${bindir}/Essos_TDKTestApp ${D}${TDK_TARGETDIR}/
+            ln -sf ${bindir}/Westeros_TDKTestApp ${D}${TDK_TARGETDIR}/
         fi
         install -m 0644 ${S}/tdk.service ${D}${systemd_unitdir}/system/tdk.service
         install -m 755 ${S}/tdkstartup.sh ${D}${base_libdir}/rdk/
@@ -114,6 +119,7 @@ do_install_append () {
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             ln -sf ${bindir}/mediapipelinetests ${D}${TDK_TARGETDIR}/
             ln -sf ${bindir}/Essos_TDKTestApp ${D}${TDK_TARGETDIR}/
+            ln -sf ${bindir}/Westeros_TDKTestApp ${D}${TDK_TARGETDIR}/
         fi
         install -m 0644 ${S}/tdk.service ${D}${systemd_unitdir}/system/tdk.service
         install -m 755 ${S}/tdkstartup.sh ${D}${base_libdir}/rdk/
@@ -136,7 +142,7 @@ do_install_append () {
     install -m 755 ${S}/SystemUtil_stub/scripts/Ledmgr_testrunner.sh ${D}${TDK_TARGETDIR}/
     install -m 755 ${S}/IARMBUS_stub/scripts/RunAppInBackground.sh ${D}${TDK_TARGETDIR}/
     if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
-        install -m 755 ${S}/FireboltCompliance_Validation/scripts/RunWesterosTest.sh ${D}${TDK_TARGETDIR}/
+        install -m 755 ${S}/FireboltCompliance_Validation/scripts/RunGraphicsTDKTest.sh ${D}${TDK_TARGETDIR}/
     fi
 }
 
