@@ -32,7 +32,7 @@ CXXFLAGS += "-I${STAGING_INCDIR}/rdk/iarmbus -DENABLE_SD_NOTIFY -I${STAGING_INCD
 CFLAGS += "-I${STAGING_INCDIR}/rdk/iarmbus -DENABLE_SD_NOTIFY -I${STAGING_INCDIR}/rdk/iarmmgrs-hal"
 LDFLAGS += "-lsystemd -lsqlite3 -lsecure_wrapper"
 
-DEPENDS = "glib-2.0 iarmbus iarmmgrs dbus tr69hostif-headers cjson authservice nlmonitor libnl sqlite3 libsyswrapper rdk-logger breakpad"
+DEPENDS = "glib-2.0 iarmbus iarmmgrs dbus tr69hostif-headers cjson authservice nlmonitor libnl sqlite3 libsyswrapper rdk-logger breakpad xupnp"
 DEPENDS_append = " ${@bb.utils.contains('MACHINE_EXTRA_RDEPENDS', 'virtual/mocadriver', 'moca-hal-tools', '', d)}"
 
 # Add support for rfcapi
