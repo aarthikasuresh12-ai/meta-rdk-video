@@ -49,7 +49,7 @@ CXXFLAGS += " -DAAMP_BUILD_INFO=${AAMP_RELEASE_TAG_NAME}"
 
 do_install_append() {
     echo "Installing aamp-cli..."
-    install -m755 ${S}/../build/aamp-cli ${D}${libdir}
+    install -m755 ${B}/aamp-cli ${D}${libdir}
     #install aamp rfc default 
     install -d ${D}${sysconfdir} ${D}${sysconfdir}/rfcdefaults
     echo "Installing aamp.ini..."
