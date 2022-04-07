@@ -54,9 +54,7 @@ VSDK_UTILS_CLASS           := "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_vo
 inherit systemd coverity ${VSDK_UTILS_CLASS} ${GPERFTOOLS_HEAPCHECK_CLASS}
 
 BREAKPAD_BIN = "controlMgr"
-BREAKPAD_SHARED_LIBS ="libstdc++.so libffi.so libglib-2.0.so ld-2.22.so libc-2.22.so libpthread-2.22.so libgobject-2.0.so libcurl.so"
-
-BREAKPAD_SHARED_LIBS += "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', 'librdkversion.so librdkx-logger.so libbsd.so libxr-timestamp.so libxr-timer.so libxr_mq.so libxraudio-eos.so libxraudio-adpcm.so libxraudio.so libxraudio-hal.so libxrsv.so libxrsr.so libcrypto.so libssl.so libnopoll.so libjansson.so libxr-voice-sdk.so', '', d)}"
+BREAKPAD_SHARED_LIBS ="libstdc++.so libffi.so libglib-2.0.so ld-2.22.so libc-2.22.so libpthread-2.22.so libgobject-2.0.so libcurl.so librdkversion.so librdkx-logger.so libbsd.so libxr-timestamp.so libxr-timer.so libxr_mq.so libxraudio-eos.so libxraudio-adpcm.so libxraudio.so libxraudio-hal.so libxrsv.so libxrsr.so libcrypto.so libssl.so libnopoll.so libjansson.so libxr-voice-sdk.so"
 
 INCLUDE_DIRS = " \
     -I=${includedir}/glib-2.0 \
@@ -110,7 +108,7 @@ CXXFLAGS_append     = "${@bb.utils.contains('MEMORY_LOCK', 'true', ' -DMEMORY_LO
 LDFLAGS_append      = "${@bb.utils.contains('MEMORY_LOCK', 'true', ' -lclnl', '', d)}"
 DEPENDS_append      = "${@bb.utils.contains('MEMORY_LOCK', 'true', ' clnl', '', d)}"
 
-LDFLAGS_append ="${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', ' -lxr-voice-sdk -lxrsr -lxrsv -lxraudio-hal -lrdkx-logger -lxr-timestamp', '', d)}"
+LDFLAGS_append =" -lxr-voice-sdk -lxrsr -lxrsv -lxraudio-hal -lrdkx-logger -lxr-timestamp"
 LDFLAGS_append ="${@bb.utils.contains('DISTRO_FEATURES_RDK', 'comcast-gperftools-heapcheck-wp', ' -lxr-fdc', '', d)}"
 LDFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' `pkg-config --libs libsafec`', '', d)}"
 
@@ -136,7 +134,6 @@ CTRLM_CONFIG_CPC_ADD = "${S}/../ctrlm_config_cpc.add.json"
 CTRLM_CONFIG_CPC_SUB = "${S}/../ctrlm_config_cpc.sub.json"
 
 EXTRA_OECONF_append = " CTRLM_CONFIG_JSON_VSDK=${CTRLM_CONFIG_VSDK} CTRLM_CONFIG_JSON_OEM_SUB=${CTRLM_CONFIG_OEM_SUB} CTRLM_CONFIG_JSON_OEM_ADD=${CTRLM_CONFIG_OEM_ADD} CTRLM_CONFIG_JSON_CPC_SUB=${CTRLM_CONFIG_CPC_SUB} CTRLM_CONFIG_JSON_CPC_ADD=${CTRLM_CONFIG_CPC_ADD}"
-EXTRA_OECONF_append = "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', ' --enable-voicesdk', '', d)}"
 EXTRA_OECONF_append = "${@ ' --enable-xrsr_sdt' if (d.getVar('SUPPORT_VOICE_DEST_ALSA', expand=False) == "true") else ''}"
 
 DEPENDS_append   = "${@ ' virtual-mic' if (d.getVar('SUPPORT_VOICE_DEST_ALSA',   expand=False) == "true") else ''}"
