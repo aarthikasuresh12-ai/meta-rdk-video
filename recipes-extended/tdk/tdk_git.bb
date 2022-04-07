@@ -148,6 +148,7 @@ do_install_append () {
     install -m 755 ${S}/IARMBUS_stub/scripts/RunAppInBackground.sh ${D}${TDK_TARGETDIR}/
     if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
         install -m 755 ${S}/FireboltCompliance_Validation/scripts/RunGraphicsTDKTest.sh ${D}${TDK_TARGETDIR}/
+        install -m 755 ${S}/FireboltCompliance_Validation/scripts/ExecuteSuite.sh ${D}${TDK_TARGETDIR}/opensourcecomptest/
     fi
 }
 
