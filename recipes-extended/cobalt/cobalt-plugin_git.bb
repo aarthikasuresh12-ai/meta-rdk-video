@@ -6,8 +6,8 @@ TOOLCHAIN = "gcc"
 
 SRC_URI = "${CMF_GIT_ROOT}/rdk/components/generic/cobalt;protocol=${CMF_GIT_PROTOCOL};branch=master"
 
-# March 29, 2022
-SRCREV = "6a16d9f214bd024720a8ced50b9f202c08dcb8b1"
+# May 3, 2022
+SRCREV = "980cd3f2a5c1172989d213b41807fcef55a28f2b"
 
 S = "${WORKDIR}/git/plugin"
 
@@ -18,8 +18,9 @@ DEPENDS = "wpeframework libcobalt"
 COBALT_PERSISTENTPATHPOSTFIX ?= "Cobalt-0"
 COBALT_CLIENTIDENTIFIER ?= "wst-Cobalt-0"
 
-PACKAGECONFIG ??= "focus"
+PACKAGECONFIG ??= "focus closurepolicy"
 PACKAGECONFIG[focus]  = "-DPLUGIN_COBALT_ENABLE_FOCUS_IFACE=ON,-DPLUGIN_COBALT_ENABLE_FOCUS_IFACE=OFF,"
+PACKAGECONFIG[closurepolicy]  = ",-DPLUGIN_COBALT_CLOSUREPOLICY=OFF,"
 
 EXTRA_OECMAKE += " \
     -DCMAKE_BUILD_TYPE=Release \
