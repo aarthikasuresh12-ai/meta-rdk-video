@@ -18,6 +18,7 @@ SRC_URI += "file://0003-OCDM-increase-RPC-comm-timeout.patch \
            file://603.patch \
            file://0001-Support-negative-numbers-with-write_config.patch \
            file://LLAMA-2254_fix_netlink_buffer_size_error.patch \
+           file://0001-RDKTV-15888-Socket-Closed.patch \
            "
 
 inherit systemd update-rc.d pythonnative
