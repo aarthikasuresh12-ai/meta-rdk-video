@@ -20,6 +20,7 @@ SYSLOG-NG_SERVICE_ctrlm = "ctrlm-hal-rf4ce.service ctrlm-main.service"
 SYSLOG-NG_DESTINATION_ctrlm = "ctrlm_log.txt"
 SYSLOG-NG_LOGRATE_ctrlm = "medium"
 
+PV = "${RDK_RELEASE}"
 SRC_URI        = "${CMF_GIT_ROOT}/rdk/components/generic/control;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};name=ctrlm-main"
 SRC_URI_append = " file://${BPN}.service"
 SRC_URI_append = " file://1_rf4ce.conf"
