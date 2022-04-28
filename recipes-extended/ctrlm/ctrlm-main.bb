@@ -95,6 +95,14 @@ PLATFORM ?= "STB"
 EXTRA_OECONF_append = "${@bb.utils.contains('PLATFORM', 'STB', ' --enable-platform=stb', '', d)}"
 EXTRA_OECONF_append = "${@bb.utils.contains('PLATFORM', 'TV', ' --enable-platform=tv', '', d)}"
 
+# Default to HDMI / CEC discovery for IRDB
+# Options: NONE / HDMI / CEC / ALL
+IRDB_DISCOVERY_DEFAULT = "ALL"
+IRDB_DISCOVERY ?= "${IRDB_DISCOVERY_DEFAULT}"
+CXXFLAGS_append = " ${@bb.utils.contains('IRDB_DISCOVERY', 'ALL', ' -DIRDB_HDMI_DISCOVERY -DIRDB_CEC_DISCOVERY', '', d)}"
+CXXFLAGS_append = " ${@bb.utils.contains('IRDB_DISCOVERY', 'HDMI', ' -DIRDB_HDMI_DISCOVERY', '', d)}"
+CXXFLAGS_append = " ${@bb.utils.contains('IRDB_DISCOVERY', 'CEC', ' -DIRDB_CEC_DISCOVERY', '', d)}"
+
 # Thunder Dependency
 THUNDER            ?= "false"
 CXXFLAGS_append     = "${@bb.utils.contains('THUNDER', 'true', ' -I=${includedir}/WPEFramework/ -I=${includedir}/WPEFramework/core/', '', d)}"
