@@ -49,7 +49,12 @@ do_install() {
 	install -m 0644 ${S}/snmp/ipcutils/utils/vlEnv.h ${D}${includedir}/rdk/podmgr
 
 	if [ "${@bb.utils.contains('DISTRO_FEATURES', 'nopod', 'nopod', '', d)}" != "" ]; then
-               install -m 0644 ${S}/soc_qamsource_stub/hal_include/*.h ${D}${includedir}
+		install -m 0644 ${S}/soc_qamsource_stub/hal_include/*.h ${D}${includedir}
+	fi
+
+	if [ "${@bb.utils.contains('DISTRO_FEATURES', 'external-cas', 'external-cas', '', d)}" != "" ]; then
+		install -m 0644 ${S}/anycas/include/*.h ${D}${includedir}
+		install -m 0644 ${S}/anycas/src/include/*.h ${D}${includedir}
 	fi
 }
 

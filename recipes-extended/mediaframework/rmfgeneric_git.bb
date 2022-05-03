@@ -24,11 +24,14 @@ EXTRA_OECONF += "${@bb.utils.contains('DISTRO_FEATURES', 'nopod', '--enable-stub
 EXTRA_OECONF_append_client = " --enable-mediaplayersink --enable-hnsink --enable-dumpfilesink --disable-xfs"
 EXTRA_OECONF += "--enable-yocto"
 
+EXTRA_OECONF += "${@bb.utils.contains('DISTRO_FEATURES', 'external-cas', " --enable-external-cas", "", d)}"
+
 DEPENDS = "rdk-logger jansson rmfosal iarmbus iarmmgrs-hal-headers rmfhalheaders curl base64 pxcore-libnode libsyswrapper"
 DEPENDS += "virtual/dtcpmgr libtinyxml xfsprogs trm-common rmfgenericheaders rfc"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'gstreamer1', 'gstreamer1.0', 'gstreamer', d)}"
 DEPENDS += " ${@bb.utils.contains('DISTRO_FEATURES', 'nopod', 'sectionfilter-hal-stub', '', d)}"
 DEPENDS += " virtual/dvrmgr-hal dvrgenericheaders"
+DEPENDS += " ${@bb.utils.contains('DISTRO_FEATURES', 'external-cas', ' wpeframework-clientlibraries jsoncpp', "", d)}"
 DEPENDS_remove_client = "xfsprogs"
 
 #Enable support for rfcapi
