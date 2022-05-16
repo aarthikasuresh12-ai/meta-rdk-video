@@ -23,6 +23,7 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://rdkservices.ini \
            file://0001-support-for-focus-events.patch \
            file://0001-RDKTV-11792-increase-retry-count.patch \
+	   file://0001-Introduce-Memory-Monitor.patch \
           "
 
 # March 18, 2022
