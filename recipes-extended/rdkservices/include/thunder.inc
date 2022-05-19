@@ -7,8 +7,8 @@ THUNDER_RELEASE_TAG_NAME = "R2-v1.9"
 
 SRC_URI = "git://github.com/rdkcentral/Thunder.git;protocol=git;branch=R2;name=thunder"
 
-# Mar 05, 2022
-SRCREV_thunder = "${THUNDER_RELEASE_TAG_NAME}"
+# May 19, 2022
+SRCREV_thunder = "331ee30b1eaf82a7e8944ee00b8cb1d1d0aca682"
 
 PACKAGECONFIG ??= ""
 PACKAGECONFIG[debug]            = "-DCMAKE_BUILD_TYPE=Debug,-DCMAKE_BUILD_TYPE=Release,"
