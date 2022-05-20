@@ -14,5 +14,3 @@ RDEPENDS_${PN} = "boost-filesystem boost-regex"
 inherit cmake
 
 FILES_${PN}="${libdir}"
-
-EXTRA_OECMAKE = "-DDATA_SOURCE_IMPLEMENTATION=3rdparty/multicast"
