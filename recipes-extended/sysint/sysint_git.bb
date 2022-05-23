@@ -435,6 +435,15 @@ do_install_append_rdkzram() {
         install -m 0644 ${S}/../systemd_units/zram.service ${D}${systemd_unitdir}/system
 }
 
+do_install_append_rdktv() {
+        install -m 0755 ${S}/../rdktv/lib/rdk/imageFlasher.sh ${D}${base_libdir}/rdk/imageFlasher.sh
+        install -m 0755 ${S}/../rdktv/lib/rdk/ssm_cri_data.sh ${D}${base_libdir}/rdk/ssm_cri_data.sh
+        install -m 0755 ${S}/../rdktv/lib/rdk/vdec-statistics.sh ${D}${base_libdir}/rdk/vdec-statistics.sh
+        install -m 0755 ${S}/../rdktv/etc/env_setup.sh ${D}${sysconfdir}
+        install -m 0644 ${S}/../rdktv/systemd_units/vdec-statistics.service ${D}${systemd_unitdir}/system
+        install -m 0644 ${S}/../rdktv/systemd_units/disk-check.service ${D}${systemd_unitdir}/system
+}
+
 SYSTEMD_SERVICE_${PN} = "hosts.service"
 SYSTEMD_SERVICE_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_maintenance_manager', '', 'dcm-log.service',d)}"
 SYSTEMD_SERVICE_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_maintenance_manager', '', 'rfc-config.service',d)}"
