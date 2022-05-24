@@ -8,7 +8,7 @@ DEPENDS = ""
 
 include ctrlm.inc
 
-SRCREV_${PN} = "${AUTOREV}"
+SRCREV_ctrlm-headers = "${AUTOREV}"
 SRC_URI = "${CMF_GIT_ROOT}/rdk/components/generic/control;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};name=ctrlm-headers"
 
 S = "${WORKDIR}/git"

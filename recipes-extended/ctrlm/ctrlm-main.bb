@@ -22,7 +22,7 @@ SYSLOG-NG_LOGRATE_ctrlm = "medium"
 
 PV = "${RDK_RELEASE}"
 SRC_URI        = "${CMF_GIT_ROOT}/rdk/components/generic/control;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};name=ctrlm-main"
-SRC_URI_append = " file://${BPN}.service"
+SRC_URI_append = " file://ctrlm-main.service"
 SRC_URI_append = " file://1_rf4ce.conf"
 SRC_URI_append = " file://ctrlm-hal-rf4ce.service"
 SRC_URI_append = " file://restart_ctrlm.sh"
@@ -36,16 +36,16 @@ SRCREV_FORMAT = "ctrlm-main"
 
 S = "${WORKDIR}/git"
 
-FILES_${PN} += "${systemd_unitdir}/system/${BPN}.service \
+FILES_${PN} += "${systemd_unitdir}/system/ctrlm-main.service \
                 /usr/local/bin/restart_ctrlm.sh \
                 /usr/local/bin/ctrlm_db_dump.sh \
                 /usr/local/bin/ctrlm_sig_quit.sh \
                "
 FILES_${PN} += "${@bb.utils.contains('EXTRA_OECONF', '--enable-rf4ce', '${systemd_unitdir}/system/ctrlm-main.service.d/1_rf4ce.conf', '', d)}"
 
-SYSTEMD_PACKAGES += " ${PN}"
-SYSTEMD_SERVICE_${PN}  = "${BPN}.service"
-SYSTEMD_SERVICE_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_generic', 'ctrlm-hal-rf4ce.service', '', d)}"
+SYSTEMD_PACKAGES += " ctrlm-main"
+SYSTEMD_SERVICE_ctrlm-main  = "ctrlm-main.service"
+SYSTEMD_SERVICE_ctrlm-main += "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_generic', 'ctrlm-hal-rf4ce.service', '', d)}"
 
 ENABLE_GPERFTOOLS_HEAPCHECK_WP_DISTRO = "1"
 
@@ -143,7 +143,7 @@ EXTRA_OECONF_append = " GIT_BRANCH=${CMF_GIT_BRANCH}"
 
 do_install_append() {
     install -d ${D}${systemd_unitdir}/system
-    install -m 0644 ${RECIPEDIR}/${BPN}.service ${D}${systemd_unitdir}/system/
+    install -m 0644 ${RECIPEDIR}/ctrlm-main.service ${D}${systemd_unitdir}/system/
 
     if ${@bb.utils.contains('EXTRA_OECONF', '--enable-rf4ce', 'true', 'false', d)}; then
        install -d ${D}${systemd_unitdir}/system/ctrlm-main.service.d/
