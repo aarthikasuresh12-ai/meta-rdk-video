@@ -10,7 +10,7 @@ DEPENDS = "wayland virtual/egl libxkbcommon"
 
 REQUIRED_DISTRO_FEATURES += "wayland"
 
-inherit autotools pkgconfig distro_features_check
+inherit autotools pkgconfig features_check
 
 PACKAGECONFIG ??= "westeros resmgr"
 PACKAGECONFIG[westeros] = "--disable-essoswesterosfree,--enable-essoswesterosfree,westeros-simpleshell virtual/westeros-soc"

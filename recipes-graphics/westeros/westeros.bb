@@ -25,7 +25,7 @@ RDEPENDS_${PN} = "xkeyboard-config"
 
 REQUIRED_DISTRO_FEATURES += "wayland"
 
-inherit autotools pkgconfig distro_features_check
+inherit autotools pkgconfig features_check
 
 EXTRA_OECONF += "--disable-essos"
 
