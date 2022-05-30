@@ -1,4 +1,5 @@
 DEPENDS += "wdmp-c cimplog rfc"
+RDEPENDS_${PN} += " rfc"
 LDFLAGS += "-lwdmp-c -lcimplog -lrfcapi"
 CPPFLAGS_append = " -I${STAGING_INCDIR}/wdmp-c \
                     -I${STAGING_INCDIR}/cimplog \
