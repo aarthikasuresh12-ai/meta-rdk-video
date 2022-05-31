@@ -2,25 +2,29 @@ SUMMARY = "Cobalt plugin"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://../LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 
+require starboard_revision.inc
+
 TOOLCHAIN = "gcc"
 
-SRC_URI = "${CMF_GIT_ROOT}/rdk/components/generic/cobalt;protocol=${CMF_GIT_PROTOCOL};branch=master"
-
-# June 28, 2022
-SRCREV = "089b281036d6b8cb41ccfe63ed5737d320b7a512"
+SRC_URI = "${STARBOARD_SRC_URI};protocol=${CMF_GIT_PROTOCOL};branch=master"
+SRCREV = "${STARBOARD_SRCREV}"
 
 S = "${WORKDIR}/git/plugin"
 
 inherit cmake pkgconfig
 
-DEPENDS = "wpeframework libcobalt"
+DEPENDS = "wpeframework"
 
 COBALT_PERSISTENTPATHPOSTFIX ?= "Cobalt-0"
 COBALT_CLIENTIDENTIFIER ?= "wst-Cobalt-0"
 
 PACKAGECONFIG ??= "focus closurepolicy"
+PACKAGECONFIG_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'cobalt_enable_evergreen_lite', 'evegreenlite', 'libcobalt', d)}"
+
 PACKAGECONFIG[focus]  = "-DPLUGIN_COBALT_ENABLE_FOCUS_IFACE=ON,-DPLUGIN_COBALT_ENABLE_FOCUS_IFACE=OFF,"
 PACKAGECONFIG[closurepolicy]  = ",-DPLUGIN_COBALT_CLOSUREPOLICY=OFF,"
+PACKAGECONFIG[evegreenlite]  = "-DPLUGIN_COBALT_EVEGREEN_LITE=ON,-DPLUGIN_COBALT_EVEGREEN_LITE=OFF,libloader-app,virtual/cobalt-evergreen"
+PACKAGECONFIG[libcobalt]  = "-DPLUGIN_COBALT_EVEGREEN_LITE=OFF,,libcobalt"
 
 EXTRA_OECMAKE += " \
     -DCMAKE_BUILD_TYPE=Release \

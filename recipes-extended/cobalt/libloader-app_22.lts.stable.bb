@@ -1,4 +1,4 @@
-SUMMARY = "A high-performance, small-footprint platform that implements a subset of HTML5/CSS/JS to run applications, including the YouTube TV app"
+SUMMARY = "Evergreen Cobalt loader_app library."
 HOMEPAGE = "https://cobalt.googlesource.com/"
 
 LICENSE = "BSD-3-Clause & Apache-2.0"
@@ -10,13 +10,12 @@ LIC_FILES_CHKSUM = " \
 
 require starboard_revision.inc
 
-# Disable by default for morty
-DEFAULT_PREFERENCE_morty = "-1"
 TOOLCHAIN = "gcc"
 
 SRC_URI  = "git://cobalt.googlesource.com/cobalt.git;protocol=https;name=cobalt;branch=22.lts.stable"
 SRC_URI += "git://cobalt.googlesource.com/depot_tools.git;protocol=https;destsuffix=depot_tools;name=depottools"
 SRC_URI += "${STARBOARD_SRC_URI};protocol=${CMF_GIT_PROTOCOL};destsuffix=starboard;name=starboard;branch=master"
+SRC_URI += "file://0001-build-fix.patch"
 
 PR = "5"
 SRCREV_cobalt = "22.lts.${PR}"
@@ -37,10 +36,11 @@ PACKAGECONFIG ?= "${@bb.utils.contains('DISTRO_FEATURES', 'opencdm', 'opencdm', 
 PACKAGECONFIG[opencdm] = ""
 PACKAGECONFIG[nplb] = ""
 
-inherit pythonnative pkgconfig
+inherit pythonnative pkgconfig breakpad-wrapper
+
+BREAKPAD_BIN = "lib*.so*"
 
 COBALT_PLATFORM ?= ""
-COBALT_PLATFORM_rpi ?= "rdk-rpi"
 COBALT_PLATFORM_arm ?= "rdk-arm"
 COBALT_BUILD_TYPE ?= ""${@bb.utils.contains('DISTRO_FEATURES', 'cobalt-qa', 'qa', 'gold', d)}""
 
@@ -55,47 +55,44 @@ addtask unpack_extra after do_unpack before do_patch
 do_configure() {
     export COBALT_HAS_OCDM="${@bb.utils.contains('PACKAGECONFIG', 'opencdm', '1', '0', d)}"
     export COBALT_ARM_CALLCONVENTION="${@bb.utils.contains('TUNE_FEATURES', 'callconvention-hard', 'hardfp', 'softfp', d)}"
-    ${S}/src/cobalt/build/gyp_cobalt -C qa -C gold -C devel ${COBALT_PLATFORM}
+    export COBALT_EVERGREEN_LITE="1"
+    ${S}/src/cobalt/build/gyp_cobalt -C ${COBALT_BUILD_TYPE} -C devel ${COBALT_PLATFORM}
 }
 
 do_compile[progress] = "percent"
 do_compile() {
     export NINJA_STATUS='%p '
-    ninja -C ${S}/src/out/${COBALT_PLATFORM}_${COBALT_BUILD_TYPE} cobalt cobalt_bin
+    ninja -C ${S}/src/out/${COBALT_PLATFORM}_${COBALT_BUILD_TYPE} loader_app crashpad_handler
 }
 
 do_install() {
     install -d ${D}${bindir}
-    install -m 0755 ${S}/src/out/${COBALT_PLATFORM}_${COBALT_BUILD_TYPE}/cobalt_bin ${D}${bindir}
+    install -m 0755 ${S}/src/out/${COBALT_PLATFORM}_${COBALT_BUILD_TYPE}/crashpad_handler ${D}${bindir}
 
     install -d ${D}${libdir}
-    install -m 0755 ${S}/src/out/${COBALT_PLATFORM}_${COBALT_BUILD_TYPE}/lib/libcobalt.so ${D}${libdir}
+    install -m 0755 ${S}/src/out/${COBALT_PLATFORM}_${COBALT_BUILD_TYPE}/lib/libloader_app.so ${D}${libdir}
 
     install -d ${D}${datadir}/content
     cp -arv --no-preserve=ownership ${S}/src/out/${COBALT_PLATFORM}_${COBALT_BUILD_TYPE}/content ${D}${datadir}/
-
-    # use system provided certs
-    rm -rf ${D}${datadir}/content/data/ssl/certs
-    mkdir -p ${D}${datadir}/content/data/ssl/
-    ln -s /etc/ssl/certs ${D}${datadir}/content/data/ssl/certs
 }
 
 # NPLB
 do_compile_append() {
     if ${@bb.utils.contains('PACKAGECONFIG', 'nplb', 'true', 'false', d)}; then
         export PYTHONHTTPSVERIFY=0
-        ninja -C ${S}/src/out/${COBALT_PLATFORM}_devel nplb
+        ninja -C ${S}/src/out/${COBALT_PLATFORM}_devel nplb nplb_evergreen_compat_tests
     fi
 }
 do_install_append() {
     if ${@bb.utils.contains('PACKAGECONFIG', 'nplb', 'true', 'false', d)}; then
         install -m 0755 ${S}/src/out/${COBALT_PLATFORM}_devel/nplb ${D}${bindir}
+        install -m 0755 ${S}/src/out/${COBALT_PLATFORM}_devel/nplb_evergreen_compat_tests ${D}${bindir}
         cp -arv --no-preserve=ownership ${S}/src/out/${COBALT_PLATFORM}_devel/content ${D}${datadir}/
     fi
 }
 
 FILES_${PN}  = "${bindir}/*"
-FILES_${PN} += "${libdir}/libcobalt.so"
+FILES_${PN} += "${libdir}/libloader_app.so"
 FILES_${PN} += "${datadir}/content/*"
 
 FILES_SOLIBSDEV = ""
