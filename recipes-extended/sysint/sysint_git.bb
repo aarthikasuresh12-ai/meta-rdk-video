@@ -54,7 +54,7 @@ SYSLOG-NG_SERVICE_rfc-config = "rfc-config.service"
 SYSLOG-NG_DESTINATION_rfc-config = "rfcscript.log"
 SYSLOG-NG_LOGRATE_rfc-config = "low"
 SYSLOG-NG_SERVICE_update-device-details = "update-device-details.service"
-SYSLOG-NG_DESTINATION_update-device-details = "device-details.log"
+SYSLOG-NG_DESTINATION_update-device-details = "device_details.log"
 SYSLOG-NG_LOGRATE_update-device-details = "low"
 SYSLOG-NG_SERVICE_iptables = "iptables.service"
 SYSLOG-NG_DESTINATION_iptables = "iptables.log"
@@ -74,8 +74,9 @@ SYSLOG-NG_LOGRATE_mount_log = "low"
 SYSLOG-NG_SERVICE_reboot-reason = "reboot-reason-logger.service update-reboot-info.service"
 SYSLOG-NG_DESTINATION_reboot-reason = "rebootreason.log"
 SYSLOG-NG_LOGRATE_reboot-reason = "low"
-SYSLOG-NG_PROGRAM_swupdate = "swupdate"
+SYSLOG-NG_SERVICE_swupdate = "swupdate.service"
 SYSLOG-NG_DESTINATION_swupdate = "swupdate.log"
+SYSLOG-NG_LOGRATE_swupdate = "low"
 
 do_compile[noexec] = "1"
 
@@ -164,6 +165,8 @@ do_install() {
         install -m 0644 ${S}/../systemd_units/mount-failure-count.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/update-reboot-info.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/update-reboot-info.service ${D}${systemd_unitdir}/system
+        install -m 0644 ${S}/../systemd_units/restart-parodus.path ${D}${systemd_unitdir}/system
+        install -m 0644 ${S}/../systemd_units/restart-parodus.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/update-rf4ce-details.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/ping-telemetry.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/ping-telemetry.timer ${D}${systemd_unitdir}/system
@@ -472,6 +475,8 @@ SYSTEMD_SERVICE_${PN} += "ping-telemetry.timer"
 SYSTEMD_SERVICE_${PN} += "oops-dump.service"
 SYSTEMD_SERVICE_${PN} += "update-reboot-info.path"
 SYSTEMD_SERVICE_${PN} += "update-reboot-info.service"
+SYSTEMD_SERVICE_${PN} += "restart-parodus.path"
+SYSTEMD_SERVICE_${PN} += "restart-parodus.service"
 SYSTEMD_SERVICE_${PN} += "gstreamer-cleanup.service"
 SYSTEMD_SERVICE_${PN} += "path-fail-notifier@.service"
 

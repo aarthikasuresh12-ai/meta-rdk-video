@@ -13,7 +13,7 @@ RDEPENDS_${PN} += "gst-plugins-rdk-aamp devicesettings"
 
 NO_RECOMMENDATIONS = "1"
 
-AAMP_RELEASE_TAG_NAME ?= "4.2.3.0"
+AAMP_RELEASE_TAG_NAME ?= "4.4.2.0"
 
 SRC_URI = "${CMF_GIT_ROOT}/rdk/components/generic/aamp;protocol=${CMF_GIT_PROTOCOL};branch=${AAMP_RELEASE_TAG_NAME};nobranch=1;name=aamp"
 
@@ -49,7 +49,7 @@ CXXFLAGS += " -DAAMP_BUILD_INFO=${AAMP_RELEASE_TAG_NAME}"
 
 do_install_append() {
     echo "Installing aamp-cli..."
-    install -m755 ${S}/../build/aamp-cli ${D}${libdir}
+    install -m755 ${B}/aamp-cli ${D}${libdir}
     #install aamp rfc default 
     install -d ${D}${sysconfdir} ${D}${sysconfdir}/rfcdefaults
     echo "Installing aamp.ini..."

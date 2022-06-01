@@ -26,8 +26,8 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
 	   file://0001-Introduce-Memory-Monitor.patch \
           "
 
-# March 18, 2022
-SRCREV = "139c3e8e551ce9c1c4260b16ae5ca6efeab1a4f8"
+# May 27, 2022
+SRCREV = "2a0911478a5fc13c256f8e8109d3ed9e85537e77"
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
 

@@ -8,17 +8,21 @@ LIC_FILES_CHKSUM = " \
     file://../starboard/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57 \
 "
 
+# Disable by default
+DEFAULT_PREFERENCE_morty = "-1"
 TOOLCHAIN = "gcc"
 
-SRC_URI  = "git://cobalt.googlesource.com/cobalt.git;protocol=https;name=cobalt;branch=21.lts.stable"
+SRC_URI  = "git://cobalt.googlesource.com/cobalt.git;protocol=https;name=cobalt;branch=22.lts.stable"
 SRC_URI += "git://cobalt.googlesource.com/depot_tools.git;protocol=https;destsuffix=depot_tools;name=depottools"
-SRC_URI += "${CMF_GIT_ROOT}/rdk/components/generic/cobalt;protocol=${CMF_GIT_PROTOCOL};destsuffix=starboard;name=starboard;branch=21.lts.stable"
+SRC_URI += "${CMF_GIT_ROOT}/rdk/components/generic/cobalt;protocol=${CMF_GIT_PROTOCOL};destsuffix=starboard;name=starboard;branch=master"
+SRC_URI += "file://0001-Fix-crash-on-unfreeze-from-preloaded-state.patch"
 
-PR = "7"
-SRCREV_cobalt = "21.lts.${PR}"
+PR = "3"
+SRCREV_cobalt = "22.lts.${PR}"
 SRCREV_depottools = "913305037df7027dc118253b7c2d3655d181c612"
-# May 3, 2022
-SRCREV_starboard = "4c7fadd6a8bb011b31eaa0a39ec29b5f85a9306e"
+# May 23, 2022
+SRCREV_starboard = "23187586ace4343852bf3dae7dc5ec1f98fd6573"
+
 SRCREV_FORMAT = "cobalt_depottools_starboard"
 
 do_fetch[vardeps] += " SRCREV_FORMAT SRCREV_cobalt SRCREV_depottools SRCREV_starboard"

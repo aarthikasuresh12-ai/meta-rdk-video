@@ -2,7 +2,7 @@ SUMMARY = "Test Development Kit for RDK stack"
 SECTION = "console/utils"
 
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=4d143a9ba9a6853832bd72db78d75a84"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=94800ec97dc80e9d6e0c228c2100adc2"
 
 PV = "${RDK_RELEASE}"
 SRC_URI = "${CMF_GIT_ROOT}/rdkv/tools/tdkv;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};name=tdk"
@@ -57,6 +57,7 @@ do_install_append () {
         install -D -p -m 755 ${D}${bindir}/gen_multiple_events ${D}${TDK_TARGETDIR}/
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             install -D -p -m 755 ${D}${bindir}/mediapipelinetests ${D}${TDK_TARGETDIR}/
+            install -D -p -m 755 ${D}${bindir}/mediapipelinetests_trickplay ${D}${TDK_TARGETDIR}/
             install -D -p -m 755 ${D}${bindir}/Essos_TDKTestApp ${D}${TDK_TARGETDIR}/
             install -D -p -m 755 ${D}${bindir}/Westeros_TDKTestApp ${D}${TDK_TARGETDIR}/
         fi
@@ -74,6 +75,7 @@ do_install_append () {
         install -D -p -m 755 ${D}${bindir}/gen_multiple_events ${D}${TDK_TARGETDIR}/
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             install -D -p -m 755 ${D}${bindir}/mediapipelinetests ${D}${TDK_TARGETDIR}/
+            install -D -p -m 755 ${D}${bindir}/mediapipelinetests_trickplay ${D}${TDK_TARGETDIR}/
             install -D -p -m 755 ${D}${bindir}/Essos_TDKTestApp ${D}${TDK_TARGETDIR}/
             install -D -p -m 755 ${D}${bindir}/Westeros_TDKTestApp ${D}${TDK_TARGETDIR}/
         fi
@@ -87,6 +89,7 @@ do_install_append () {
         rm -rf ${D}${bindir}/gen_multiple_events
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             rm -rf ${D}${bindir}/mediapipelinetests
+            rm -rf ${D}${bindir}/mediapipelinetests_trickplay
             rm -rf ${D}${bindir}/Essos_TDKTestApp
             rm -rf ${D}${bindir}/Westeros_TDKTestApp
         fi
@@ -100,6 +103,7 @@ do_install_append () {
         ln -sf ${bindir}/gen_multiple_events ${D}${TDK_TARGETDIR}/
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             ln -sf ${bindir}/mediapipelinetests ${D}${TDK_TARGETDIR}/
+            ln -sf ${bindir}/mediapipelinetests_trickplay ${D}${TDK_TARGETDIR}/
             ln -sf ${bindir}/Essos_TDKTestApp ${D}${TDK_TARGETDIR}/
             ln -sf ${bindir}/Westeros_TDKTestApp ${D}${TDK_TARGETDIR}/
         fi
@@ -118,6 +122,7 @@ do_install_append () {
         ln -sf ${bindir}/gen_multiple_events ${D}${TDK_TARGETDIR}/
         if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
             ln -sf ${bindir}/mediapipelinetests ${D}${TDK_TARGETDIR}/
+            ln -sf ${bindir}/mediapipelinetests_trickplay ${D}${TDK_TARGETDIR}/
             ln -sf ${bindir}/Essos_TDKTestApp ${D}${TDK_TARGETDIR}/
             ln -sf ${bindir}/Westeros_TDKTestApp ${D}${TDK_TARGETDIR}/
         fi
@@ -143,6 +148,7 @@ do_install_append () {
     install -m 755 ${S}/IARMBUS_stub/scripts/RunAppInBackground.sh ${D}${TDK_TARGETDIR}/
     if ${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', 'true', 'false', d)}; then
         install -m 755 ${S}/FireboltCompliance_Validation/scripts/RunGraphicsTDKTest.sh ${D}${TDK_TARGETDIR}/
+        install -m 755 ${S}/FireboltCompliance_Validation/scripts/ExecuteSuite.sh ${D}${TDK_TARGETDIR}/opensourcecomptest/
     fi
 }
 

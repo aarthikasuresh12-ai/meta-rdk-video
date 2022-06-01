@@ -15,7 +15,7 @@ S = "${WORKDIR}/git/diag"
 DEPENDS = "jansson iarmbus trm-common safec-common-wrapper"
 DEPENDS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' safec', '', d)}"
 
-inherit autotools systemd pkgconfig syslog-ng-config-gen
+inherit autotools systemd pkgconfig syslog-ng-config-gen breakpad-logmapper
 SYSLOG-NG_FILTER = "trmmgr"
 SYSLOG-NG_SERVICE_trmmgr = "trmmgr.service"
 SYSLOG-NG_DESTINATION_trmmgr = "trmmgr.log"
@@ -41,3 +41,6 @@ do_install() {
 SYSTEMD_SERVICE_${PN} = "trmmgr.service"
 FILES_${PN} += "${systemd_unitdir}/system/trmmgr.service"
 
+# Breakpad processname and logfile mapping
+BREAKPAD_LOGMAPPER_PROCLIST = "TRMMgr"
+BREAKPAD_LOGMAPPER_LOGLIST = "trmmgr.log"

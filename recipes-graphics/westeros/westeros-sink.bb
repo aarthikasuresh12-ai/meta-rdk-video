@@ -18,4 +18,3 @@ DEPENDS_append = "${@bb.utils.contains('DISTRO_FEATURES', 'westeros_sink_softwar
 CFLAGS_append = "${@bb.utils.contains('DISTRO_FEATURES', 'westeros_sink_software_decode', ' -DENABLE_SW_DECODE', '', d)}"
 LDFLAGS_append = "${@bb.utils.contains('DISTRO_FEATURES', 'westeros_sink_software_decode', ' -lavcodec -lavutil', '', d)}"
 SRC_URI += "file://0001-westeros-sink-1080p.patch;patchdir=../../"
-SRC_URI += "file://0001-paramount-fix_stable2.patch;patchdir=../../"

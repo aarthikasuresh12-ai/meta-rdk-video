@@ -1,0 +1,54 @@
+##########################################
+From: Thamim Razith <Thamim Razith@comcast.com>
+Date: Thu, 21 Apr 2022 21:41:28 +0000
+Subject: [PATCH] /0001-RDKTV-15888-Socket-Closed.patch
+Source: COMCAST
+License: GPLV2
+Upstream-Status: Pending
+Signed-off-by: Thamim Razith <tabbas651@cable.comcast.com>
+##########################################
+Index: git/Source/core/SocketPort.cpp
+===================================================================
+--- git.orig/Source/core/SocketPort.cpp
++++ git/Source/core/SocketPort.cpp
+@@ -371,11 +371,16 @@ namespace Core {
+     {
+         TRACE_L5("Destructor SocketPort <%p>", (this));
+ 
+-        // Make sure the socket is closed before you destruct. Otherwise
++	// Make sure the socket is closed before you destruct. Otherwise
+         // the virtuals might be called, which are destructed at this point !!!!
++        TRACE_L1("Destructor: Before Lock");
++        m_syncAdmin.Lock();
++        TRACE_L1("Destructor: After Lock");
+         ASSERT(m_Socket == INVALID_SOCKET);
++        TRACE_L1("Destructor: Before Free");
+ 
+         ::free(m_SendBuffer);
++        m_syncAdmin.Unlock();
+     }
+ 
+     //////////////////////////////////////////////////////////////////////
+@@ -1110,15 +1115,22 @@ namespace Core {
+ 
+         ASSERT(m_Socket != INVALID_SOCKET);
+ 
++        TRACE_L1("CLOSED: Before Mutex Lock");
+         m_syncAdmin.Lock();
+ 
+         // Turn them all off, except for the SHUTDOWN bit, to show whether this was
+         // done on our request, or closed from the other side...
++        TRACE_L1("CLOSED: m_state value before shutdown bit %lu",m_State);
+         m_State &= SHUTDOWN;
+ 
++        TRACE_L1("CLOSED: m_state value before StateChangefunction %lu",m_State);
++
+         StateChange();
+ 
++        TRACE_L1("CLOSED: m_state value after StateChangefunction %lu",m_State);
++
+         m_State &= (~SHUTDOWN);
++        TRACE_L1("CLOSED: m_state value after shutdown bit %lu",m_State);
+ 
+         if (m_State != 0) {
+             result = false;
