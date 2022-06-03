@@ -98,7 +98,7 @@ CFLAGS += "-std=c++11 -fPIC -D_REENTRANT -Wall -I./include ${INCLUDE_DIRS}"
 
 CFLAGS_append_client = " -DMEDIA_CLIENT"
 CFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', '-DENABLE_MFR_WIFI', '', d)}"
-CFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'build_rne', '-DENABLE_LINUX_REMOTE_KEYS', '', d)}"
+CFLAGS_append = " ${@bb.utils.contains_any('DISTRO_FEATURES', 'build_rne flex2_rdk firebolt_rdk_certify', '-DENABLE_LINUX_REMOTE_KEYS', '', d)}"
 CFLAGS_append = " -DUSE_YAJL2"
 EXTRA_OEMAKE += "-e MAKEFLAGS="
 
