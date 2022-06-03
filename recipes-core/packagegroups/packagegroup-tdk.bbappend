@@ -4,7 +4,6 @@ RDEPENDS_packagegroup-tdk += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_fi
   gstreamer1.0-plugins-base-videotestsrc \
   gstreamer1.0-plugins-base-audiotestsrc \
   gstreamer1.0-plugins-base-test \
-  aamp-bin \
   gstreamer1.0-plugins-bad-test \
   gstreamer1.0-plugins-good-test \
   gstreamer1.0-plugins-good-videobox \
@@ -13,7 +12,6 @@ RDEPENDS_packagegroup-tdk += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_fi
   gstreamer1.0-plugins-good-rtp \
   gstreamer1.0-plugins-good-wavpack \
   gstreamer1.0-plugins-good-flv \
-  gstreamer1.0-plugins-good-matroska \
   gstreamer1.0-plugins-good-wavparse \
   gstreamer1.0-plugins-bad-jpegformat \
   ', '', d)}"

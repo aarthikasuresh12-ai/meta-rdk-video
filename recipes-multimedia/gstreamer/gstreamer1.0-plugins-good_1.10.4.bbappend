@@ -61,9 +61,6 @@ do_install_append () {
         install -D -p -m 755 ${B}/tests/check/elements/jpegdec ${D}/${GSTREAMER_TEST_BINPATH}/
         install -D -p -m 755 ${B}/tests/check/elements/jpegenc ${D}/${GSTREAMER_TEST_BINPATH}/
         install -D -p -m 755 ${B}/tests/check/elements/level ${D}/${GSTREAMER_TEST_BINPATH}/
-        install -D -p -m 755 ${B}/tests/check/elements/matroskademux ${D}/${GSTREAMER_TEST_BINPATH}/
-        install -D -p -m 755 ${B}/tests/check/elements/matroskamux ${D}/${GSTREAMER_TEST_BINPATH}/
-        install -D -p -m 755 ${B}/tests/check/elements/matroskaparse ${D}/${GSTREAMER_TEST_BINPATH}/
         install -D -p -m 755 ${B}/tests/check/elements/mpegaudioparse ${D}/${GSTREAMER_TEST_BINPATH}/
         install -D -p -m 755 ${B}/tests/check/elements/mulawdec ${D}/${GSTREAMER_TEST_BINPATH}/
         install -D -p -m 755 ${B}/tests/check/elements/mulawenc ${D}/${GSTREAMER_TEST_BINPATH}/
