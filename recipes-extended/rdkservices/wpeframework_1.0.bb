@@ -21,6 +21,7 @@ SRC_URI += "file://0003-OCDM-increase-RPC-comm-timeout.patch \
            file://0001-RDKTV-15888-Socket-Closed.patch \
            file://0001-Unregister-During-Socket-close.patch \
            file://0001-RDKTV-15395-ProcessContainers.patch \
+	   file://0001-RDKTV-15803-Setting-NULL-To-Unused-Ptr.patch \
            "
 
 inherit systemd update-rc.d pythonnative
