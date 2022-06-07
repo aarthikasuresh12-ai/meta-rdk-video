@@ -1,0 +1,27 @@
+From 3651cf6792f57006d66e55d90bda7aa34602b5a2 Mon Sep 17 00:00:00 2001
+From: nsahu910 <Neeraj_Sahu@comcast.com>
+Date: Sat, 21 May 2022 10:29:09 +0000
+Subject: [PATCH] Unregister-During-Socket-close
+Source: COMCAST
+License: GPLV2
+Upstream-Status: Pending
+Signed-off-by: Neeraj Sahu <Neeraj_Sahu@comcast.com>
+---
+ Source/core/SocketPort.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Source/core/SocketPort.cpp b/Source/core/SocketPort.cpp
+index ae3aa6b1..2f9ddd31 100644
+--- a/Source/core/SocketPort.cpp
++++ b/Source/core/SocketPort.cpp
+@@ -1136,6 +1136,7 @@ namespace Core {
+             result = false;
+         } else {
+             DestroySocket(m_Socket);
++	    ResourceMonitor::Instance().Unregister(*this);
+             // Remove socket descriptor for UNIX domain datagram socket.
+             if ((m_LocalNode.Type() == NodeId::TYPE_DOMAIN) && 
+                 ((m_SocketType == SocketPort::LISTEN) || (SocketMode() != SOCK_STREAM)) &&
+-- 
+2.17.1
+
