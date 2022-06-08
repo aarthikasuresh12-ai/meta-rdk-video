@@ -1,0 +1,41 @@
+#####################################################################
+Date: Tue, 08 June 2022 02:35:00 PM
+From:
+Subject: Fix for lambda crash error RDKTV-16258
+Source: COMCAST
+License:
+Upstream-Status:
+Signed-off-by: muhammed rafi c <muhammed_rafi@comcast.com>
+#####################################################################
+Index: git/Tools/ProxyStubGenerator/StubGenerator.py
+===================================================================
+--- git.orig/Tools/ProxyStubGenerator/StubGenerator.py
++++ git/Tools/ProxyStubGenerator/StubGenerator.py
+@@ -826,8 +826,10 @@ def GenerateStubs(output_file, source_fi
+                     emit.Line("// call implementation")
+                     emit.Line("%s* implementation = reinterpret_cast<%s*>(input.Implementation());" %
+                               ((" ".join(m.qualifiers) + " " + iface_name).strip(),  (" ".join(m.qualifiers) + " " + iface_name).strip()))
+-                    emit.Line("ASSERT((implementation != %s) && \"Null %s implementation pointer\");" %
+-                              (NULLPTR, iface_name))
++                    #emit.Line("ASSERT((implementation != %s) && \"Null %s implementation pointer\");" %
++                    #         (NULLPTR, iface_name))
++                    emit.Line("if (implementation != %s) {" % (NULLPTR))
++                    emit.IndentInc()
+                     call = ""
+                     if retval.has_output:
+                         call += "%s %s = " % (retval.str_noref, retval.name)
+@@ -914,7 +916,13 @@ def GenerateStubs(output_file, source_fi
+                                     p.name)
+                                 emit.IndentDec()
+                                 emit.Line("}")
+-
++                    emit.IndentDec()
++                    emit.Line("}")
++                    emit.Line("else {")
++                    emit.IndentInc()
++                    emit.Line("TRACE_L1(\"Failed to get instance of %s proxy\");" % iface_name)
++                    emit.IndentDec()
++                    emit.Line("}")
+                 else:
+                     log.Print("stubbed method %s" % m.full_name, source_file)
+                     emit.Line("// RPC::Data::Input& input(message->Parameters());")
