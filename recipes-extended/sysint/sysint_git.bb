@@ -449,6 +449,7 @@ do_install_append_rdktv() {
         install -m 0755 ${S}/../rdktv/etc/env_setup.sh ${D}${sysconfdir}
         install -m 0644 ${S}/../rdktv/systemd_units/vdec-statistics.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../rdktv/systemd_units/disk-check.service ${D}${systemd_unitdir}/system
+        install -m 0755 ${S}/../rdktv/lib/rdk/get-reboot-reason.sh ${D}${base_libdir}/rdk/get-reboot-reason.sh
 }
 
 SYSTEMD_SERVICE_${PN} = "hosts.service"
@@ -538,6 +539,8 @@ SYSTEMD_SERVICE_${PN}_append_container = " lxc-usb-event-trigger.path"
 SYSTEMD_SERVICE_${PN}_append_hybrid = " htmldiag-pre.service"
 
 SYSTEMD_SERVICE_${PN}_append_rdkzram = " zram.service"
+
+SYSTEMD_SERVICE_${PN}_append_rdktv = " vdec-statistics.service"
 
 PACKAGE_BEFORE_PN += "${PN}-conf"
 
