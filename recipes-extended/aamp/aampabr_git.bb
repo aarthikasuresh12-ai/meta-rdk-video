@@ -4,7 +4,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://COPYING;md5=175792518e4ac015ab6696d16c4f607e"
 
 PV = "${RDK_RELEASE}"
-AAMP_ABR_RELEASE_TAG_NAME ?= "4.4.1.0"
+AAMP_ABR_RELEASE_TAG_NAME ?= "4.5.1.0"
 SRC_URI = "${CMF_GIT_ROOT}/rdk/components/generic/aampabr;protocol=${CMF_GIT_PROTOCOL};branch=${AAMP_ABR_RELEASE_TAG_NAME};nobranch=1;name=aamp-abr"
 
 SRCREV_aamp-abr = "${AUTOREV}"
