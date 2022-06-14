@@ -24,6 +24,7 @@ SRC_URI += "file://0003-OCDM-increase-RPC-comm-timeout.patch \
            file://0001-RDKTV-15803-Setting-NULL-To-Unused-Ptr.patch \
            file://DELIA-56519_pass_DEBUG_through_CFLAGS.patch \
            file://0001-Thunder_trace_log_enabled.patch \
+           file://0001-RDKTV-15393-clock_gettime.patch \
            "
 
 inherit systemd update-rc.d pythonnative
