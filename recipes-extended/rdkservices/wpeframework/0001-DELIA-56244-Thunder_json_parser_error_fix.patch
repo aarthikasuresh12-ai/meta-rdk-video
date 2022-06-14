@@ -1,0 +1,24 @@
+##########################################################################################
+Date: Tue, 14 June 2022 02:00:00 PM
+From:
+Subject: Fix for DELIA-56244-Thunder json parser does not extract integer value correctly
+Source: COMCAST
+License:
+Upstream-Status:
+Signed-off-by: muhammed rafi c <muhammed_rafi@comcast.com>
+##########################################################################################
+Index: git/Source/core/JSON.h
+===================================================================
+--- git.orig/Source/core/JSON.h
++++ git/Source/core/JSON.h
+@@ -1836,6 +1836,10 @@ namespace Core {
+                 } else {
+                     offset = 0;
+                     _scopeCount |= ((_scopeCount & QuoteFoundBit) ? SetBit : (_value == NullTag ? NullBit : SetBit));
++                    if ((_scopeCount & QuoteFoundBit) == 0) {
++                        // Right-trim the non-string value, it's always left-trimmed already
++                        _value.erase(std::find_if(_value.rbegin(), _value.rend(), [](const unsigned char ch) { return (!std::isspace(ch)); }).base(), _value.end());
++                    }
+                 }
+ 
+                 return (result);
