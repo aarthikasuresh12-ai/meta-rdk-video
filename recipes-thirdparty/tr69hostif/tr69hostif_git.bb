@@ -12,7 +12,7 @@ SRCREV_FORMAT = "tr69hostif"
 
 S = "${WORKDIR}/git"
 
-DEPENDS = "iarmbus iarmmgrs e2fsprogs iksemel libsoup-2.4 libsyswrapper yajl \
+DEPENDS = "iarmbus iarmmgrs e2fsprogs libsoup-2.4 libsyswrapper yajl \
            devicesettings procps glib-2.0 \
            storagemanager cjson libtinyxml2\
 	  "
