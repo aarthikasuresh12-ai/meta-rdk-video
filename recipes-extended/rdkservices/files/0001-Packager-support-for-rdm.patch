@@ -13,7 +13,7 @@ Index: git/Packager/opkg.conf.in
 ===================================================================
 --- git.orig/Packager/opkg.conf.in
 +++ git/Packager/opkg.conf.in
-@@ -1,6 +1,5 @@
+@@ -1,6 +1,6 @@
 -src/gz snapshots http://yoctobuild.metrological.com/snapshots/vodafone
 -src/gz local file:///hdd/cache/packages
 -dest root /
@@ -25,6 +25,7 @@ Index: git/Packager/opkg.conf.in
 +option lock_file /run/opkg/opkg.lock
 +option connect_timeout_ms 30000
 +option transfer_timeout_ms 600000
++option follow_location 1
 Index: git/Packager/PackagerImplementation.cpp
 ===================================================================
 --- git.orig/Packager/PackagerImplementation.cpp
