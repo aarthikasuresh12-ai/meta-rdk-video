@@ -1,12 +1,12 @@
-EXTRA_OECONF_remove = "${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', ' --disable-jpegformat --disable-rawparse ', '', d)}"
+EXTRA_OECONF_remove = "${@bb.utils.contains('DISTRO_FEATURES', 'enable_gst_testing', ' --disable-jpegformat --disable-rawparse ', '', d)}"
 
 TDK_TARGETDIR="${@bb.utils.contains('DISTRO_FEATURES','ENABLE_IPK','/opt/TDK','${localstatedir}/TDK',d)}"
 GSTREAMER_TEST_BINPATH="${TDK_TARGETDIR}/opensourcecomptest/gst-plugin-bad/"
 
-RDEPENDS_${PN}-test = "${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', ' bash ', '', d)}"
+RDEPENDS_${PN}-test = "${@bb.utils.contains('DISTRO_FEATURES', 'enable_gst_testing', ' bash ', '', d)}"
 
 def build_gst_test_suites(d):
-    build_gst_tests = bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', '1', '0', d)
+    build_gst_tests = bb.utils.contains('DISTRO_FEATURES', 'enable_gst_testing', '1', '0', d)
     return build_gst_tests
 
 do_compile_append() {
@@ -55,5 +55,5 @@ do_install_append () {
     fi
 }
 
-PACKAGES =+ "${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', ' ${PN}-test ', '', d)}"
-FILES_${PN}-test += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', '${GSTREAMER_TEST_BINPATH}', '', d)}"
+PACKAGES =+ "${@bb.utils.contains('DISTRO_FEATURES', 'enable_gst_testing', ' ${PN}-test ', '', d)}"
+FILES_${PN}-test += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_gst_testing', '${GSTREAMER_TEST_BINPATH}', '', d)}"
