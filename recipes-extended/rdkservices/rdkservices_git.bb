@@ -25,13 +25,13 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://0001-RDKTV-11792-increase-retry-count.patch \
           "
 
-# Jun 16, 2022
-SRCREV = "8bb6b326471dbf8121e3ae6da2aa69c1353bb54a"
+# Jun 20, 2022
+SRCREV = "b45dc2e15c98609d0ea2a063287569032737e4a0"
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
 
 DEPENDS += "wpeframework-clientlibraries devicesettings iarmbus iarmmgrs tts storagemanager nopoll audiocapturemgr hdmicec ctrlm-headers"
-DEPENDS +=  " trower-base64 rfc telemetry "
+DEPENDS +=  " trower-base64 rfc telemetry websocketpp boost "
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', 'bluetooth-mgr', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'rdkshell', ' rdkshell ', '', d)}"
 DEPENDS += " breakpad-wrapper"
