@@ -20,13 +20,13 @@ do_install() {
    install -d ${D}/home/root
    cp -a ${B}/rdkshell ${D}/home/root
 
-   install -d ${D}/usr/lib
-   cp -a ${B}/librdkshell.so ${D}/usr/lib
+   install -d ${D}/${libdir}
+   cp -a ${B}/librdkshell.so ${D}/${libdir}
 
-   install -d ${D}/usr/lib/plugins/westeros
-   cp -a ${B}/extensions/RdkShellExtendedInput/libwesteros_plugin_rdkshell_extended_input.so.1.0.0 ${D}/usr/lib/plugins/westeros/libwesteros_plugin_rdkshell_extended_input.so
+   install -d ${D}/${libdir}/plugins/westeros
+   cp -a ${B}/extensions/RdkShellExtendedInput/libwesteros_plugin_rdkshell_extended_input.so.1.0.0 ${D}/${libdir}/plugins/westeros/libwesteros_plugin_rdkshell_extended_input.so
 
-   install -d ${D}/usr/lib
+   install -d ${D}/${libdir}
    install -d ${D}${includedir}
    mkdir -p ${D}${includedir}/rdkshell
 
@@ -43,5 +43,5 @@ DEBIAN_NOAUTONAME_${PN} = "1"
 BBCLASSEXTEND = "native"
 
 FILES_${PN} += "/home/root/rdkshell"
-FILES_${PN} += "/usr/lib/librdkshell.so"
-FILES_${PN} += "/usr/lib/plugins/westeros/libwesteros_plugin_rdkshell_extended_input.so"
+FILES_${PN} += "${libdir}/librdkshell.so"
+FILES_${PN} += "${libdir}/plugins/westeros/libwesteros_plugin_rdkshell_extended_input.so"

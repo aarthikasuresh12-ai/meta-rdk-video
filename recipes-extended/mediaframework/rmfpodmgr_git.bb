@@ -14,7 +14,7 @@ S = "${WORKDIR}/git/qamsource/podmgr"
 export OPENSSL_CFLAGS = "-I=${includedir}/openssl-0.9"
 export OPENSSL_LDFLAGS = "-lcrypto-0.9"
 export FSROOT = '='
-export LIBPREFIX = "=/usr/lib"
+export LIBPREFIX = "=${libdir}"
 export NETSNMP_LIBS = "${LIBPREFIX}/libnetsnmpagent.la ${LIBPREFIX}/libnetsnmphelpers.la ${LIBPREFIX}/libnetsnmpmibs.la ${LIBPREFIX}/libnetsnmp.la"
 export SNMP_LIBS = "-lsnmpinterface ${NETSNMP_LIBS}"
 export RMF_OSAL_LIBS = "-lrmfosal -lrmfosalutils -lrmfproxyservice"

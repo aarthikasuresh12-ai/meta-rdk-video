@@ -280,7 +280,7 @@ do_install() {
         # Samhain can only invoke external utilities present in trusted FHS path
         install -d ${D}${sbindir}
         if [ -f ${S}/../lib/rdk/upload2splunk.sh ]; then
-            install -m 0755 ${S}/../lib/rdk/upload2splunk.sh ${D}${sbindir}/
+            install -m 0755 ${S}/../lib/rdk/upload2splunk.sh ${D}${sbindir}
         fi
 	if [ -f ${D}/${base_libdir}/rdk/upload2splunk.sh ]; then
 	    rm -f ${D}${base_libdir}/rdk/upload2splunk.sh
@@ -552,7 +552,7 @@ FILES_${PN} += "/rebootSTB.sh"
 FILES_${PN} += "/rebootNow.sh"
 FILES_${PN} += "${sysconfdir}/*"
 FILES_${PN} += "${base_bindir}/timestamp"
-FILES_${PN} += "${sbindir}/upload2splunk.sh"
+FILES_${PN} += "${sbindir}/*"
 FILES_${PN}_append_hybrid = " ${systemd_unitdir}/system/update-device-details.service.d/update-device-details.conf"
 FILES_${PN}_append_client = " /HrvInitScripts/*"
 FILES_${PN}-conf = "${sysconfdir}/rfcdefaults/sysint.ini"

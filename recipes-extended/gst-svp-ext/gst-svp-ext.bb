@@ -15,16 +15,16 @@ S = "${WORKDIR}/git/"
 BUILD_FLAGS += "${@bb.utils.contains('DISTRO_FEATURES', 'dynamic_svp_decryption', '-DDYNAMIC_SVP_DECRYPTION=ENABLED', '', d)}"
 BUILD_FLAGS += "${@bb.utils.contains('DISTRO_FEATURES', 'rdk_svp', '-DRDK_SVP=ENABLED', '', d)}"
 
-CXXFLAGS += "-fPIC -I${STAGING_INCDIR} -I${STAGING_INCDIR}/glib-2.0 -I${STAGING_INCDIR}/gstreamer-1.0 -I${STAGING_DIR_TARGET}/usr/lib/glib-2.0/include/ -I${WORKDIR}/git/ ${BUILD_FLAGS}"
+CXXFLAGS += "-fPIC -I${STAGING_INCDIR} -I${STAGING_INCDIR}/glib-2.0 -I${STAGING_INCDIR}/gstreamer-1.0 -I${STAGING_DIR_TARGET}/${libdir}/glib-2.0/include/ -I${WORKDIR}/git/ ${BUILD_FLAGS}"
 
 do_compile () {
     oe_runmake -C ${S} -f Makefile PLATFORM_SVP="${PLATFORM_SVP}"
 }
 
 do_install() {
-        install -d ${D}/usr/lib
+        install -d ${D}/${libdir}
         install -d ${D}/usr/include
-        install -m 0755 ${S}/libgstsvpext.so        ${D}/usr/lib
+        install -m 0755 ${S}/libgstsvpext.so        ${D}/${libdir}
         install -m 0644 ${S}/gst_svp_meta.h         ${D}/usr/include
         install -m 0644 ${S}/gst_svp_performance.h  ${D}/usr/include
         install -m 0644 ${S}/GstPerf.h              ${D}/usr/include

@@ -51,6 +51,6 @@ do_install(){
 
 FILES_${PN} = "${systemd_unitdir}/system/appmanager.service"
 FILES_${PN} += "/home/root"
-FILES_${PN} += "${base_libdir}/rdk/*"
+FILES_${PN} += "/lib/rdk/*"
 
 SYSTEMD_SERVICE_${PN} = "${@bb.utils.contains('DISTRO_FEATURES', 'rdkshell', '', 'appmanager.service', d)}"
