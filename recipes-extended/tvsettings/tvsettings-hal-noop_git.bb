@@ -11,11 +11,13 @@ PV = "git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-DEPENDS = "tvsettings-hal-headers"
+DEPENDS = "iarmmgrs-hal-headers iarmbus tvsettings-hal-headers"
 
 EXTRA_OEMAKE += "-e MAKEFLAGS="
 
 INCLUDE_DIRS = " \
+    -I${STAGING_DIR_TARGET}${includedir}/rdk/iarmmgrs-hal/ \
+    -I${STAGING_DIR_TARGET}${includedir}/rdk/iarmbus/ \
     -I${STAGING_DIR_TARGET}${includedir}/rdk/tv-hal/ \
     "
 
