@@ -16,17 +16,11 @@ DEPENDS = "iarmbus iarmmgrs e2fsprogs iksemel libsoup-2.4 libsyswrapper yajl \
            devicesettings procps glib-2.0 \
            storagemanager cjson libtinyxml2\
 	  "
-DEPENDS_append = " rdk-logger libparodus parodus"
+DEPENDS_append = " rdk-logger libparodus parodus "
 DEPENDS_append_client = " tr69agent-headers netsrvmgr"
 
 DEPENDS += "safec-common-wrapper"
 DEPENDS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' safec', " ", d)}"
-
-# Add remotedebugger dependency
-DEPENDS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'rrd', ' remotedebugger', " ", d)}"
-RDEPENDS_${PN}_append  = " ${@bb.utils.contains('DISTRO_FEATURES', 'rrd',' remotedebugger', '',d)}"
-CXXFLAGS_append     = "${@bb.utils.contains('DISTRO_FEATURES', 'rrd', ' -DUSE_REMOTE_DEBUGGER', '', d)}"
-CXXFLAGS_append     = "${@bb.utils.contains('DISTRO_FEATURES', 'rrd', ' -I=${includedir}/rrd/', '', d)}"
 
 inherit pkgconfig breakpad-logmapper syslog-ng-config-gen
 SYSLOG-NG_FILTER = "parodus tr69hostif"
@@ -36,6 +30,7 @@ SYSLOG-NG_LOGRATE_tr69hostif = "high"
 SYSLOG-NG_SERVICE_parodus = "parodus.service"
 SYSLOG-NG_DESTINATION_parodus = "parodus.log"
 SYSLOG-NG_LOGRATE_parodus = "high"
+
 
 CXXFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' `pkg-config --cflags libsafec`', ' -fPIC', d)}"
 CXXFLAGS_append_client = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' `pkg-config --cflags libsafec`', ' -fPIC', d)}"

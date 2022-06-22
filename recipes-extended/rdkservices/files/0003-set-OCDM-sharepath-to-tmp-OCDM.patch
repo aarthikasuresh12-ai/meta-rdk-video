@@ -1,16 +1,25 @@
-From: Punam Kumbhar <punam_kumbhar@comcast.com>
-Date: Thur, 03 Feb 2022 07:02:00 +0000
+From 62c01e3245719674cbb76368e78682cf52ee1419 Mon Sep 17 00:00:00 2001
+From: Gurdal Oruklu <gurdal_oruklu@comcast.com>
+Date: Wed, 11 Nov 2020 23:13:21 +0000
 Subject: [PATCH] set OCDM sharepath to /tmp/OCDM
-Signed-off-by:  Punam Kumbhar <punam_kumbhar@comcast.com>
+
+Signed-off-by: Gurdal Oruklu <gurdal_oruklu@comcast.com>
+---
+ OpenCDMi/OCDM.config | 1 +
+ 1 file changed, 1 insertion(+)
+
 diff --git a/OpenCDMi/OCDM.config b/OpenCDMi/OCDM.config
-index 7b96107..dffd27d 100644
+index a6ef39a..1d0f6e1 100644
 --- a/OpenCDMi/OCDM.config
 +++ b/OpenCDMi/OCDM.config
-@@ -17,6 +17,7 @@ end()
+@@ -18,6 +18,7 @@ end()
  ans(rootobject)
  
  map()
-+    kv(sharepath "/tmp/OCDM")
-     kv(systems ___array___)
-     if (NOT PLUGIN_OPENCDMI_MODE)
-        kv(outofprocess ${PLUGIN_OPENCDMI_OOP})
++   kv(sharepath "/tmp/OCDM")
+    kv(systems ___array___)
+ end()
+ ans(configuration)
+-- 
+2.14.2
+

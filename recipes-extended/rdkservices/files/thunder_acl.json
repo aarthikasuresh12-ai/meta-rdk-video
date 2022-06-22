@@ -94,7 +94,7 @@
           "PlayerInfo" : { "default" : "allowed" },
           "DisplayInfo" : { "default" : "allowed" },
           "DeviceIdentification" : { "default" : "allowed" },
-          "org.rdk.Network" : { "default" : "blocked", "methods" : [ "getDefaultInterface", "register", "getInterfaces" ] },
+          "org.rdk.Network" : { "default" : "blocked", "methods" : [ "getDefaultInterface" ] },
           "org.rdk.TextToSpeech" : { "default" : "allowed", "methods" : [ "enabletts" ] },   
           "OCDM" : { "default" : "allowed" },
           "org.rdk.AuthService" : { "default" : "blocked", "methods" : [ "getExperience" ] }

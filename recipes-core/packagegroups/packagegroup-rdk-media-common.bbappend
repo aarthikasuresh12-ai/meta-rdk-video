@@ -12,5 +12,4 @@ RDEPENDS_packagegroup-rdk-media-common += "\
    ${@bb.utils.contains("DISTRO_FEATURES", "rdkshell", "rdkshell", "", d)} \
    ${@bb.utils.contains("DISTRO_FEATURES", "offline_apps", "lxapp-bt-audio  residentui", "", d)} \
    ${@bb.utils.contains("DISTRO_FEATURES", "build_rne", "rdkresidentapp wpeframework-ui", "", d)} \
-   ${@bb.utils.contains('DISTRO_FEATURES', 'fwupgrader', 'rdkfwupgrader', '', d)} \
    "

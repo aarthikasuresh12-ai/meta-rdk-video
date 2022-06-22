@@ -18,8 +18,8 @@ SRC_URI = "git://github.com/rdkcentral/ThunderClientLibraries.git;protocol=git;b
            file://0009-DELIA-51340.patch \
            "
 
-# Feb 10, 2022
-SRCREV_wpeframework-clientlibraries = "8fa988587b6164cdbe1ce7d4661cd1b31b8f4505"
+# Aug 31, 2021
+SRCREV_wpeframework-clientlibraries = "f69e573984e9f46300eef90dafe81663beb6b8f6"
 
 
 # ----------------------------------------------------------------------------

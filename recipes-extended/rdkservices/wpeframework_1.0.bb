@@ -18,11 +18,10 @@ SRC_URI += "file://0003-OCDM-increase-RPC-comm-timeout.patch \
            file://603.patch \
            file://0001-Support-negative-numbers-with-write_config.patch \
            file://LLAMA-2254_fix_netlink_buffer_size_error.patch \
-           file://0001-RDKTV-15888-Socket-Closed.patch \
-           file://0001-Unregister-During-Socket-close.patch \
-           file://0001-RDKTV-15395-ProcessContainers.patch \
-	   file://0001-RDKTV-15803-Setting-NULL-To-Unused-Ptr.patch \
-           "
+           file://0005-RDK-33247-ProcessContainers-PID-fix.patch \
+           file://BCOM-5717-Memory-Allocaion-fix.patch \
+           file://0001-DELIA-54331-Don-t-set-the-receive-buffer.patch \
+"
 
 inherit systemd update-rc.d pythonnative
 

@@ -1,0 +1,48 @@
+From b73f3e9ea84572d30fc589a4251186f073f33378 Mon Sep 17 00:00:00 2001
+From: Nikita Poltorapavlo <Nikita_Poltorapavlo2@cable.comcast.com>
+Date: Wed, 16 Feb 2022 11:50:32 +0200
+Source: COMCAST
+License: GPLV2
+Upstream-Status: Pending
+Subject: [PATCH] DELIA-54331: Don't set the receive buffer
+
+Reason for change: TCP delays caused by the receive buffer
+set after connect/accept to a value less than the localhost
+MSS and the TCP window advertised on connect/accept.
+Test Procedure: Check performance.
+Risks: Low
+Signed-off-by: Nikita Poltorapavlo <npoltorapavlo@productengine.com>
+---
+ Source/plugins/Channel.cpp     | 2 +-
+ Source/websocket/JSONRPCLink.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Source/plugins/Channel.cpp b/Source/plugins/Channel.cpp
+index d6526d3f..c20dcd0a 100644
+--- a/Source/plugins/Channel.cpp
++++ b/Source/plugins/Channel.cpp
+@@ -28,7 +28,7 @@ namespace PluginHost {
+ #pragma warning(disable : 4355)
+ #endif
+     Channel::Channel(const SOCKET& connector, const Core::NodeId& remoteId)
+-        : BaseClass(true, false, 5, _requestAllocator, false, connector, remoteId, 1024, 1024)
++        : BaseClass(true, false, 5, _requestAllocator, false, connector, remoteId, 1024, -1)
+         , _adminLock()
+         , _ID(0)
+         , _nameOffset(~0)
+diff --git a/Source/websocket/JSONRPCLink.h b/Source/websocket/JSONRPCLink.h
+index 452b5fa4..9946c876 100644
+--- a/Source/websocket/JSONRPCLink.h
++++ b/Source/websocket/JSONRPCLink.h
+@@ -132,7 +132,7 @@ namespace JSONRPC {
+     
+             public:
+                 ChannelImpl(CommunicationChannel* parent, const Core::NodeId& remoteNode, const string& callsign, const string& query)
+-                    : BaseClass(5, FactoryImpl::Instance(), callsign, _T("JSON"), query, "", false, false, false, remoteNode.AnyInterface(), remoteNode, 256, 256)
++                    : BaseClass(5, FactoryImpl::Instance(), callsign, _T("JSON"), query, "", false, false, false, remoteNode.AnyInterface(), remoteNode, 256, -1)
+                     , _parent(*parent)
+                 {
+                 }
+-- 
+2.25.1
+

@@ -12,9 +12,9 @@ PV = "1.x+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-#May 26, 2022
+#January 11, 2021
 SRC_URI = "git://github.com/rdkcentral/RDKShell;branch=master"
-SRCREV = "bda7b79bf42c1e915bfcec73423f25c0af5cade5"
+SRCREV = "2bc8738494ae8ce8c20bce77a01796755a6fc3fd"
 
 do_install() {
    install -d ${D}/home/root

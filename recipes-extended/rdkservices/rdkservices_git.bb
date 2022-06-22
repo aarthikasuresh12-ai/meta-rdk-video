@@ -23,11 +23,13 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://rdkservices.ini \
            file://0001-support-for-focus-events.patch \
            file://0001-RDKTV-11792-increase-retry-count.patch \
-	   file://0001-Introduce-Memory-Monitor.patch \
+	   ${@bb.utils.contains('DISTRO_FEATURES', 'tinyrdk','file://0001-Introduce-Memory-Monitor.patch','',d)} \
+	   ${@bb.utils.contains('DISTRO_FEATURES', 'tinyrdk','file://0002-Listen-to-keyevents.patch','',d)} \
+	   ${@bb.utils.contains('DISTRO_FEATURES', 'tinyrdk','file://0101-Fix-tptimer-failure.patch','',d)} \
           "
 
-# June 1, 2022
-SRCREV = "d00ef6635927c655a958c5ac5e0df828aa9a76a0"
+# March 08, 2022
+SRCREV = "dfa45d2e87607116477f94bb46cf227847550b39"
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
 
@@ -61,7 +63,7 @@ WPEFRAMEWORK_LOCATIONSYNC_URI ?= "http://jsonip.metrological.com/?maf=true"
 
 PACKAGECONFIG ?= " \
     ${WPE_SNAPSHOT} \
-    activitymonitor avinput continuewatching controlservice voicecontrol datacapture devicediagnostics \
+    activitymonitor avinput continuewatching controlservice datacapture devicediagnostics \
     displaysettings framerate hdcpprofile hdmicec hdmiinput loggingpreferences \
     messenger network remoteactionmapping screencapture securityagent stateobserver \
     systemservices timer tracecontrol userpreferences warehouse monitor locationsync texttospeech persistent_store\
@@ -86,7 +88,6 @@ PACKAGECONFIG[avinput]              = "-DPLUGIN_AVINPUT=ON,-DPLUGIN_AVINPUT=OFF,
 PACKAGECONFIG[bluetoothcontrol]     = "-DPLUGIN_BLUETOOTH=ON -DPLUGIN_BLUETOOTH_AUTOSTART=true,-DPLUGIN_BLUETOOTH=OFF,,bluez5"
 PACKAGECONFIG[continuewatching]     = "-DPLUGIN_CONTINUEWATCHING=ON,-DPLUGIN_CONTINUEWATCHING=OFF,"
 PACKAGECONFIG[controlservice]       = "-DPLUGIN_CONTROLSERVICE=ON,-DPLUGIN_CONTROLSERVICE=OFF,"
-PACKAGECONFIG[voicecontrol]         = "-DPLUGIN_VOICECONTROL=ON,-DPLUGIN_VOICECONTROL=OFF,"
 PACKAGECONFIG[datacapture]          = "-DPLUGIN_DATACAPTURE=ON, -DPLUGIN_DATACAPTURE=OFF,"
 PACKAGECONFIG[devicediagnostics]    = "-DPLUGIN_DEVICEDIAGNOSTICS=ON,-DPLUGIN_DEVICEDIAGNOSTICS=OFF,"
 PACKAGECONFIG[deviceinfo]           = "-DPLUGIN_DEVICEINFO=ON,-DPLUGIN_DEVICEINFO=OFF,"

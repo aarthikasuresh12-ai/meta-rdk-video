@@ -16,7 +16,7 @@ SRCREV_FORMAT = "sysintgeneric_sysintdevice"
 
 S = "${WORKDIR}/git/device"
 inherit systemd syslog-ng-config-gen
-SYSLOG-NG_FILTER = " systemd dropbear gstreamer-cleanup card-provision-check dibbler rfc-config update-device-details ping-telemetry applications vitalprocess-info iptables mount_log swupdate reboot-reason"
+SYSLOG-NG_FILTER = " systemd dropbear gstreamer-cleanup card-provision-check dibbler rfc-config update-device-details ping-telemetry applications vitalprocess-info iptables mount_log reboot-reason"
 SYSLOG-NG_FILTER_append_client = " ConnectionStats systemd_timesyncd"
 SYSLOG-NG_SERVICE_ConnectionStats_client = "network-connection-stats.service eth-connection-stats.service"
 SYSLOG-NG_DESTINATION_ConnectionStats_client = "ConnectionStats.txt"
@@ -54,7 +54,7 @@ SYSLOG-NG_SERVICE_rfc-config = "rfc-config.service"
 SYSLOG-NG_DESTINATION_rfc-config = "rfcscript.log"
 SYSLOG-NG_LOGRATE_rfc-config = "low"
 SYSLOG-NG_SERVICE_update-device-details = "update-device-details.service"
-SYSLOG-NG_DESTINATION_update-device-details = "device_details.log"
+SYSLOG-NG_DESTINATION_update-device-details = "device-details.log"
 SYSLOG-NG_LOGRATE_update-device-details = "low"
 SYSLOG-NG_SERVICE_iptables = "iptables.service"
 SYSLOG-NG_DESTINATION_iptables = "iptables.log"
@@ -74,9 +74,6 @@ SYSLOG-NG_LOGRATE_mount_log = "low"
 SYSLOG-NG_SERVICE_reboot-reason = "reboot-reason-logger.service update-reboot-info.service"
 SYSLOG-NG_DESTINATION_reboot-reason = "rebootreason.log"
 SYSLOG-NG_LOGRATE_reboot-reason = "low"
-SYSLOG-NG_SERVICE_swupdate = "swupdate.service"
-SYSLOG-NG_DESTINATION_swupdate = "swupdate.log"
-SYSLOG-NG_LOGRATE_swupdate = "low"
 
 do_compile[noexec] = "1"
 
@@ -151,6 +148,7 @@ do_install() {
         install -m 0644 ${S}/../systemd_units/minidump-secure-upload.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/minidump-upload.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/minidump-secure-upload.path ${D}${systemd_unitdir}/system
+        install -m 0644 ${S}/../systemd_units/dropbear.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/disk-threshold-check.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/disk-threshold-check.timer ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/reboot-reason-logger.service ${D}${systemd_unitdir}/system
@@ -165,8 +163,6 @@ do_install() {
         install -m 0644 ${S}/../systemd_units/mount-failure-count.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/update-reboot-info.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/update-reboot-info.service ${D}${systemd_unitdir}/system
-        install -m 0644 ${S}/../systemd_units/restart-parodus.path ${D}${systemd_unitdir}/system
-        install -m 0644 ${S}/../systemd_units/restart-parodus.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/update-rf4ce-details.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/ping-telemetry.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/ping-telemetry.timer ${D}${systemd_unitdir}/system
@@ -325,7 +321,6 @@ do_install_append_hybrid() {
         install -m 0644 ${S}/../systemd_units/lightsleep.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/lightsleep.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/htmldiag-pre.service ${D}${systemd_unitdir}/system
-        install -m 0644 ${S}/../systemd_units/dropbear.service ${D}${systemd_unitdir}/system
 
         if [ -f ${D}${base_libdir}/rdk/iptables_init_xi ]; then
             rm -f ${D}${base_libdir}/rdk/iptables_init_xi
@@ -367,7 +362,6 @@ do_install_append_client() {
 	install -m 0644 ${S}/../systemd_units/ntp-event.service ${D}${systemd_unitdir}/system
 	install -m 0644 ${S}/../systemd_units/ntp-event.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/ntp-time-checker.service ${D}${systemd_unitdir}/system
-	install -m 0644 ${S}/../systemd_units/dropbear_mediaclient.service ${D}${systemd_unitdir}/system/dropbear.service
         if [ "${WIFI_ENABLED}" = "false" ] ; then
           install -m 0644 ${S}/../systemd_units/eth-connection-stats.service ${D}${systemd_unitdir}/system
           install -m 0644 ${S}/../systemd_units/eth-connection-stats.timer ${D}${systemd_unitdir}/system
@@ -475,8 +469,6 @@ SYSTEMD_SERVICE_${PN} += "ping-telemetry.timer"
 SYSTEMD_SERVICE_${PN} += "oops-dump.service"
 SYSTEMD_SERVICE_${PN} += "update-reboot-info.path"
 SYSTEMD_SERVICE_${PN} += "update-reboot-info.service"
-SYSTEMD_SERVICE_${PN} += "restart-parodus.path"
-SYSTEMD_SERVICE_${PN} += "restart-parodus.service"
 SYSTEMD_SERVICE_${PN} += "gstreamer-cleanup.service"
 SYSTEMD_SERVICE_${PN} += "path-fail-notifier@.service"
 

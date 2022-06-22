@@ -13,8 +13,8 @@ SRC_URI = "git://github.com/rdkcentral/ThunderInterfaces.git;protocol=git;branch
            file://0001-Add-IFocus-iface.patch \
            "
 
-# Mar 4, 2022
-SRCREV_wpeframework-interfaces = "4ec7c6f8e14b152143a105a41f4c62b6723372c4"
+# Nov 23, 2021
+SRCREV_wpeframework-interfaces = "1ed7eee3e833ed2f7d6a39624f0e32d1659d3f03"
 
 # ----------------------------------------------------------------------------
 
