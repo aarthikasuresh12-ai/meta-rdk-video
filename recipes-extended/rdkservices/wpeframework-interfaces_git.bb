@@ -11,6 +11,8 @@ SRC_URI = "git://github.com/rdkcentral/ThunderInterfaces.git;protocol=git;branch
            file://0020-Adding-the-VoiceCommand-API-for-Netflix-plugin.patch \
            file://0001-RDK-31882-Add-GstCaps-parsing-in-OCDM-wpeframework-interfaces.patch \
            file://0001-Add-IFocus-iface.patch \
+           file://0001-Merge-pull-request-162-from-npoltorapavlo-RDK-34729.patch \
+           file://0002-Merge-pull-request-173-from-npoltorapavlo-RDK-34729_.patch \
            "
 
 # Mar 4, 2022
