@@ -26,7 +26,7 @@ DEPENDS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' safec', " 
 DEPENDS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'rrd', ' remotedebugger', " ", d)}"
 RDEPENDS_${PN}_append  = " ${@bb.utils.contains('DISTRO_FEATURES', 'rrd',' remotedebugger', '',d)}"
 CXXFLAGS_append     = "${@bb.utils.contains('DISTRO_FEATURES', 'rrd', ' -DUSE_REMOTE_DEBUGGER', '', d)}"
-CXXFLAGS_append     = "${@bb.utils.contains('DISTRO_FEATURES', 'rrd', ' -I=${includedir}/rrd/', '', d)}"
+CXXFLAGS_append     = "${@bb.utils.contains('DISTRO_FEATURES', 'rrd', ' -I=${includedir}/rrd/ -I=${includedir}/rdk/iarmmgrs/rdmmgr/', '', d)}"
 
 inherit pkgconfig breakpad-logmapper syslog-ng-config-gen
 SYSLOG-NG_FILTER = "parodus tr69hostif"
