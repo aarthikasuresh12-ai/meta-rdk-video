@@ -2,7 +2,7 @@ SUMMARY = "This recipe compiles runsnmp code base."
 SECTION = "console/utils"
 
 LICENSE = "Apache-2.0 & BSD-3-Clause & MIT"
-LIC_FILES_CHKSUM = "file://../../LICENSE;md5=bc14e971d0e95ae5ca07a810dcd5893b"
+LIC_FILES_CHKSUM = "file://../../LICENSE;md5=1a7c83d1696f84e35c7f8efcc4ca9d72"
 
 SRC_URI = "${CMF_GIT_ROOT}/rdk/components/generic/mediaframework;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH}"
 
