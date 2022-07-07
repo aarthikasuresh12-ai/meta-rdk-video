@@ -14,8 +14,8 @@ SRC_URI = "git://github.com/rdkcentral/ThunderInterfaces.git;protocol=git;branch
            file://0001-Revert-Merge-pull-request-137-from-mikolaj-staworzyn.patch \
            "
 
-# Jul 18, 2022
-SRCREV_wpeframework-interfaces = "cb3b8476aa3b00ae9e73ff0cf64114563d1ee7ae"
+# Jul 20, 2022
+SRCREV_wpeframework-interfaces = "${THUNDER_RELEASE_TAG_NAME}"
 
 # ----------------------------------------------------------------------------
 
