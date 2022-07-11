@@ -26,7 +26,8 @@ SRC_URI += "file://0003-OCDM-increase-RPC-comm-timeout.patch \
            file://0001-Thunder_trace_log_enabled.patch \
            file://0001-RDKTV-15393-clock_gettime.patch \
            file://0001-DELIA-56244-Thunder_json_parser_error_fix.patch \
-	   file://0001-RDKTV-15390-DestroySocket.patch \
+           file://0001-RDKTV-15390-DestroySocket.patch \
+           file://0001-RDKTV-15888-Unregister-During-Socket-close.patch \
            "
 
 inherit systemd update-rc.d pythonnative
