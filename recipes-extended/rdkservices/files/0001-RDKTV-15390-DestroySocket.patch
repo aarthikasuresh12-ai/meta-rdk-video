@@ -1,0 +1,220 @@
+From b65f3b3ef498a8b2e45c33bfd6ed79cdb2b0d76b Mon Sep 17 00:00:00 2001
+From: nsahu910 <Neeraj_Sahu@comcast.com>
+Date: Thu, 30 Jun 2022 19:11:45 +0000
+Subject: [PATCH] test
+Source: COMCAST
+License: GPLV2
+Upstream-Status: Pending
+Signed-off-by: Neeraj Sahu <Neeraj_Sahu@comcast.com>
+---
+ Source/core/Portability.h  | 17 +++++++++++++++++
+ Source/core/SocketPort.cpp | 31 +++++++++++++++++--------------
+ Source/core/SocketPort.h   | 19 ++++++++++---------
+ 3 files changed, 44 insertions(+), 23 deletions(-)
+
+diff --git a/Source/core/Portability.h b/Source/core/Portability.h
+index d98aca83..dc65a093 100644
+--- a/Source/core/Portability.h
++++ b/Source/core/Portability.h
+@@ -658,6 +658,23 @@ namespace Core {
+         }
+     };
+ 
++    namespace memory_order {
++    #ifdef __WINDOWS__
++        static constexpr std::memory_order memory_order_relaxed = std::memory_order::memory_order_relaxed;
++        static constexpr std::memory_order memory_order_consume = std::memory_order::memory_order_seq_cst;
++        static constexpr std::memory_order memory_order_acquire = std::memory_order::memory_order_seq_cst;
++        static constexpr std::memory_order memory_order_release = std::memory_order::memory_order_release;
++        static constexpr std::memory_order memory_order_acq_rel = std::memory_order::memory_order_seq_cst;
++        static constexpr std::memory_order memory_order_seq_cst = std::memory_order::memory_order_seq_cst;
++    #else
++        static constexpr std::memory_order memory_order_relaxed = std::memory_order::memory_order_relaxed;
++        static constexpr std::memory_order memory_order_consume = std::memory_order::memory_order_consume;
++        static constexpr std::memory_order memory_order_acquire = std::memory_order::memory_order_acquire;
++        static constexpr std::memory_order memory_order_release = std::memory_order::memory_order_release;
++        static constexpr std::memory_order memory_order_acq_rel = std::memory_order::memory_order_acq_rel;
++        static constexpr std::memory_order memory_order_seq_cst = std::memory_order::memory_order_seq_cst;
++    #endif
++    }
+ 
+     #define ERROR_CODES \
+         ERROR_CODE(ERROR_NONE, 0) \
+diff --git a/Source/core/SocketPort.cpp b/Source/core/SocketPort.cpp
+index 2f9ddd31..2cb25247 100644
+--- a/Source/core/SocketPort.cpp
++++ b/Source/core/SocketPort.cpp
+@@ -363,7 +363,7 @@ namespace Core {
+ 
+             BufferAlignment(m_Socket);
+ 
+-            m_State = SocketPort::LINK | SocketPort::OPEN | SocketPort::READ;
++	    m_State.store(SocketPort::LINK | SocketPort::OPEN | SocketPort::READ, Core::memory_order::memory_order_relaxed);
+         }
+     }
+ 
+@@ -376,9 +376,12 @@ namespace Core {
+         TRACE_L1("Destructor: Before Lock");
+         m_syncAdmin.Lock();
+         TRACE_L1("Destructor: After Lock");
+-        ASSERT(m_Socket == INVALID_SOCKET);
++        ASSERT((m_Socket == INVALID_SOCKET) || (IsClosed()));
+         TRACE_L1("Destructor: Before Free");
+ 
++        if (m_Socket != INVALID_SOCKET) {
++	    DestroySocket(m_Socket);
++        }
+         ::free(m_SendBuffer);
+         m_syncAdmin.Unlock();
+     }
+@@ -444,11 +447,12 @@ namespace Core {
+         m_SendBytes = 0;
+         m_SendOffset = 0;
+ 
+-        if ((m_State & (SocketPort::LINK | SocketPort::OPEN | SocketPort::MONITOR)) == (SocketPort::LINK | SocketPort::OPEN)) {
++        if ((m_State.load(Core::memory_order::memory_order_relaxed) & (SocketPort::LINK | SocketPort::OPEN | SocketPort::MONITOR)) == (SocketPort::LINK | SocketPort::OPEN)) {
+             // Open up an accepted socket, but not yet added to the monitor.
++	    m_State.fetch_or(SocketPort::UPDATE, Core::memory_order::memory_order_relaxed);
+             nStatus = Core::ERROR_NONE;
+         } else {
+-            ASSERT((m_Socket == INVALID_SOCKET) && (m_State == 0));
++            ASSERT((m_Socket == INVALID_SOCKET) && (m_State.load(Core::memory_order::memory_order_relaxed) == 0));
+ 
+             if ((m_SocketType == SocketPort::STREAM) || (m_SocketType == SocketPort::SEQUENCED) || (m_SocketType == SocketPort::RAW)) {
+                 if (m_LocalNode.IsValid() == false) {
+@@ -463,7 +467,7 @@ namespace Core {
+             if ((m_Socket != INVALID_SOCKET) && (Initialize() == true)) {
+ 
+                 if ((m_SocketType == DATAGRAM) || ((m_SocketType == RAW) && (m_RemoteNode.IsValid() == false))) {
+-                    m_State = SocketPort::OPEN | SocketPort::READ;
++		    m_State.store(SocketPort::UPDATE | SocketPort::OPEN | SocketPort::READ, Core::memory_order::memory_order_relaxed);
+ 
+                     nStatus = Core::ERROR_NONE;
+                 } else if (m_SocketType == LISTEN) {
+@@ -471,19 +475,19 @@ namespace Core {
+                         TRACE_L5("Error on port socket LISTEN. Error %d", __ERRORRESULT__);
+                     } else {
+                         // Trigger state to Open
+-                        m_State = SocketPort::OPEN | SocketPort::ACCEPT;
++			m_State.store(SocketPort::UPDATE | SocketPort::OPEN | SocketPort::ACCEPT, Core::memory_order::memory_order_relaxed);
+ 
+                         nStatus = Core::ERROR_NONE;
+                     }
+                 } else {
+                     if (::connect(m_Socket, static_cast<const NodeId&>(m_RemoteNode), m_RemoteNode.Size()) != SOCKET_ERROR) {
+-                        m_State = SocketPort::LINK | SocketPort::OPEN | SocketPort::READ;
++			m_State.store(SocketPort::UPDATE | SocketPort::LINK | SocketPort::OPEN | SocketPort::READ, Core::memory_order::memory_order_relaxed);
+                         nStatus = Core::ERROR_NONE;
+                     } else {
+                         int l_Result = __ERRORRESULT__;
+ 
+                         if ((l_Result == __ERROR_WOULDBLOCK__) || (l_Result == __ERROR_AGAIN__) || (l_Result == __ERROR_INPROGRESS__)) {
+-                            m_State = SocketPort::LINK | SocketPort::WRITE;
++			    m_State.store(SocketPort::UPDATE | SocketPort::LINK | SocketPort::WRITE, Core::memory_order::memory_order_relaxed);
+                             nStatus = Core::ERROR_INPROGRESS;
+                         } else if (l_Result == __ERROR_ISCONN__) {
+                             nStatus = Core::ERROR_ALREADY_CONNECTED;
+@@ -501,7 +505,6 @@ namespace Core {
+         }
+ 
+         if ((nStatus == Core::ERROR_NONE) || (nStatus == Core::ERROR_INPROGRESS)) {
+-            m_State |= SocketPort::UPDATE;
+             ResourceMonitor::Instance().Register(*this);
+ 
+             if (nStatus == Core::ERROR_INPROGRESS) {
+@@ -879,7 +882,7 @@ namespace Core {
+ 
+ #ifdef __DEBUG__
+             if ((++reportSlot & 0x1F) == 0) {
+-                TRACE_L1("Currently waiting for Socket Closure. Current State [0x%X]", m_State);
++                TRACE_L1("Currently waiting for Socket Closure. Current State [0x%X]", m_State.load(Core::memory_order::memory_order_relaxed));
+             }
+             waiting -= (waiting == Core::infinite ? 0 : sleepSlot);
+ #else
+@@ -1120,17 +1123,17 @@ namespace Core {
+ 
+         // Turn them all off, except for the SHUTDOWN bit, to show whether this was
+         // done on our request, or closed from the other side...
+-        TRACE_L1("CLOSED: m_state value before shutdown bit %lu",m_State);
++        TRACE_L1("CLOSED: m_state value before shutdown bit %lu",State());
+         m_State &= SHUTDOWN;
+ 
+-        TRACE_L1("CLOSED: m_state value before StateChangefunction %lu",m_State);
++        TRACE_L1("CLOSED: m_state value before StateChangefunction %lu",State());
+ 
+         StateChange();
+ 
+-        TRACE_L1("CLOSED: m_state value after StateChangefunction %lu",m_State);
++        TRACE_L1("CLOSED: m_state value after StateChangefunction %lu",State());
+ 
+         m_State &= (~SHUTDOWN);
+-        TRACE_L1("CLOSED: m_state value after shutdown bit %lu",m_State);
++        TRACE_L1("CLOSED: m_state value after shutdown bit %lu",State());
+ 
+         if (m_State != 0) {
+             result = false;
+diff --git a/Source/core/SocketPort.h b/Source/core/SocketPort.h
+index 26bbe19c..e69ad70d 100644
+--- a/Source/core/SocketPort.h
++++ b/Source/core/SocketPort.h
+@@ -99,7 +99,7 @@ namespace Core {
+     public:
+         inline uint16_t State() const
+         {
+-            return (m_State);
++            return (m_State.load(Core::memory_order::memory_order_relaxed));
+         }
+         inline void RemoteNode(const NodeId& remote)
+         {
+@@ -119,31 +119,32 @@ namespace Core {
+         }
+         inline bool IsListening() const
+         {
+-            return ((m_State & (SocketPort::SHUTDOWN | SocketPort::EXCEPTION | SocketPort::OPEN | SocketPort::LINK | SocketPort::ACCEPT)) == (SocketPort::OPEN | SocketPort::ACCEPT));
++            return ((State() & (SocketPort::SHUTDOWN | SocketPort::EXCEPTION | SocketPort::OPEN | SocketPort::LINK | SocketPort::ACCEPT)) == (SocketPort::OPEN | SocketPort::ACCEPT));
+         }
+         inline bool IsConnecting() const
+         {
+-            return ((m_State & (SocketPort::SHUTDOWN | SocketPort::EXCEPTION | SocketPort::OPEN | SocketPort::LINK | SocketPort::ACCEPT)) == SocketPort::LINK);
++            return ((State() & (SocketPort::SHUTDOWN | SocketPort::EXCEPTION | SocketPort::OPEN | SocketPort::LINK | SocketPort::ACCEPT)) == SocketPort::LINK);
+         }
+         inline bool IsSuspended() const
+         {
+-            return ((m_State & (SocketPort::SHUTDOWN | SocketPort::EXCEPTION)) == SocketPort::SHUTDOWN);
++            return ((State() & (SocketPort::SHUTDOWN | SocketPort::EXCEPTION)) == SocketPort::SHUTDOWN);
+         }
+         inline bool IsForcedClosing() const
+         {
+-            return (((m_State & (SocketPort::SHUTDOWN | SocketPort::EXCEPTION)) == (SocketPort::SHUTDOWN | SocketPort::EXCEPTION)) || ((m_State & (SocketPort::OPEN | SocketPort::EXCEPTION)) == (SocketPort::EXCEPTION)));
++	    uint16_t state = State();
++            return (((state & (SocketPort::SHUTDOWN | SocketPort::EXCEPTION)) == (SocketPort::SHUTDOWN | SocketPort::EXCEPTION)) || ((state & (SocketPort::OPEN | SocketPort::EXCEPTION)) == (SocketPort::EXCEPTION)));
+         }
+         inline bool IsOpen() const
+         {
+-            return ((m_State & (SocketPort::SHUTDOWN | SocketPort::EXCEPTION | SocketPort::OPEN)) == SocketPort::OPEN);
++            return ((State() & (SocketPort::SHUTDOWN | SocketPort::EXCEPTION | SocketPort::OPEN)) == SocketPort::OPEN);
+         }
+         inline bool IsClosed() const
+         {
+-            return (m_State == 0);
++            return (State() == 0);
+         }
+         inline bool HasError() const
+         {
+-            return ((m_State & (SocketPort::SHUTDOWN | SocketPort::EXCEPTION)) == SocketPort::EXCEPTION);
++            return ((State() & (SocketPort::SHUTDOWN | SocketPort::EXCEPTION)) == SocketPort::EXCEPTION);
+         }
+         inline bool operator==(const SocketPort& RHS) const
+         {
+@@ -265,7 +266,7 @@ namespace Core {
+         enumType m_SocketType;
+         SOCKET m_Socket;
+         mutable CriticalSection m_syncAdmin;
+-        volatile uint16_t m_State;
++	std::atomic<uint16_t> m_State;
+         NodeId m_ReceivedNode;
+         uint8_t* m_SendBuffer;
+         uint8_t* m_ReceiveBuffer;
+-- 
+2.17.1
+
