@@ -77,7 +77,7 @@ PACKAGECONFIG ?= " \
 "
 EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'rdkshell', ' -DPLUGIN_RDKSHELL=ON ', ' -DPLUGIN_RDKSHELL=OFF ', d)}"
 EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'rdkshell_disable_autostart', ' -DPLUGIN_RDKSHELL_AUTOSTART=false ', ' -DPLUGIN_RDKSHELL_AUTOSTART=true ', d)}"
-EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'rdkshell_ra', ' -DPLUGIN_RDKSHELL_AUTOSTART=true ', ' ', d)}"
+EXTRA_OECMAKE += "${@bb.utils.contains_any('DISTRO_FEATURES', 'rdkshell_ra second_form_factor', ' -DPLUGIN_RDKSHELL_AUTOSTART=true ', ' ', d)}"
 
 PACKAGECONFIG[activitymonitor]      = "-DPLUGIN_ACTIVITYMONITOR=ON,-DPLUGIN_ACTIVITYMONITOR=OFF,"
 PACKAGECONFIG[avinput]              = "-DPLUGIN_AVINPUT=ON,-DPLUGIN_AVINPUT=OFF,"
@@ -158,7 +158,7 @@ EXTRA_OECMAKE += " \
 do_install_append() {
     install -m 0644 ${WORKDIR}/thunder_acl.json ${D}${sysconfdir}
     install -m 0644 ${WORKDIR}/rdkshell_post_startup.conf ${D}${sysconfdir}
-    if ${@bb.utils.contains("DISTRO_FEATURES", "rdkshell_ra", "true", "false", d)}
+    if ${@bb.utils.contains_any("DISTRO_FEATURES", "rdkshell_ra second_form_factor", "true", "false", d)}
     then
       install -d ${D}${sysconfdir}/rfcdefaults
       install -m 0644 ${WORKDIR}/rdkservices.ini ${D}${sysconfdir}/rfcdefaults/
