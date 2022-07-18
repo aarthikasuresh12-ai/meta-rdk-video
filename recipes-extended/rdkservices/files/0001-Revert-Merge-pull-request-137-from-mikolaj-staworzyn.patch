@@ -1,0 +1,84 @@
+From 0c7eb7f172594c93284141dec583e63f3e6fe82b Mon Sep 17 00:00:00 2001
+From: Nikita Poltorapavlo <Nikita_Poltorapavlo2@cable.comcast.com>
+Date: Mon, 18 Jul 2022 14:22:57 +0300
+Subject: [PATCH] Revert "Merge pull request #137 from
+ mikolaj-staworzynski-red/ONEM-23137-Allow-to-select-interfaces-R2"
+
+This reverts commit fc38a87aa9c43c79e75fd864068a5a55247d8f60, reversing
+changes made to 4ec7c6f8e14b152143a105a41f4c62b6723372c4.
+---
+ CMakeLists.txt             |  4 +---
+ definitions/CMakeLists.txt | 11 ++++-------
+ interfaces/CMakeLists.txt  |  6 ++----
+ 3 files changed, 7 insertions(+), 14 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d1f6415..fbe7336 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -15,7 +15,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-cmake_minimum_required(VERSION 3.12)
++cmake_minimum_required(VERSION 3.3)
+ 
+ project(WPEFramework)
+ 
+@@ -25,8 +25,6 @@ set(VERSION_PATCH 0)
+ 
+ set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+ set(NAMESPACE ${PROJECT_NAME} CACHE STRING "Namespace of the project")
+-set(INTERFACES_PATTERNS "I*.h" CACHE STRING "Patterns matching files for which stubs should be generated")
+-set(JSONRPC_PATTERNS "*.json" CACHE STRING "Patterns matching files for which json stubs should be generated")
+ 
+ message(STATUS "Setting up ${PROJECT_NAME} v${VERSION}")
+ 
+diff --git a/definitions/CMakeLists.txt b/definitions/CMakeLists.txt
+index 852e98e..9c7ee91 100644
+--- a/definitions/CMakeLists.txt
++++ b/definitions/CMakeLists.txt
+@@ -15,17 +15,14 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
++cmake_minimum_required(VERSION 3.7.2)
++
+ project(Definitions)
+ 
+ set(Target ${NAMESPACE}Definitions)
+ 
+-separate_arguments(JSONRPC_PATTERNS)
+-list(TRANSFORM JSONRPC_PATTERNS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/../jsonrpc/")
+-file(GLOB JSON_FILE ${JSONRPC_PATTERNS})
+-
+-separate_arguments(INTERFACES_PATTERNS)
+-list(TRANSFORM INTERFACES_PATTERNS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/../interfaces/")
+-file(GLOB INTERFACE_FILE ${INTERFACES_PATTERNS})
++file(GLOB JSON_FILE      "${CMAKE_CURRENT_SOURCE_DIR}/../jsonrpc/*.json")
++file(GLOB INTERFACE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/../interfaces/I*.h")
+ 
+ set(PUBLIC_HEADERS "definitions.h")
+ 
+diff --git a/interfaces/CMakeLists.txt b/interfaces/CMakeLists.txt
+index ea3ad85..ec4e3e1 100644
+--- a/interfaces/CMakeLists.txt
++++ b/interfaces/CMakeLists.txt
+@@ -21,12 +21,10 @@ project(Interfaces)
+ 
+ set(TargetMarshalling ${NAMESPACE}Marshallings)
+ 
+-separate_arguments(INTERFACES_PATTERNS)
+-file(GLOB INTERFACES_HEADERS ${INTERFACES_PATTERNS})
+-
+ set(GENERATOR_SEARCH_PATH ${CMAKE_SYSROOT}${CMAKE_INSTALL_PREFIX}/include/${NAMESPACE})
+-ProxyStubGenerator(INPUT "${INTERFACES_HEADERS}" OUTDIR "${CMAKE_CURRENT_BINARY_DIR}/generated" INCLUDE_PATH ${GENERATOR_SEARCH_PATH})
++ProxyStubGenerator(INPUT "${CMAKE_CURRENT_SOURCE_DIR}" OUTDIR "${CMAKE_CURRENT_BINARY_DIR}/generated" INCLUDE_PATH ${GENERATOR_SEARCH_PATH})
+ 
++file(GLOB INTERFACES_HEADERS I*.h)
+ file(GLOB JSON_HEADERS json/*.h)
+ list(APPEND INTERFACES_HEADERS Module.h)
+ 
+-- 
+2.25.1
+
