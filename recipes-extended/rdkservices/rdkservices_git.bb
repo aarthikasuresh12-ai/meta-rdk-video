@@ -21,12 +21,11 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://0001-add_gstcaps_forcobalt_mediatype.patch \
            file://0001-Add-monitoring-of-cloned-callsigns.patch \
            file://rdkservices.ini \
-           file://0001-support-for-focus-events.patch \
            file://0001-RDKTV-11792-increase-retry-count.patch \
           "
 
-# Jul 19, 2022
-SRCREV = "b16c23ab842783b325bf6e20fb0c7e7d071a9422"
+# Jul 21, 2022
+SRCREV = "4f0fe9adce5812343454b1a996a025f5dea6d625"
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
 
