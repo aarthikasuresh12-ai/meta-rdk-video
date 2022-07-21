@@ -20,8 +20,8 @@ SRC_URI += "file://0001-Fix-crash-on-unfreeze-from-preloaded-state.patch"
 PR = "3"
 SRCREV_cobalt = "22.lts.${PR}"
 SRCREV_depottools = "913305037df7027dc118253b7c2d3655d181c612"
-# May 23, 2022
-SRCREV_starboard = "23187586ace4343852bf3dae7dc5ec1f98fd6573"
+# June 28, 2022
+SRCREV_starboard = "089b281036d6b8cb41ccfe63ed5737d320b7a512"
 
 SRCREV_FORMAT = "cobalt_depottools_starboard"
 
