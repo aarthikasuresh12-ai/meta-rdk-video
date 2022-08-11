@@ -14,35 +14,33 @@ Risks: None
 
 Change-Id: Ie3a4718a04b555ad24c0f6fccd2761b5f8492220
 ---
- LocationSync/LocationSync.cpp | 102 +++++++++++++++++++++++++++++++++-
+ LocationSync/LocationSync.cpp | 100 +++++++++++++++++++++++++++++++++-
  LocationSync/LocationSync.h   |  13 ++++-
- 2 files changed, 110 insertions(+), 5 deletions(-)
+ 2 files changed, 109 insertions(+), 4 deletions(-)
 
 diff --git a/LocationSync/LocationSync.cpp b/LocationSync/LocationSync.cpp
-index 7ed0e0c1..88c854b9 100644
+index 7acedc6e..a16815d5 100644
 --- a/LocationSync/LocationSync.cpp
 +++ b/LocationSync/LocationSync.cpp
-@@ -16,14 +16,18 @@
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+@@ -18,6 +18,8 @@
   */
-- 
-+
+  
  #include "LocationSync.h"
 +#include <functional>
 +#include <curl/curl.h>
  
- namespace WPEFramework {
- namespace Plugin {
+ #define API_VERSION_NUMBER_MAJOR 1
+ #define API_VERSION_NUMBER_MINOR 0
+@@ -28,6 +30,8 @@ namespace Plugin {
  
-     SERVICE_REGISTRATION(LocationSync, 1, 0);
+     SERVICE_REGISTRATION(LocationSync, API_VERSION_NUMBER_MAJOR, API_VERSION_NUMBER_MINOR, API_VERSION_NUMBER_PATCH);
  
-+    const u_int32_t NETCONTROL_CHECK_TIME_IN_SECONDS(5);
-+    const u_int32_t NETCONTROL_CHECK_MAX_ATTEMPTS(90);
++	const u_int32_t NETCONTROL_CHECK_TIME_IN_SECONDS(5);
++	const u_int32_t NETCONTROL_CHECK_MAX_ATTEMPTS(90);
      static Core::ProxyPoolType<Web::Response> responseFactory(4);
      static Core::ProxyPoolType<Web::JSONBodyType<LocationSync::Data>> jsonResponseFactory(4);
  
-@@ -58,7 +62,31 @@ namespace Plugin {
+@@ -62,7 +66,31 @@ namespace Plugin {
              _skipURL = static_cast<uint16_t>(service->WebPrefix().length());
              _source = config.Source.Value();
              _service = service;
@@ -75,7 +73,7 @@ index 7ed0e0c1..88c854b9 100644
              _sink.Initialize(config.Source.Value(), config.Interval.Value(), config.Retries.Value());
          } else {
              result = _T("URL for retrieving location is incorrect !!!");
-@@ -71,7 +99,6 @@ namespace Plugin {
+@@ -75,7 +103,6 @@ namespace Plugin {
      void LocationSync::Deinitialize(PluginHost::IShell* service VARIABLE_IS_NOT_USED) /* override */
      {
          ASSERT(_service == service);
@@ -83,7 +81,7 @@ index 7ed0e0c1..88c854b9 100644
          _sink.Deinitialize();
      }
  
-@@ -160,5 +187,74 @@ namespace Plugin {
+@@ -164,5 +191,74 @@ namespace Plugin {
          }
      }
  
@@ -193,5 +191,5 @@ index 4bfcf64f..73911616 100644
      private:
          uint16_t _skipURL;
 -- 
-2.32.0 (Apple Git-132)
+2.17.1
 

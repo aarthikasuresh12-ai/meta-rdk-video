@@ -18,16 +18,8 @@ SRC_URI += "file://0003-OCDM-increase-RPC-comm-timeout.patch \
            file://603.patch \
            file://0001-Support-negative-numbers-with-write_config.patch \
            file://LLAMA-2254_fix_netlink_buffer_size_error.patch \
-           file://0001-RDKTV-15888-Socket-Closed.patch \
-           file://0001-Unregister-During-Socket-close.patch \
-           file://0001-RDKTV-15395-ProcessContainers.patch \
-           file://0001-RDKTV-15803-Setting-NULL-To-Unused-Ptr.patch \
-           file://DELIA-56519_pass_DEBUG_through_CFLAGS.patch \
            file://0001-Thunder_trace_log_enabled.patch \
            file://0001-RDKTV-15393-clock_gettime.patch \
-           file://0001-DELIA-56244-Thunder_json_parser_error_fix.patch \
-           file://0001-RDKTV-15390-DestroySocket.patch \
-           file://0001-RDKTV-15888-Unregister-During-Socket-close.patch \
            "
 
 inherit systemd update-rc.d pythonnative
