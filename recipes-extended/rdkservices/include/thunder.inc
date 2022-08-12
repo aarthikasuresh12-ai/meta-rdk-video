@@ -13,7 +13,7 @@ SRCREV_thunder = "${THUNDER_RELEASE_TAG_NAME}"
 PACKAGECONFIG ??= ""
 PACKAGECONFIG[debug]            = "-DCMAKE_BUILD_TYPE=Debug,-DCMAKE_BUILD_TYPE=Release,"
 
-PV = "${RDK_RELEASE}"
+PV = "${RDK_RELEASE}+git${SRCPV}"
 S = "${WORKDIR}/git"
 
 inherit cmake pkgconfig
