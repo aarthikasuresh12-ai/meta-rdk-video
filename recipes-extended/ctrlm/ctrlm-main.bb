@@ -3,7 +3,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 
 SECTION = "base"
-DEPENDS = "sqlite3 curl rdkversion jansson glib-2.0 systemd iarmbus iarmmgrs breakpad util-linux devicesettings nopoll rfc libarchive safec-common-wrapper"
+DEPENDS = "sqlite3 curl rdkversion jansson glib-2.0 systemd iarmbus iarmmgrs breakpad util-linux devicesettings nopoll rfc libarchive safec-common-wrapper gperf-native"
 
 DEPENDS_append = "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', ' xr-voice-sdk xr-timestamp', '', d)}"
 DEPENDS_append = "${@bb.utils.contains('DISTRO_FEATURES_RDK', 'comcast-gperftools-heapcheck-wp', ' xr-fdc', '', d)}"
@@ -70,6 +70,8 @@ INCLUDE_DIRS = " \
     -I=${includedir}/nopoll \
     "
 
+CFLAGS_append = " -std=c11 -fPIC -D_REENTRANT -rdynamic -Wall -Werror ${INCLUDE_DIRS}"
+
 CXXFLAGS_append = " -std=c++11 -fPIC -D_REENTRANT -rdynamic -Wall -Werror ${INCLUDE_DIRS}"
 
 CXXFLAGS_append = "${@bb.utils.contains('DISTRO_FEATURES_RDK', 'comcast-gperftools-heapcheck-wp', ' -DFDC_ENABLED', '', d)}"
@@ -127,6 +129,8 @@ SUPPORT_VOICE_DEST_ALSA   ?= "false"
 
 export CTRLM_UTILS_JSON_TO_HEADER  = "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', '${VSDK_UTILS_JSON_TO_HEADER}', '${S}/scripts/json_to_header.py', d)}"
 export CTRLM_UTILS_JSON_COMBINE    = "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', '${VSDK_UTILS_JSON_COMBINE}', '${S}/scripts/json_combine.py', d)}"
+
+export STAGING_BINDIR_NATIVE
 
 CTRLM_CONFIG_VSDK    = "${PKG_CONFIG_SYSROOT_DIR}/usr/include/xrsr_config.json"
 CTRLM_CONFIG_OEM_ADD = "${S}/../ctrlm_config_oem.add.json"
