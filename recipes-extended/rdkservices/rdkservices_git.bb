@@ -25,8 +25,8 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://0001-SERXIONE-600-LocationSync-Network-check.patch \
           "
 
-# Aug 17, 2022
-SRCREV = "9b4a2b39807fa1013a87424e91ff11d4fd0804d6"
+# Aug 18, 2022
+SRCREV = "c30418f5a8fc4db61a08eda626c73841bf2faf05"
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
 
