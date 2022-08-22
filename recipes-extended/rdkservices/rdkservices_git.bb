@@ -8,7 +8,7 @@ PV = "3.0+git${SRCPV}"
 S = "${WORKDIR}/git"
 inherit cmake pkgconfig
 
-SRC_URI = "git://github.com/ahmedShafi12/rdkservices.git;protocol=git;branch=main_RDKTV/18555 \
+SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main \
            file://0001-Fix-DisplayInfo-build-with-SDK-14.4.patch \
            file://0002-RDK-28534-Comcast-Security-Agent-changes.patch \
            file://index.html \
@@ -26,7 +26,7 @@ SRC_URI = "git://github.com/ahmedShafi12/rdkservices.git;protocol=git;branch=mai
           "
 
 # Aug 18, 2022
-SRCREV = "30f1b83d771af06e561aa651786ec7b2c83ecc10"
+SRCREV = "c30418f5a8fc4db61a08eda626c73841bf2faf05"
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
 
