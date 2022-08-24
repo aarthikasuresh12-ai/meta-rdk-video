@@ -54,6 +54,8 @@ LDFLAGS += "-lpthread -lglib-2.0 -L. -lIARMBus -ldl "
 CFLAGS += "-fPIC -D_REENTRANT -Wall ${INCLUDE_DIRS}"
 CFLAGS += "-DRDK_DSHAL_NAME="\""libds-hal.so.0\""""
 CFLAGS += " -DYOCTO_BUILD"
+CFLAGS += " -DDS_AUDIO_SETTINGS_PERSISTENCE"
+
 
 # Shared libs created by the RDK build aren't versioned, so we need
 # to force the .so files into the runtime package (and keep them
