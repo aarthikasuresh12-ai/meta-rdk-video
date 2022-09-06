@@ -2,7 +2,9 @@ SUMMARY = "Evergreen Cobalt Core library."
 HOMEPAGE = "https://cobalt.googlesource.com/"
 
 LICENSE = "BSD-3-Clause"
-LIC_FILES_CHKSUM = "file://../LICENSE;md5=0fca02217a5d49a14dfe2d11837bb34d"
+# See https://github.com/youtube/cobalt/blob/master/LICENSE for governing license.
+# This license has been stored locally as COBALT_LICENSE
+LIC_FILES_CHKSUM = "file://../COBALT_LICENSE;md5=0fca02217a5d49a14dfe2d11837bb34d"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/evergreen:"
 DEPENDS += "unzip-native breakpad-native"
@@ -22,7 +24,7 @@ PV = "2.5.5"
 YT_BASE_URI = "https://github.com/youtube/cobalt/releases/download/22.lts.5"
 SRC_URI  = "${YT_BASE_URI}/${CRX_FILE};name=cobalt"
 SRC_URI += "${YT_BASE_URI}/${DBG_FILE};name=cobalt_debug;subdir=debug_syms"
-SRC_URI += "file://LICENSE"
+SRC_URI += "file://COBALT_LICENSE"
 SRC_URI[cobalt.sha256sum] = "${CRX_FILE_SHA256SUM}"
 SRC_URI[cobalt_debug.sha256sum] = "${DBG_FILE_SHA256SUM}"
 
