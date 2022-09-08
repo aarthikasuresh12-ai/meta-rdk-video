@@ -115,6 +115,12 @@ LDFLAGS_append =" -lxr-voice-sdk -lxrsr -lxrsv -lxraudio-hal -lrdkx-logger -lxr-
 LDFLAGS_append ="${@bb.utils.contains('DISTRO_FEATURES_RDK', 'comcast-gperftools-heapcheck-wp', ' -lxr-fdc', '', d)}"
 LDFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' `pkg-config --libs libsafec`', '', d)}"
 
+# Telemetry Support
+TELEMETRY_SUPPORT  ?= "false"
+DEPENDS_append      = "${@bb.utils.contains('TELEMETRY_SUPPORT', 'true', ' telemetry', '', d)}"
+LDFLAGS_append      = "${@bb.utils.contains('TELEMETRY_SUPPORT', 'true', ' -ltelemetry_msgsender', '', d)}"
+EXTRA_OECONF_append = "${@bb.utils.contains('TELEMETRY_SUPPORT', 'true', ' --enable-telemetry-support', '', d)}"
+
 CTRLM_GENERIC = "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_generic', 'true', 'false', d)}"
 
 XLOG_MODULE_NAME="CTRLM"
