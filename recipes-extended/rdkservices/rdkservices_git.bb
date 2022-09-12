@@ -22,10 +22,12 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://0001-Add-monitoring-of-cloned-callsigns.patch \
            file://rdkservices.ini \
            file://0001-RDKTV-11792-increase-retry-count.patch \
+           file://0001-Revert-Merge-pull-request-3125-from-npoltorapavlo-DE.patch \
+           file://0001-SERXIONE-600-LocationSync-Network-check-timer.patch \
           "
 
 # Sept 9, 2022
-SRCREV = "4190a2158a1abfdbfa196b0ccd4cce99212b079b"
+SRCREV = "91b4ecf96293b3b84a3a818e7cde3255814428bb"
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
 
