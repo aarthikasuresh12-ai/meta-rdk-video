@@ -73,6 +73,8 @@ EXTRA_OECONF_append   = "${@bb.utils.contains('MICROPHONE', 'true', ' --enable-m
 CUSTOM_AUDIO_ANALYSIS ?= "false"
 EXTRA_OECONF_append   = "${@bb.utils.contains('CUSTOM_AUDIO_ANALYSIS', 'true', ' --enable-custom-audio-analysis', '', d)}"
 
+EXTRA_OECONF_append   = "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_mic_tap', ' --enable-mic-tap', '', d)}"
+
 XLOG_MODULE_NAME="CTRLM"
 LOGGER:="${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', 'rdkx-logger', '', d)}"
 inherit ${LOGGER}

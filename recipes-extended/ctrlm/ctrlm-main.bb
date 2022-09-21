@@ -151,6 +151,8 @@ DEPENDS_append   = "${@ ' virtual-mic' if (d.getVar('SUPPORT_VOICE_DEST_ALSA',  
 
 EXTRA_OECONF_append = " GIT_BRANCH=${CMF_GIT_BRANCH}"
 
+EXTRA_OECONF_append = "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_mic_tap', ' --enable-mic_tap', '', d)}"
+
 do_install_append() {
     install -d ${D}${systemd_unitdir}/system
     install -m 0644 ${RECIPEDIR}/ctrlm-main.service ${D}${systemd_unitdir}/system/
