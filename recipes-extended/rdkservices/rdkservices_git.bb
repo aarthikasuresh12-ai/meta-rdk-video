@@ -26,8 +26,8 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://0001-SERXIONE-600-LocationSync-Network-check-timer.patch \
           "
 
-# Sep 30, 2022
-SRCREV = "b0eec131bbf9f334a688784c335ddfad40b8b0a6"
+# Oct 04, 2022
+SRCREV = "0169c8fc0b2b7fc3afca62df273ceba2336f92d0"
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
 
@@ -46,6 +46,7 @@ RDEPENDS_${PN} += "devicesettings"
 CXXFLAGS += " -I${STAGING_DIR_TARGET}${includedir}/wdmp-c/ "
 CXXFLAGS += " -I${STAGING_DIR_TARGET}${includedir}/trower-base64/ "
 CXXFLAGS += "${@bb.utils.contains('DISTRO_FEATURES', 'build_rfc_enabled',"-DRFC_ENABLED ","", d)}"
+CXXFLAGS += " -Wall -Werror "
 
 # More complicated plugins are moved seperate includes
 include include/compositor.inc
