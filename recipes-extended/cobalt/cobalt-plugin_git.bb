@@ -7,13 +7,25 @@ require starboard_revision.inc
 TOOLCHAIN = "gcc"
 
 SRC_URI = "${STARBOARD_SRC_URI};protocol=${CMF_GIT_PROTOCOL};branch=master"
+SRC_URI += "file://cobalt-test-plugin_package.json"
 SRCREV = "${STARBOARD_SRCREV}"
 
 S = "${WORKDIR}/git/plugin"
 
 inherit cmake pkgconfig
 
+# Generate cobalt plugin as a rdm package for test purpose when rdm-test-plugin distro is enabled.
+inherit ${@bb.utils.contains('DISTRO_FEATURES', 'rdm-test-plugin', 'comcast-package-deploy', '', d)}
+DOWNLOAD_APPS="${@bb.utils.contains('DISTRO_FEATURES','rdm-test-plugin','cobalt-test-plugin', '', d)}"
+
 DEPENDS = "wpeframework"
+
+do_install_append() {
+    if ${@bb.utils.contains('DISTRO_FEATURES', 'rdm-test-plugin', 'true', 'false', d)}; then
+         install -d ${D}${sysconfdir}/apps/
+         install -m 0644  ${WORKDIR}/cobalt-test-plugin_package.json ${D}${sysconfdir}/apps/
+    fi
+}
 
 COBALT_PERSISTENTPATHPOSTFIX ?= "Cobalt-0"
 COBALT_CLIENTIDENTIFIER ?= "wst-Cobalt-0"
@@ -35,3 +47,4 @@ EXTRA_OECMAKE += " \
 
 FILES_SOLIBSDEV = ""
 FILES_${PN} += "${libdir}/wpeframework/plugins/*.so"
+FILES_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'rdm-test-plugin', '${sysconfdir}/apps/cobalt-test-plugin_package.json', '', d)}"
