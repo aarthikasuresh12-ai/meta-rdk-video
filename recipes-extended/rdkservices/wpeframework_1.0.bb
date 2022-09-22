@@ -21,6 +21,7 @@ SRC_URI += "file://0003-OCDM-increase-RPC-comm-timeout.patch \
            file://0001-Thunder_trace_log_enabled.patch \
            file://0001-RDKTV-15393-clock_gettime.patch \
            file://DELIA-57764-LD_LIBRARY_PATH-fix.patch \
+           file://SERXIONE-964-use-CLOCK_MONOTONIC-for-sem_clockwait.patch \
            "
 
 inherit systemd update-rc.d pythonnative
