@@ -5,7 +5,10 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=175792518e4ac015ab6696d16c4f607e"
 SRCREV = "${AUTOREV}"
 
 DEPENDS += " gstreamer1.0 gstreamer1.0-plugins-base"
-
+AUDIOMIXER_NOT_SUPPORTED = "${@bb.utils.contains('DISTRO_FEATURES', 'disable_audio_mixer', "true", "", d)}"
+EXTRA_OECMAKE += " \
+    -DAUDIOMIXER_NOT_SUPPORTED =${AUDIOMIXER_NOT_SUPPORTED} \
+"
 SRC_URI = "${RDK_GENERIC_ROOT_GIT}/gstreamer-netflix-platform/generic;protocol=${RDK_GIT_PROTOCOL};branch=${RDK_GIT_BRANCH}"
 
 S = "${WORKDIR}/git"
