@@ -8,7 +8,7 @@ PV = "3.0+git${SRCPV}"
 S = "${WORKDIR}/git"
 inherit cmake pkgconfig
 
-SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main \
+SRC_URI = "git://github.com/ahmedshafi12/rdkservices.git;protocol=git;branch=stable2/LLAMA/8021 \
            file://0001-Fix-DisplayInfo-build-with-SDK-14.4.patch \
            file://0002-RDK-28534-Comcast-Security-Agent-changes.patch \
            file://index.html \
@@ -25,8 +25,8 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://0001-SERXIONE-600-LocationSync-Network-check-timer.patch \
           "
 
-# Oct 14, 2022
-SRCREV = "457f6e724ca4220191e2eab32e0ec904a651fa69"
+# Oct 17, 2022
+SRCREV = "4b972348509de060cc7b690d17841e8bd3caeba3"
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
 
