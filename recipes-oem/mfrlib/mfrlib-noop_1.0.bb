@@ -16,9 +16,10 @@ CFLAGS += " \
 "
 
 SOVER = "0.0.0"
+TARGET_CC_ARCH += "${LDFLAGS}"
 
 do_compile () {
-	${CC} -shared ${CFLAGS} ${WORKDIR}/mfrlib.c -o ${WORKDIR}/libRDKMfrLib.so.${SOVER}
+	${CC} -shared -Wl,-soname,libRDKMfrLib.so.0 ${CFLAGS} ${WORKDIR}/mfrlib.c -o ${WORKDIR}/libRDKMfrLib.so.${SOVER}
 }
 
 do_install () {
