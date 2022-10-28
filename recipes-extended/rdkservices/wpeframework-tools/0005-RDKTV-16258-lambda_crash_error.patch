@@ -1,36 +1,28 @@
-#####################################################################
-Date: Tue, 08 June 2022 02:35:00 PM
-From:
-Subject: Fix for lambda crash error RDKTV-16258
-Source: COMCAST
-License:
-Upstream-Status:
-Signed-off-by: muhammed rafi c <muhammed_rafi@comcast.com>
-#####################################################################
-Index: git/Tools/ProxyStubGenerator/StubGenerator.py
-===================================================================
---- git.orig/Tools/ProxyStubGenerator/StubGenerator.py
-+++ git/Tools/ProxyStubGenerator/StubGenerator.py
-@@ -826,8 +826,10 @@ def GenerateStubs(output_file, source_fi
-                     emit.Line("// call implementation")
-                     emit.Line("%s* implementation = reinterpret_cast<%s*>(input.Implementation());" %
-                               ((" ".join(m.qualifiers) + " " + iface_name).strip(),  (" ".join(m.qualifiers) + " " + iface_name).strip()))
--                    emit.Line("ASSERT((implementation != %s) && \"Null %s implementation pointer\");" %
--                              (NULLPTR, iface_name))
-+                    #emit.Line("ASSERT((implementation != %s) && \"Null %s implementation pointer\");" %
-+                    #         (NULLPTR, iface_name))
-+                    emit.Line("if (implementation != %s) {" % (NULLPTR))
-+                    emit.IndentInc()
-                     call = ""
-                     if retval.has_output:
-                         call += "%s %s = " % (retval.str_noref, retval.name)
-@@ -914,7 +916,13 @@ def GenerateStubs(output_file, source_fi
-                                     p.name)
-                                 emit.IndentDec()
+From 879b4673d06ad8e73edf5c069ec6d165bea9fa3e Mon Sep 17 00:00:00 2001
+From: Arun P Madhavan <arun_madhavan@comcast.com>
+Date: Wed, 21 Sep 2022 20:29:24 +0000
+Subject: [PATCH] Fix for lambda crash error RDKTV-16258
+Reason for change: Rebased to match the Thunder GITHASH.
+Initial commit by muhammed rafi c <muhammed_rafi@comcast.com>
+Test Procedure: Please see ticket for details.
+Risks: Medium
+Source: Comcast
+License: Inherited
+Upstream-Status: Pending
+Priority: P1
+Signed-off-by: Arun Madhavan <arun_madhavan@comcast.com>
+---
+ Tools/ProxyStubGenerator/StubGenerator.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+diff --git a/Tools/ProxyStubGenerator/StubGenerator.py b/Tools/ProxyStubGenerator/StubGenerator.py
+index ce9d3619..7b79a8f1 100755
+--- a/Tools/ProxyStubGenerator/StubGenerator.py
++++ b/Tools/ProxyStubGenerator/StubGenerator.py
+@@ -928,7 +928,11 @@ def GenerateStubs(output_file, source_file, includePaths = [], defaults="", scan
                                  emit.Line("}")
+                     emit.IndentDec()
+                     emit.Line("}")
 -
-+                    emit.IndentDec()
-+                    emit.Line("}")
 +                    emit.Line("else {")
 +                    emit.IndentInc()
 +                    emit.Line("TRACE_L1(\"Failed to get instance of %s proxy\");" % iface_name)
@@ -39,3 +31,5 @@ Index: git/Tools/ProxyStubGenerator/StubGenerator.py
                  else:
                      log.Print("stubbed method %s" % m.full_name, source_file)
                      emit.Line("// RPC::Data::Input& input(message->Parameters());")
+-- 
+2.17.1

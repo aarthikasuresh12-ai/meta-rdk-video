@@ -19,8 +19,8 @@ SRC_URI = "git://github.com/rdkcentral/ThunderClientLibraries.git;protocol=git;b
            file://opencdm_system_supports_server_certificate.patch \
            "
 
-# Jul 20, 2022
-SRCREV_wpeframework-clientlibraries = "${THUNDER_RELEASE_TAG_NAME}"
+# Jul 20, 2022; R2-v1.11 HASH; https://github.com/rdkcentral/ThunderClientLibraries/commit/d3e3d6c2be6516dd6b4ccfc04b129f8725b59baa
+SRCREV_wpeframework-clientlibraries = "d3e3d6c2be6516dd6b4ccfc04b129f8725b59baa"
 
 
 # ----------------------------------------------------------------------------
