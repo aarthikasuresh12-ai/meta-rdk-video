@@ -1,4 +1,4 @@
 STARBOARD_SRC_URI = "${CMF_GIT_ROOT}/rdk/components/generic/cobalt"
 
-# Oct 17, 2022
-STARBOARD_SRCREV = "3e3f3e0c53940861e6da47cc8ea1a332744ea1b9"
+# Oct 31, 2022
+STARBOARD_SRCREV = "d23e2da63e840f04a1bfa5cf1f2a1e7b0c261102"
