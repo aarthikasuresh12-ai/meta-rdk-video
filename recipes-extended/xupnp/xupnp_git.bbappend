@@ -27,6 +27,8 @@ do_install_append() {
         install -m 0644 ${S}/conf/systemd/xdiscovery.conf ${D}${sysconfdir}
         install -m 0644 ${S}/conf/systemd/xdevice.conf ${D}${sysconfdir}
         install -m 0500 ${S}/conf/addRouteToMocaBridge.sh ${D}${sysconfdir}/Xupnp/addRouteToMocaBridge.sh
+        install -d ${D}${sysconfdir} ${D}${sysconfdir}/rfcdefaults
+        install -m 0644 ${S}/conf/xupnp.ini ${D}${sysconfdir}/rfcdefaults
 }
 
 do_install_append_hybrid() {
