@@ -6,7 +6,6 @@ Subject: [PATCH] RDK-28334 : Integrate latest Westeros
      Westeros in order to keep RDK up to date, and to expose Westeros changes to RDK sprint testing.
 
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: jwanna001 <jeff_wannamaker@cable.comcast.com>
 ---

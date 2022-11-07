@@ -5,7 +5,6 @@ Subject: [PATCH] DELIA-50375 : PSN data not populating in AD placement request
      Added progressCallback and stop the http download if thread stop requested.
 
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: Suresh Sathiah <Suresh_Sathiah@comcast.com>
 ---

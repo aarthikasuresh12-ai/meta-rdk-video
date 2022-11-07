@@ -1,7 +1,6 @@
 From 9df5dd3e10213323578d679ceb67fe93260211fb Mon Sep 17 00:00:00 2001
 From: Pierre Wielders <pierre@wielders.net>
 Source: Metrological
-License: Apache-2.0
 Upstream-Status: merged
 Date: Fri, 10 Apr 2020 09:24:42 +0200
 Subject: [PATCH] [StubGen] Add Instantiation destructor implementation to Recall()

@@ -5,7 +5,6 @@ Subject: [PATCH] DELIA-48575: killall not restarting receiver
      Make sure receiver not hanged and pid of child is populated
 
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: Madana Gopal Thirumalai <madanagopal_thirumalai@comcast.com>
 ---

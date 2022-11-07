@@ -14,7 +14,6 @@ Subject: [PATCH] build-sys: add check for gperf lookup function signature
 		| Makefile:14811: recipe for target 'src/timesync/timesyncd-gperf.o' failed
 
 Source: GITHUB [ https://github.com/systemd/systemd/issues/5039 ]
-License: GPLV2
 Upstream-Status: Submitted
 Signed-off-by: Mike Gilbert <floppymaster@gmail.com>
 ---

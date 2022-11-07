@@ -2,7 +2,6 @@ From e271879b3b455dad5b2914f6ce7e1152864f5ba9 Mon Sep 17 00:00:00 2001
 From: Nikita Poltorapavlo <Nikita_Poltorapavlo2@cable.comcast.com>
 Date: Mon, 29 Nov 2021 18:56:31 +0200
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Subject: [PATCH] RDKTV-11792: increase retry count
 

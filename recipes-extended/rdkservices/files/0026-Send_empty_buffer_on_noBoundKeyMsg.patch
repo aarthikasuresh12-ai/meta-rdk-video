@@ -3,7 +3,6 @@ From: akuria844 <anooja_kurian@comcast.com>
 Date: Thu, 3 Dec 2020 08:09:06 +0000
 Subject: [PATCH 26/26] Send_empty_buffer_on_noBoundKeyMsg
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: akuria844 <anooja_kurian@comcast.com>
 ---

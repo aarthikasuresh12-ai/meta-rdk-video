@@ -2,7 +2,6 @@ Date: Oct 28 07:42:58 2021 -0400
 From: I48903e16e2ca241ee19f4a677436cf7a504fde43 Oct 28, 2021 07:42 AM
 Subject: [PATCH] 302 http response handling
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: Suresh Sathiah <Suresh_Sathiah@comcast.com>
 diff --git a/src/rtFileDownloader.cpp b/src/rtFileDownloader.cpp

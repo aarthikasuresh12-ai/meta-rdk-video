@@ -5,7 +5,6 @@ Subject: [PATCH] DELIA-42952 : Add distro feature for disabling Spark
       Add distro feature to disable building spark libs
 
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: mthiru270 <madanagopal_thirumalai@comcast.com>
 ---

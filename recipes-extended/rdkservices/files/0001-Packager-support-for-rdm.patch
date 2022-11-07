@@ -5,7 +5,6 @@ Subject: [PATCH] RDK-28320: Integrate thunder packager plugin
      Build packager plugin
 
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: Deva <Deva_Thiyagarajan2@comcast.com>
 ---

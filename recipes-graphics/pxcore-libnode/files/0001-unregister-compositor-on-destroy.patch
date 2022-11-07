@@ -2,7 +2,6 @@ Date: Oct 02, 2020  1:00 PM
 From: 51333037650ecee44191492b541106efa573cc35 Feb 12, 2020 09:06 PM
 Subject: [PATCH] pxWayland Unregister Compositor crash
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: binbar366 <binu_inbaraj@comcast.com>
 

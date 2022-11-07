@@ -2,7 +2,6 @@ Date: Tue 11 Jan 2022 01:32:51 AM UTC
 From: f1386ab496cf754773770b17508afd22fcd7eb13 Mon Sep 17 00:00:00 2001
 Subject: Backport opencdm_system_supports_server_certificate
 Source: COMCAST
-License: GPLV2
 Upstream-Status: N/A
 Signed-off-by: Ievgen Mutavchi <Ievgen_Mutavchi@comcast.com>
 

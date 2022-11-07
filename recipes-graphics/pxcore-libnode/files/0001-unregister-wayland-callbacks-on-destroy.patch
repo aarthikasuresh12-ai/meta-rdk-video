@@ -2,7 +2,6 @@ Date: Feb 26, 2020 1:00 PM
 From: ebecd56aaa2727b6305d39c69951fbdc8740f800 Oct 31, 2018 11:56 PM
 Subject: [PATCH] unregister wayland callbacks on destroy
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: mfiess200 <michael_fiess@cable.comcast.com>
 

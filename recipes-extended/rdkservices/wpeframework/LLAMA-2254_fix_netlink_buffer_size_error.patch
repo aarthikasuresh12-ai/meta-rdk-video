@@ -1,7 +1,6 @@
 From: Ben Gray <ben.gray@sky.uk>
 Date: Fri Aug 6 2021
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: Nikita Poltorapavlo <npoltorapavlo@productengine.com>
 Subject: [PATCH] LLAMA-2254: High %CPU observed for WPEFramework

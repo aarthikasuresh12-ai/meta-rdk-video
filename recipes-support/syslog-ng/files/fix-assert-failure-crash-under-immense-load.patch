@@ -12,7 +12,6 @@ Subject: [PATCH] affile: simplify time-reap()
 
 Source: GITHUB 
 
-License: LGPL-2.1-or-later
 
 Upstream-Status: Submitted [ https://github.com/syslog-ng/syslog-ng/commit/c0c34619fb277a5ccf19436114711df50acc1ff8 ]
 

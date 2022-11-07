@@ -3,7 +3,6 @@ From: Gurdal Oruklu <gurdal_oruklu@comcast.com>
 Date: Sat, 19 Jun 2021 17:45:04 +0000
 Subject: [PATCH] added opencdm_gstreamer_transform_caps method
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: N/A
 Signed-off-by: Gurdal Oruklu <gurdal_oruklu@comcast.com>
 ---

@@ -4,7 +4,6 @@ Date: Mon, 6 Jun 2022 11:05:51 +0000
 Subject: [PATCH] parodus pid file creation
 
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: mselva006c <mani_selvaraj@comcast.com>
 ---

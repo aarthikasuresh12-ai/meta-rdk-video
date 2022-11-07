@@ -2,7 +2,6 @@ Date: Wed, 7 Jul 2021 18:22:04 +000
 From: 51bcca413901a9bb9fd0c299d01eff09859f67e1 Mon Sep 17 00:00:00 2001
 Subject: [PATCH] support for focus events
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: mfiess200 <michael_fiess@cable.comcast.com>
 

@@ -22,7 +22,6 @@ Subject: [PATCH] Partially revert a time-reap race condition fix
 
 Source: GITHUB
 
-License: LGPL-2.1-or-later
 
 Upstream-Status: Submitted [ https://github.com/syslog-ng/syslog-ng/commit/9ead49af4b192e7a6b8e32403d9df2df4fb07237 ]
 

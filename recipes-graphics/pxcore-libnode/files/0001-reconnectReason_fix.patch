@@ -5,7 +5,6 @@ Subject: [PATCH] DELIA-45068: Avoid kill process id 0 in pxWayland terminateclie
       fix reconnect reason on Receiver restart
 
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: Renjith Warier <renjith_warier@comcast.com>
 ---

@@ -4,7 +4,6 @@ Date: Tue, 30 Aug 2022 20:38:30 +0200
 Subject: [PATCH] SERXIONE-600: LocationSync Network check (timer)
 
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Reason for change: LocationSync depends on Network but it might not be available early on boot-up
 Implements:  network availability check

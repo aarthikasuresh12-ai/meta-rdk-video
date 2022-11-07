@@ -9,7 +9,6 @@ Subject: [PATCH] XRE-13227: Defer seek complition until it is actually finished
 
 Source: COMCAST
 
-License: LGPL-2.1-or-later
 
 Upstream-Status: Pending 
 

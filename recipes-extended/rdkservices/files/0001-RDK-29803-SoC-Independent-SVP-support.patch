@@ -3,7 +3,6 @@ From: Douglas Adler <douglas_adler2@comcast.com>
 Date: Sun, 7 Feb 2021 20:36:31 +0000
 Subject: [PATCH] RDK-29803 : SoC Independent SVP support
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: NA
 
 Reason for change: Make the RDK support SVP on multiple SoC Platforms

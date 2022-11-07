@@ -3,7 +3,6 @@ From: Karunakaran A <Karunakaran_Amirthalingam@cable.comcast.com>
 Date: Thu, 7 Apr 2022 16:14:42 +0000
 Subject: [PATCH] Revert "ONEM-22659: Synchronization in Release changed"
 Source: COMCAST
-License: GPLV2
 Upstream-Status: Pending
 Signed-off-by: Karunakaran A <Karunakaran_Amirthalingam@cable.comcast.com>
 

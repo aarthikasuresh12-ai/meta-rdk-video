@@ -9,7 +9,6 @@ Subject: [PATCH] RDK-22467 support for new error codes and fix memory leak
 
 Source: COMCAST
 
-License: Apache-2.0
 
 Upstream-Status: Pending
 

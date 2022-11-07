@@ -18,7 +18,6 @@ Subject: [PATCH] matroskademux: emit no-more-pads when the Tracks element is com
 
 Source: GITLAB
 
-License: LGPL-2.1-or-later
 
 Upstream-Status: Submitted [ https://www.w3.org/TR/mse-byte-stream-format-webm https://bug334082.bugzilla-attachments.gnome.org/attachment.cgi?id=362212 ]
 

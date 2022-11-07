@@ -1,7 +1,6 @@
 From 3b50d0e8b87fefe59d19cfaa1c0d2e3c22949572 Mon Sep 17 00:00:00 2001
 From: yramak601 <Yashaswini_Ramakrishna@comcast.com>
 Source: Comcast
-License: Apache-2.0
 Upstream-Status: NA
 Date: Mon, 23 Nov 2020 10:44:58 +0000
 Subject: [PATCH] link-secapi-crypto

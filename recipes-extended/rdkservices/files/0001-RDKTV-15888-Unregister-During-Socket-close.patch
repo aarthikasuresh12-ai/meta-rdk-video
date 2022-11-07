@@ -3,7 +3,6 @@ From: Karunakaran Amirthalingam
 Date: Tue, 5 Jul 2022 21:41:28 +0000
 Subject: [PATCH] /0001-SocketPort_Resource_Unregister.patch
 Source: COMCAST
-License: GPLV2
 Upstream-Status: Backport
 Signed-off-by: Karunakaran Amirthalingam <Karunakaran_Amirthalingam@cable.comcast.com>
 ##########################################

@@ -4,7 +4,6 @@ Date: Mon, 8 Mar 2021 16:14:38 +0000
 Subject: [PATCH] RDK-31882 : Add GstCaps parsing in OCDM to
  wpeframework-clientlibraries
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: N/A
 
 Reason for change: Amlogic needs to handle Audio data outside the SVP path

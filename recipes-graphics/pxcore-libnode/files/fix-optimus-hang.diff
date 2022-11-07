@@ -5,7 +5,6 @@ Subject: [PATCH] DELIA-30067 : updating spark version
       updating spark version
 
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: Michael Fiess <michael_fiess@cable.comcast.com>
 ---

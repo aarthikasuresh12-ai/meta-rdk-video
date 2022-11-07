@@ -3,7 +3,6 @@ From: Siva Sankar Raja <sivasankar_raja@comcast.com>
 Date: Thu, 17 Sep 2020 06:19:41 +0000
 Subject: [PATCH] moved the SOC specific svp transformation to gst-svp-ext
 Source: COMCAST
-License: Apache-2.0
 Upstream-Status: Pending
 Signed-off-by: Siva Sankar Raja <sivasankar_raja@comcast.com>
 
