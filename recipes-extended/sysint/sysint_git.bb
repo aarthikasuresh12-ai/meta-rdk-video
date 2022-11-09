@@ -16,7 +16,7 @@ SRCREV_FORMAT = "sysintgeneric_sysintdevice"
 
 S = "${WORKDIR}/git/device"
 inherit systemd syslog-ng-config-gen
-SYSLOG-NG_FILTER = " systemd dropbear gstreamer-cleanup card-provision-check dibbler rfc-config update-device-details ping-telemetry applications vitalprocess-info iptables mount_log reboot-reason"
+SYSLOG-NG_FILTER = " systemd dropbear gstreamer-cleanup card-provision-check dibbler rfc-config update-device-details ping-telemetry applications vitalprocess-info iptables mount_log swupdate reboot-reason messages rdnssd"
 SYSLOG-NG_FILTER_append_client = " ConnectionStats systemd_timesyncd"
 SYSLOG-NG_SERVICE_ConnectionStats_client = "network-connection-stats.service eth-connection-stats.service"
 SYSLOG-NG_DESTINATION_ConnectionStats_client = "ConnectionStats.txt"
@@ -54,7 +54,7 @@ SYSLOG-NG_SERVICE_rfc-config = "rfc-config.service"
 SYSLOG-NG_DESTINATION_rfc-config = "rfcscript.log"
 SYSLOG-NG_LOGRATE_rfc-config = "low"
 SYSLOG-NG_SERVICE_update-device-details = "update-device-details.service"
-SYSLOG-NG_DESTINATION_update-device-details = "device-details.log"
+SYSLOG-NG_DESTINATION_update-device-details = "device_details.log"
 SYSLOG-NG_LOGRATE_update-device-details = "low"
 SYSLOG-NG_SERVICE_iptables = "iptables.service"
 SYSLOG-NG_DESTINATION_iptables = "iptables.log"
@@ -74,6 +74,16 @@ SYSLOG-NG_LOGRATE_mount_log = "low"
 SYSLOG-NG_SERVICE_reboot-reason = "reboot-reason-logger.service update-reboot-info.service"
 SYSLOG-NG_DESTINATION_reboot-reason = "rebootreason.log"
 SYSLOG-NG_LOGRATE_reboot-reason = "low"
+SYSLOG-NG_SERVICE_swupdate = "swupdate.service"
+SYSLOG-NG_DESTINATION_swupdate = "swupdate.log"
+SYSLOG-NG_LOGRATE_swupdate = "low"
+
+# Get kernel logs via journal
+SYSLOG-NG_PROGRAM_messages += " kernel"
+
+# Drop rdnssd logs
+SYSLOG-NG_SERVICE_rdnssd = "rdnssd.service"
+SYSLOG-NG_LOGRATE_rdnssd = "medium"
 
 do_compile[noexec] = "1"
 
@@ -148,7 +158,6 @@ do_install() {
         install -m 0644 ${S}/../systemd_units/minidump-secure-upload.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/minidump-upload.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/minidump-secure-upload.path ${D}${systemd_unitdir}/system
-        install -m 0644 ${S}/../systemd_units/dropbear.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/disk-threshold-check.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/disk-threshold-check.timer ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/reboot-reason-logger.service ${D}${systemd_unitdir}/system
@@ -163,6 +172,8 @@ do_install() {
         install -m 0644 ${S}/../systemd_units/mount-failure-count.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/update-reboot-info.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/update-reboot-info.service ${D}${systemd_unitdir}/system
+        install -m 0644 ${S}/../systemd_units/restart-parodus.path ${D}${systemd_unitdir}/system
+        install -m 0644 ${S}/../systemd_units/restart-parodus.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/update-rf4ce-details.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/ping-telemetry.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/ping-telemetry.timer ${D}${systemd_unitdir}/system
@@ -269,7 +280,7 @@ do_install() {
         # Samhain can only invoke external utilities present in trusted FHS path
         install -d ${D}${sbindir}
         if [ -f ${S}/../lib/rdk/upload2splunk.sh ]; then
-            install -m 0755 ${S}/../lib/rdk/upload2splunk.sh ${D}${sbindir}/
+            install -m 0755 ${S}/../lib/rdk/upload2splunk.sh ${D}${sbindir}
         fi
 	if [ -f ${D}/${base_libdir}/rdk/upload2splunk.sh ]; then
 	    rm -f ${D}${base_libdir}/rdk/upload2splunk.sh
@@ -321,6 +332,7 @@ do_install_append_hybrid() {
         install -m 0644 ${S}/../systemd_units/lightsleep.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/lightsleep.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/htmldiag-pre.service ${D}${systemd_unitdir}/system
+        install -m 0644 ${S}/../systemd_units/dropbear.service ${D}${systemd_unitdir}/system
 
         if [ -f ${D}${base_libdir}/rdk/iptables_init_xi ]; then
             rm -f ${D}${base_libdir}/rdk/iptables_init_xi
@@ -362,6 +374,7 @@ do_install_append_client() {
 	install -m 0644 ${S}/../systemd_units/ntp-event.service ${D}${systemd_unitdir}/system
 	install -m 0644 ${S}/../systemd_units/ntp-event.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/ntp-time-checker.service ${D}${systemd_unitdir}/system
+	install -m 0644 ${S}/../systemd_units/dropbear_mediaclient.service ${D}${systemd_unitdir}/system/dropbear.service
         if [ "${WIFI_ENABLED}" = "false" ] ; then
           install -m 0644 ${S}/../systemd_units/eth-connection-stats.service ${D}${systemd_unitdir}/system
           install -m 0644 ${S}/../systemd_units/eth-connection-stats.timer ${D}${systemd_unitdir}/system
@@ -429,6 +442,16 @@ do_install_append_rdkzram() {
         install -m 0644 ${S}/../systemd_units/zram.service ${D}${systemd_unitdir}/system
 }
 
+do_install_append_rdktv() {
+        install -m 0755 ${S}/../rdktv/lib/rdk/imageFlasher.sh ${D}${base_libdir}/rdk/imageFlasher.sh
+        install -m 0755 ${S}/../rdktv/lib/rdk/ssm_cri_data.sh ${D}${base_libdir}/rdk/ssm_cri_data.sh
+        install -m 0755 ${S}/../rdktv/lib/rdk/vdec-statistics.sh ${D}${base_libdir}/rdk/vdec-statistics.sh
+        install -m 0755 ${S}/../rdktv/etc/env_setup.sh ${D}${sysconfdir}
+        install -m 0644 ${S}/../rdktv/systemd_units/vdec-statistics.service ${D}${systemd_unitdir}/system
+        install -m 0644 ${S}/../rdktv/systemd_units/disk-check.service ${D}${systemd_unitdir}/system
+        install -m 0755 ${S}/../rdktv/lib/rdk/get-reboot-reason.sh ${D}${base_libdir}/rdk/get-reboot-reason.sh
+}
+
 SYSTEMD_SERVICE_${PN} = "hosts.service"
 SYSTEMD_SERVICE_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_maintenance_manager', '', 'dcm-log.service',d)}"
 SYSTEMD_SERVICE_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_maintenance_manager', '', 'rfc-config.service',d)}"
@@ -469,6 +492,8 @@ SYSTEMD_SERVICE_${PN} += "ping-telemetry.timer"
 SYSTEMD_SERVICE_${PN} += "oops-dump.service"
 SYSTEMD_SERVICE_${PN} += "update-reboot-info.path"
 SYSTEMD_SERVICE_${PN} += "update-reboot-info.service"
+SYSTEMD_SERVICE_${PN} += "restart-parodus.path"
+SYSTEMD_SERVICE_${PN} += "restart-parodus.service"
 SYSTEMD_SERVICE_${PN} += "gstreamer-cleanup.service"
 SYSTEMD_SERVICE_${PN} += "path-fail-notifier@.service"
 
@@ -515,6 +540,8 @@ SYSTEMD_SERVICE_${PN}_append_hybrid = " htmldiag-pre.service"
 
 SYSTEMD_SERVICE_${PN}_append_rdkzram = " zram.service"
 
+SYSTEMD_SERVICE_${PN}_append_rdktv = " vdec-statistics.service"
+
 PACKAGE_BEFORE_PN += "${PN}-conf"
 
 FILES_${PN} += "${bindir}/*"
@@ -525,7 +552,7 @@ FILES_${PN} += "/rebootSTB.sh"
 FILES_${PN} += "/rebootNow.sh"
 FILES_${PN} += "${sysconfdir}/*"
 FILES_${PN} += "${base_bindir}/timestamp"
-FILES_${PN} += "${sbindir}/upload2splunk.sh"
+FILES_${PN} += "${sbindir}/*"
 FILES_${PN}_append_hybrid = " ${systemd_unitdir}/system/update-device-details.service.d/update-device-details.conf"
 FILES_${PN}_append_client = " /HrvInitScripts/*"
 FILES_${PN}-conf = "${sysconfdir}/rfcdefaults/sysint.ini"

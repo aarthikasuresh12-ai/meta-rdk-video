@@ -30,9 +30,9 @@ CXXFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' -DSAFEC_R
 
 CXXFLAGS += "-I${STAGING_INCDIR}/rdk/iarmbus -DENABLE_SD_NOTIFY -I${STAGING_INCDIR}/rdk/iarmmgrs-hal"
 CFLAGS += "-I${STAGING_INCDIR}/rdk/iarmbus -DENABLE_SD_NOTIFY -I${STAGING_INCDIR}/rdk/iarmmgrs-hal"
-LDFLAGS += "-lsystemd -lsqlite3 -lsecure_wrapper"
+LDFLAGS += "-lsystemd -lsqlite3 -lsecure_wrapper -lcurl"
 
-DEPENDS = "glib-2.0 iarmbus iarmmgrs dbus tr69hostif-headers cjson authservice nlmonitor libnl sqlite3 libsyswrapper rdk-logger breakpad"
+DEPENDS = "glib-2.0 iarmbus iarmmgrs dbus tr69hostif-headers cjson authservice nlmonitor libnl sqlite3 libsyswrapper rdk-logger breakpad xupnp curl"
 DEPENDS_append = " ${@bb.utils.contains('MACHINE_EXTRA_RDEPENDS', 'virtual/mocadriver', 'moca-hal-tools', '', d)}"
 
 # Add support for rfcapi
@@ -44,9 +44,11 @@ LDFLAGS += "-lrfcapi"
 PACKAGECONFIG += " ${@bb.utils.contains('MACHINE_EXTRA_RDEPENDS', 'virtual/mocadriver', 'moca', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'wifi', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'lostfound', '', d)}"
+PACKAGECONFIG += "telemetry_2_0"
 PACKAGECONFIG[moca] = "--enable-rdk-moca-hal=yes,--enable-rdk-moca-hal=no,,"
 PACKAGECONFIG[wifi] = "--enable-rdk-wifi-hal=yes,--enable-rdk-wifi-hal=no,virtual/wifi-hal,virtual/wifi-hal"
 PACKAGECONFIG[lostfound] = "--enable-lost-found=yes,--enable-lost-found=no,lostandfound,lostandfound"
+PACKAGECONFIG[telemetry_2_0] = "--enable-telemetry_2_0=yes,--enable-telemetry_2_0=no,telemetry,telemetry"
 EXTRA_OECONF_append_client = " --enable-nlmonitor --enable-iarm --enable-route-support"
 EXTRA_OECONF_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'WIFI_CLIENT_ROAMING', ' --enable-client-roaming', '', d)}"
 BREAKPAD_BIN_append = " netsrvmgr"

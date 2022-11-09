@@ -1,13 +1,9 @@
-From ca50788efcf99833684b98c11aa2c6feb4ac67e5 Mon Sep 17 00:00:00 2001
-From: Douglas Adler <douglas_adler2@comcast.com>
-Date: Mon, 8 Mar 2021 16:49:39 +0000
-Subject: [PATCH] RDK-31882 : Add GstCaps parsing in OCDM to rdkservices
+From aefd93708c95d1ff2f7ac74d20d5d5a37e89d5bc Mon Sep 17 00:00:00 2001
+From: svemur170 <srikanth_vemuri@comcast.com>
+Date: Fri, 26 Aug 2022 11:33:25 -0400
+Subject: [PATCH] DELIA-57501 : Fix Warnings in RDKServices builds and enable
+ warnings as errors
 
-Reason for change: Amlogic needs to handle Audio data outside the SVP path
-Test Procedure: Verify that CDM module is detecting the stream type
-Risks: None
-
-Signed-off-by: Douglas Adler <douglas_adler2@comcast.com>
 ---
  OpenCDMi/CMakeLists.txt   |   1 +
  OpenCDMi/CapsParser.cpp   | 200 ++++++++++++++++++++++++++++++++++++++
@@ -18,20 +14,20 @@ Signed-off-by: Douglas Adler <douglas_adler2@comcast.com>
  create mode 100644 OpenCDMi/CapsParser.h
 
 diff --git a/OpenCDMi/CMakeLists.txt b/OpenCDMi/CMakeLists.txt
-index 943885d..fe23606 100644
+index 406035f8..f8bbe409 100644
 --- a/OpenCDMi/CMakeLists.txt
 +++ b/OpenCDMi/CMakeLists.txt
-@@ -27,6 +27,7 @@ add_library(${MODULE_NAME} SHARED
-         OCDMJsonRpc.cpp
+@@ -42,6 +42,7 @@ add_library(${MODULE_NAME} SHARED
+ add_library(${PLUGIN_OCDM_IMPLEMENTATION} SHARED
          CENCParser.cpp
          FrameworkRPC.cpp
 +        CapsParser.cpp
          Module.cpp)
  
- # avoid -as-needed flag being set, this will break linking to libocdm.so
+ add_dependencies(${MODULE_NAME} ${PLUGIN_OCDM_IMPLEMENTATION})
 diff --git a/OpenCDMi/CapsParser.cpp b/OpenCDMi/CapsParser.cpp
 new file mode 100644
-index 0000000..7d77cff
+index 00000000..e4a1a75e
 --- /dev/null
 +++ b/OpenCDMi/CapsParser.cpp
 @@ -0,0 +1,200 @@
@@ -59,7 +55,7 @@ index 0000000..7d77cff
 +#define START_CHAR ")"
 +#define END_CHAR ","
 +
-+
++#undef  LOG
 +#define LOG(level, ...) DebugLogging(level, __FUNCTION__, __LINE__, __VA_ARGS__)
 +static bool s_bLogTrace = false;
 +
@@ -117,11 +113,11 @@ index 0000000..7d77cff
 +namespace WPEFramework {
 +    namespace Plugin {
 +
-+        CapsParser::CapsParser() 
-+        : _mediaTag("original-media-type")
++        CapsParser::CapsParser()
++	: _lastHash(0)
++        , _mediaTag("original-media-type")
 +        , _widthTag("width")
-+        , _heightTag("height")
-+        , _lastHash(0)
++	, _heightTag("height")
 +        {
 +            char* envTraceLog = getenv("GSTCAPS_ENABLE_TRACE_LOGGING");
 +            if(envTraceLog && strcasecmp(envTraceLog, "true") == 0) {
@@ -237,7 +233,7 @@ index 0000000..7d77cff
 +}
 diff --git a/OpenCDMi/CapsParser.h b/OpenCDMi/CapsParser.h
 new file mode 100644
-index 0000000..9ad148d
+index 00000000..9ad148dc
 --- /dev/null
 +++ b/OpenCDMi/CapsParser.h
 @@ -0,0 +1,63 @@
@@ -305,7 +301,7 @@ index 0000000..9ad148d
 +    }
 +}
 diff --git a/OpenCDMi/FrameworkRPC.cpp b/OpenCDMi/FrameworkRPC.cpp
-index 7b39467..f4c1b86 100644
+index 37a28d37..6fafd4b2 100644
 --- a/OpenCDMi/FrameworkRPC.cpp
 +++ b/OpenCDMi/FrameworkRPC.cpp
 @@ -23,6 +23,7 @@
@@ -423,5 +419,5 @@ index 7b39467..f4c1b86 100644
  
          public:
 -- 
-2.24.0
+2.32.1 (Apple Git-133)
 

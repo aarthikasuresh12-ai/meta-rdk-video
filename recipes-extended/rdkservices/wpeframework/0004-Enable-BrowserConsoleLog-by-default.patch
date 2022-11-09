@@ -7,11 +7,11 @@ Subject: [PATCH] Enable BrowserConsoleLog by default
  Source/WPEFramework/GenericConfig.cmake | 7 +++++++
  1 file changed, 7 insertions(+)
 
-diff --git a/Source/WPEFramework/GenericConfig.cmake b/Source/WPEFramework/GenericConfig.cmake
-index ca5160e..29e586e 100644
---- a/Source/WPEFramework/GenericConfig.cmake
-+++ b/Source/WPEFramework/GenericConfig.cmake
-@@ -141,6 +141,12 @@ map()
+Index: git/Source/WPEFramework/GenericConfig.cmake
+===================================================================
+--- git.orig/Source/WPEFramework/GenericConfig.cmake
++++ git/Source/WPEFramework/GenericConfig.cmake
+@@ -137,6 +137,19 @@ map()
  end()
  ans(PLUGIN_FATAL_TRACING)
  
@@ -21,17 +21,22 @@ index ca5160e..29e586e 100644
 +    kv(enabled true)
 +end()
 +ans(PLUGIN_WEBKITBROWSER_TRACING)
++
++map()
++    kv(category "BrowserConsoleLog")
++    kv(module "Plugin_WebKitBrowserExtension")
++    kv(enabled true)
++end()
++ans(PLUGIN_WEBKITBROWSEREXTENSION_TRACING)
  
  if(NOT VIRTUALINPUT)
      map()
-@@ -173,6 +179,7 @@ map_append(${CONFIG} tracing ${PLUGIN_STARTUP_TRACING})
+@@ -169,6 +182,8 @@ map_append(${CONFIG} tracing ${PLUGIN_ST
  map_append(${CONFIG} tracing ${PLUGIN_SHUTDOWN_TRACING})
  map_append(${CONFIG} tracing ${PLUGIN_NOTIFICATION_TRACING})
  map_append(${CONFIG} tracing ${PLUGIN_FATAL_TRACING})
 +map_append(${CONFIG} tracing ${PLUGIN_WEBKITBROWSER_TRACING})
++map_append(${CONFIG} tracing ${PLUGIN_WEBKITBROWSEREXTENSION_TRACING})
  endif(TRACE_SETTINGS)
  
  map_append(${PLUGIN_CONTROLLER} configuration ${PLUGIN_CONTROLLER_CONFIGURATION})
--- 
-2.7.4
-

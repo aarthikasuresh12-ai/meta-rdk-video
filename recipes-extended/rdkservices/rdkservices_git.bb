@@ -21,20 +21,17 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://0001-add_gstcaps_forcobalt_mediatype.patch \
            file://0001-Add-monitoring-of-cloned-callsigns.patch \
            file://rdkservices.ini \
-           file://0001-support-for-focus-events.patch \
            file://0001-RDKTV-11792-increase-retry-count.patch \
-	   ${@bb.utils.contains('DISTRO_FEATURES', 'tinyrdk','file://0001-Introduce-Memory-Monitor.patch','',d)} \
-	   ${@bb.utils.contains('DISTRO_FEATURES', 'tinyrdk','file://0002-Listen-to-keyevents.patch','',d)} \
-	   ${@bb.utils.contains('DISTRO_FEATURES', 'tinyrdk','file://0101-Fix-tptimer-failure.patch','',d)} \
+           file://0001-SERXIONE-600-LocationSync-Network-check-timer.patch \
           "
 
-# March 08, 2022
-SRCREV = "dfa45d2e87607116477f94bb46cf227847550b39"
+# Commits on Nov 02, 2022
+SRCREV = "6d97686804b1811000d94830b8ab27feb975a08f"
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
 
 DEPENDS += "wpeframework-clientlibraries devicesettings iarmbus iarmmgrs tts storagemanager nopoll audiocapturemgr hdmicec ctrlm-headers"
-DEPENDS +=  " trower-base64 rfc telemetry "
+DEPENDS +=  " trower-base64 rfc telemetry websocketpp boost "
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', 'bluetooth-mgr', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'rdkshell', ' rdkshell ', '', d)}"
 DEPENDS += " breakpad-wrapper"
@@ -48,6 +45,7 @@ RDEPENDS_${PN} += "devicesettings"
 CXXFLAGS += " -I${STAGING_DIR_TARGET}${includedir}/wdmp-c/ "
 CXXFLAGS += " -I${STAGING_DIR_TARGET}${includedir}/trower-base64/ "
 CXXFLAGS += "${@bb.utils.contains('DISTRO_FEATURES', 'build_rfc_enabled',"-DRFC_ENABLED ","", d)}"
+CXXFLAGS += " -Wall -Werror "
 
 # More complicated plugins are moved seperate includes
 include include/compositor.inc
@@ -63,7 +61,7 @@ WPEFRAMEWORK_LOCATIONSYNC_URI ?= "http://jsonip.metrological.com/?maf=true"
 
 PACKAGECONFIG ?= " \
     ${WPE_SNAPSHOT} \
-    activitymonitor avinput continuewatching controlservice datacapture devicediagnostics \
+    activitymonitor avinput continuewatching controlservice voicecontrol datacapture devicediagnostics \
     displaysettings framerate hdcpprofile hdmicec hdmiinput loggingpreferences \
     messenger network remoteactionmapping screencapture securityagent stateobserver \
     systemservices timer tracecontrol userpreferences warehouse monitor locationsync texttospeech persistent_store\
@@ -81,13 +79,14 @@ PACKAGECONFIG ?= " \
 "
 EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'rdkshell', ' -DPLUGIN_RDKSHELL=ON ', ' -DPLUGIN_RDKSHELL=OFF ', d)}"
 EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'rdkshell_disable_autostart', ' -DPLUGIN_RDKSHELL_AUTOSTART=false ', ' -DPLUGIN_RDKSHELL_AUTOSTART=true ', d)}"
-EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'rdkshell_ra', ' -DPLUGIN_RDKSHELL_AUTOSTART=true ', ' ', d)}"
+EXTRA_OECMAKE += "${@bb.utils.contains_any('DISTRO_FEATURES', 'rdkshell_ra second_form_factor', ' -DPLUGIN_RDKSHELL_AUTOSTART=true ', ' ', d)}"
 
 PACKAGECONFIG[activitymonitor]      = "-DPLUGIN_ACTIVITYMONITOR=ON,-DPLUGIN_ACTIVITYMONITOR=OFF,"
 PACKAGECONFIG[avinput]              = "-DPLUGIN_AVINPUT=ON,-DPLUGIN_AVINPUT=OFF,"
 PACKAGECONFIG[bluetoothcontrol]     = "-DPLUGIN_BLUETOOTH=ON -DPLUGIN_BLUETOOTH_AUTOSTART=true,-DPLUGIN_BLUETOOTH=OFF,,bluez5"
 PACKAGECONFIG[continuewatching]     = "-DPLUGIN_CONTINUEWATCHING=ON,-DPLUGIN_CONTINUEWATCHING=OFF,"
 PACKAGECONFIG[controlservice]       = "-DPLUGIN_CONTROLSERVICE=ON,-DPLUGIN_CONTROLSERVICE=OFF,"
+PACKAGECONFIG[voicecontrol]         = "-DPLUGIN_VOICECONTROL=ON,-DPLUGIN_VOICECONTROL=OFF,"
 PACKAGECONFIG[datacapture]          = "-DPLUGIN_DATACAPTURE=ON, -DPLUGIN_DATACAPTURE=OFF,"
 PACKAGECONFIG[devicediagnostics]    = "-DPLUGIN_DEVICEDIAGNOSTICS=ON,-DPLUGIN_DEVICEDIAGNOSTICS=OFF,"
 PACKAGECONFIG[deviceinfo]           = "-DPLUGIN_DEVICEINFO=ON,-DPLUGIN_DEVICEINFO=OFF,"
@@ -161,7 +160,7 @@ EXTRA_OECMAKE += " \
 do_install_append() {
     install -m 0644 ${WORKDIR}/thunder_acl.json ${D}${sysconfdir}
     install -m 0644 ${WORKDIR}/rdkshell_post_startup.conf ${D}${sysconfdir}
-    if ${@bb.utils.contains("DISTRO_FEATURES", "rdkshell_ra", "true", "false", d)}
+    if ${@bb.utils.contains_any("DISTRO_FEATURES", "rdkshell_ra second_form_factor", "true", "false", d)}
     then
       install -d ${D}${sysconfdir}/rfcdefaults
       install -m 0644 ${WORKDIR}/rdkservices.ini ${D}${sysconfdir}/rfcdefaults/

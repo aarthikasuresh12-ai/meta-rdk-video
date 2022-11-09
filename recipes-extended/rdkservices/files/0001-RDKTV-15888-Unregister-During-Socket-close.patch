@@ -1,0 +1,32 @@
+##########################################
+From: Karunakaran Amirthalingam
+Date: Tue, 5 Jul 2022 21:41:28 +0000
+Subject: [PATCH] /0001-SocketPort_Resource_Unregister.patch
+Source: COMCAST
+License: GPLV2
+Upstream-Status: Backport
+Signed-off-by: Karunakaran Amirthalingam <Karunakaran_Amirthalingam@cable.comcast.com>
+##########################################
+Index: git/Source/core/SocketPort.cpp
+===================================================================
+diff --git a/Source/core/SocketPort.cpp b/Source/core/SocketPort.cpp
+index 8ff7b7f6..6d9ce659 100644
+--- a/Source/core/SocketPort.cpp
++++ b/Source/core/SocketPort.cpp
+@@ -373,14 +373,12 @@ namespace Core {
+
+	// Make sure the socket is closed before you destruct. Otherwise
+         // the virtuals might be called, which are destructed at this point !!!!
+-        TRACE_L1("Destructor: Before Lock");
+         m_syncAdmin.Lock();
+-        TRACE_L1("Destructor: After Lock");
+         ASSERT((m_Socket == INVALID_SOCKET) || (IsClosed()));
+-        TRACE_L1("Destructor: Before Free");
+
+         if (m_Socket != INVALID_SOCKET) {
+	    DestroySocket(m_Socket);
++            ResourceMonitor::Instance().Unregister(*this);
+         }
+         ::free(m_SendBuffer);
+	m_SendBuffer = nullptr;
+

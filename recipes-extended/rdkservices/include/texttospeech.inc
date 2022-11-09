@@ -8,6 +8,9 @@ TEXTTOSPEECH_RATE ?= "50"
 TEXTTOSPEECH_VOICE_FOR_EN ?= " "
 TEXTTOSPEECH_VOICE_FOR_ES ?= " "
 TEXTTOSPEECH_VOICE_FOR_FR ?= " "
+TEXTTOSPEECH_VOICE_FOR_GB ?= " "
+TEXTTOSPEECH_VOICE_FOR_DE ?= " "
+TEXTTOSPEECH_VOICE_FOR_IT ?= " "
 
 # ----------------------------------------------------------------------------
 
@@ -20,6 +23,9 @@ PACKAGECONFIG[texttospeech] = "-DPLUGIN_TEXTTOSPEECH=ON \
                                -DPLUGIN_TEXTTOSPEECH_VOICE_FOR_EN="${TEXTTOSPEECH_VOICE_FOR_EN}" \
                                -DPLUGIN_TEXTTOSPEECH_VOICE_FOR_ES="${TEXTTOSPEECH_VOICE_FOR_ES}" \
                                -DPLUGIN_TEXTTOSPEECH_VOICE_FOR_FR="${TEXTTOSPEECH_VOICE_FOR_FR}" \
+                               -DPLUGIN_TEXTTOSPEECH_VOICE_FOR_GB="${TEXTTOSPEECH_VOICE_FOR_GB}" \
+                               -DPLUGIN_TEXTTOSPEECH_VOICE_FOR_DE="${TEXTTOSPEECH_VOICE_FOR_DE}" \
+                               -DPLUGIN_TEXTTOSPEECH_VOICE_FOR_IT="${TEXTTOSPEECH_VOICE_FOR_IT}" \
                                , -DPLUGIN_TEXTTOSPEECH=OFF,"
 
 # ----------------------------------------------------------------------------

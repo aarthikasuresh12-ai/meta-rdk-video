@@ -1,0 +1,41 @@
+Date: Wed, 1 Jun 2022 12:23:59 +0000
+Subject: [PATCH] build fix
+From: 080186426c2c272edecc05bb8dc8f237bd0783da Mon Sep 17 00:00:00 2001
+Source: COMCAST
+Upstream-Status: N/A
+Signed-off-by: Ievgen Mutavchi <Ievgen_Mutavchi@comcast.com>
+
+---
+ .../nplb_evergreen_compat_tests.gyp                            | 3 +++
+ src/third_party/crashpad/handler/handler.gyp                   | 1 +
+ 2 files changed, 4 insertions(+)
+
+diff --git a/src/starboard/nplb/nplb_evergreen_compat_tests/nplb_evergreen_compat_tests.gyp b/src/starboard/nplb/nplb_evergreen_compat_tests/nplb_evergreen_compat_tests.gyp
+index 1f2b9a735d..5f742b3d74 100644
+--- a/src/starboard/nplb/nplb_evergreen_compat_tests/nplb_evergreen_compat_tests.gyp
++++ b/src/starboard/nplb/nplb_evergreen_compat_tests/nplb_evergreen_compat_tests.gyp
+@@ -39,6 +39,9 @@
+         '<(DEPTH)/testing/gmock.gyp:gmock',
+         '<(DEPTH)/testing/gtest.gyp:gtest',
+       ],
++      'ldflags': [
++        '-Wl,--unresolved-symbols=ignore-in-shared-libs',
++      ],
+     },
+     {
+       'target_name': 'nplb_evergreen_compat_tests_deploy',
+diff --git a/src/third_party/crashpad/handler/handler.gyp b/src/third_party/crashpad/handler/handler.gyp
+index d862d70bd7..1d25651af5 100644
+--- a/src/third_party/crashpad/handler/handler.gyp
++++ b/src/third_party/crashpad/handler/handler.gyp
+@@ -103,6 +103,7 @@
+             '-Wl,--as-needed',
+             '-Wl,-gc-sections',
+             '-Wl,-z,noexecstack',
++            '-Wl,--unresolved-symbols=ignore-in-shared-libs',
+           ],
+         }],
+         ['OS=="win"',  {
+-- 
+2.25.1
+

@@ -1,0 +1,58 @@
+#####################################################################
+Date: Tue, 16 June 2022 03:19:00 PM
+From:
+Subject: Thunder trace log enabled
+Source: COMCAST
+License:
+Upstream-Status:
+Signed-off-by: muhammed rafi c <muhammed_rafi@comcast.com>
+#####################################################################
+Index: git/Source/core/Trace.h
+===================================================================
+--- git.orig/Source/core/Trace.h
++++ git/Source/core/Trace.h
+@@ -49,10 +49,14 @@ namespace WPEFramework {
+ #define TRACE_PROCESS_ID ::getpid()
+ #endif
+ 
++#define TRACE_LOG_FLAG  "/tmp/wpeframeworkTraceEnable"
++
+ #define TRACE_FORMATTING(fmt, ...)                                                                                                        \
+     do {                                                                                                                                  \
+-        fprintf(stderr, "\033[1;32m[%s:%d](%s)<%d>" fmt "\n\033[0m", &__FILE__[WPEFramework::Core::FileNameOffset(__FILE__)], __LINE__, __FUNCTION__, TRACE_PROCESS_ID, ##__VA_ARGS__);  \
+-        fflush(stderr);                                                                                                                   \
++        if(0 == access(TRACE_LOG_FLAG, F_OK)) {                                                                                           \
++            fprintf(stderr, "\033[1;32m[%s:%d](%s)<%d>" fmt "\n\033[0m", &__FILE__[WPEFramework::Core::FileNameOffset(__FILE__)], __LINE__, __FUNCTION__, TRACE_PROCESS_ID, ##__VA_ARGS__);  \
++            fflush(stderr); \
++        } \
+     } while (0)
+ 
+ #ifdef __WINDOWS__
+Index: git/Source/core/Netlink.cpp
+===================================================================
+--- git.orig/Source/core/Netlink.cpp
++++ git/Source/core/Netlink.cpp
+@@ -24,6 +24,10 @@
+ 
+ // #define DEBUG_FRAMES 1
+ 
++#ifdef __POSIX__
++#define __ERRORRESULT__ errno
++#endif
++
+ namespace WPEFramework {
+ 
+ namespace Core {
+Index: git/Source/CMakeLists.txt
+===================================================================
+--- git.orig/Source/CMakeLists.txt
++++ git/Source/CMakeLists.txt
+@@ -64,7 +64,7 @@ option(WCHAR_SUPPORT
+         "Enable support for WCHAR." OFF)
+ option(DISABLE_TRACING
+         "Disable tracing in debug" OFF)
+-set(ENABLED_TRACING_LEVEL 0 CACHE STRING "If tracing is enabled, this sets its default level.")
++set(ENABLED_TRACING_LEVEL 2 CACHE STRING "If tracing is enabled, this sets its default level.")
+ option(HIDE_NON_EXTERNAL_SYMBOLS 
+         "Hide all non EXTERNAL tagged symbols" OFF)
+ 

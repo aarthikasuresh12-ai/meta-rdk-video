@@ -9,16 +9,16 @@ DEPENDS += " gstreamer1.0 gstreamer1.0-plugins-base"
 SRC_URI = "${RDK_GENERIC_ROOT_GIT}/gstreamer-netflix-platform/generic;protocol=${RDK_GIT_PROTOCOL};branch=${RDK_GIT_BRANCH}"
 
 S = "${WORKDIR}/git"
-CXXFLAGS += "-I${STAGING_INCDIR}/glib-2.0 -I${STAGING_INCDIR}/gstreamer-1.0 -I${STAGING_DIR_TARGET}/usr/lib/glib-2.0/include/ "
+CXXFLAGS += "-I${STAGING_INCDIR}/glib-2.0 -I${STAGING_INCDIR}/gstreamer-1.0 -I${STAGING_DIR_TARGET}/${libdir}/glib-2.0/include/ "
 
 do_compile () {
     oe_runmake -C ${S} -f Makefile                            
 }
 
 do_install() {
-        install -d ${D}/usr/lib
+        install -d ${D}/${libdir}
         install -d ${D}/usr/include
-        install -m 0755 ${S}/librdkgstreamerutils.so ${D}/usr/lib
+        install -m 0755 ${S}/librdkgstreamerutils.so ${D}/${libdir}
         install -m 0644 ${S}/rdk_gstreamer_utils.h  ${D}/usr/include
 }
 

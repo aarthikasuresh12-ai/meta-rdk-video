@@ -1,6 +1,7 @@
 inherit cmake
 EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'webkit', ' -DCMAKE_QT5WEBKIT_JSBINDINGS=1', '', d)}"
 EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'rdkbrowser2', ' -DCMAKE_WPEWEBKIT_JSBINDINGS=1', '', d)}"
+EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'webkitbrowser-plugin', ' -DCMAKE_WPEWEBKIT_JSBINDINGS=1', '', d)}"
 EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'gstreamer1', '', ' -DCMAKE_USE_GST_0.10=1', d)}"
 EXTRA_OECMAKE += "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', ' -DCMAKE_SYSTEMD_JOURNAL=1', '', d)}"
 EXTRA_OECMAKE += " -DCMAKE_BUILD_TYPE=Debug"

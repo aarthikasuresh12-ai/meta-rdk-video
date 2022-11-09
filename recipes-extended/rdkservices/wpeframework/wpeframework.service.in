@@ -1,7 +1,7 @@
 [Unit]
 Description=wpeframework
 Before=xre-receiver.service
-After=lighttpd.service iarmbusd.service pwrmgr.service irmgr.service dsmgr.service sysmgr.service authservice.service @EXTRA_AFTER@
+After=lighttpd.service iarmbusd.service pwrmgr.service pwrmgr2.service irmgr.service dsmgr.service sysmgr.service authservice.service @EXTRA_AFTER@
 
 [Service]
 PIDFile=/var/run/WPEFramework.pid

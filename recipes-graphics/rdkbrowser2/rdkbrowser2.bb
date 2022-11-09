@@ -82,4 +82,4 @@ do_cleanall () {
    oe_runmake -C ${S} -f Makefile_${BROWSER} distclean
 }
 
-FILES_${PN} += "${base_libdir}/rdk/*"
+FILES_${PN} += "/lib/rdk/*"

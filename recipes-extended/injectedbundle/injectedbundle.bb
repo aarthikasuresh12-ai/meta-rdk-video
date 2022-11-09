@@ -31,9 +31,9 @@ EXTRA_OECMAKE_rpi += "-DENABLE_AAMP_JSBINDING=1"
 EXTRA_OECMAKE += "${@bb.utils.contains("DISTRO_FEATURES", "build_rne", "", "-DENABLE_AVE=0", d)}"
 
 do_install () {
-   mkdir -p  ${D}/usr/lib/
-   rsync -rlv ${B}/*.so* ${D}/usr/lib/
-   mkdir -p  ${D}/usr/share/injectedbundle
+   install -m 0755 -d ${D}/${libdir}
+   rsync -rlv ${B}/*.so* ${D}/${libdir}
+   install -m 0755 -d ${D}/usr/share/injectedbundle
    rsync -rlv ${S}/*.js ${D}/usr/share/injectedbundle/
 }
 

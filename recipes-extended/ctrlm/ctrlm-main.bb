@@ -3,7 +3,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 
 SECTION = "base"
-DEPENDS = "sqlite3 curl rdkversion jansson glib-2.0 systemd iarmbus iarmmgrs breakpad util-linux devicesettings nopoll rfc libarchive safec-common-wrapper"
+DEPENDS = "sqlite3 curl rdkversion jansson glib-2.0 systemd iarmbus iarmmgrs breakpad util-linux devicesettings nopoll rfc libarchive safec-common-wrapper gperf-native"
 
 DEPENDS_append = "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', ' xr-voice-sdk xr-timestamp', '', d)}"
 DEPENDS_append = "${@bb.utils.contains('DISTRO_FEATURES_RDK', 'comcast-gperftools-heapcheck-wp', ' xr-fdc', '', d)}"
@@ -20,8 +20,9 @@ SYSLOG-NG_SERVICE_ctrlm = "ctrlm-hal-rf4ce.service ctrlm-main.service"
 SYSLOG-NG_DESTINATION_ctrlm = "ctrlm_log.txt"
 SYSLOG-NG_LOGRATE_ctrlm = "medium"
 
+PV = "${RDK_RELEASE}"
 SRC_URI        = "${CMF_GIT_ROOT}/rdk/components/generic/control;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};name=ctrlm-main"
-SRC_URI_append = " file://${BPN}.service"
+SRC_URI_append = " file://ctrlm-main.service"
 SRC_URI_append = " file://1_rf4ce.conf"
 SRC_URI_append = " file://ctrlm-hal-rf4ce.service"
 SRC_URI_append = " file://restart_ctrlm.sh"
@@ -35,16 +36,16 @@ SRCREV_FORMAT = "ctrlm-main"
 
 S = "${WORKDIR}/git"
 
-FILES_${PN} += "${systemd_unitdir}/system/${BPN}.service \
+FILES_${PN} += "${systemd_unitdir}/system/ctrlm-main.service \
                 /usr/local/bin/restart_ctrlm.sh \
                 /usr/local/bin/ctrlm_db_dump.sh \
                 /usr/local/bin/ctrlm_sig_quit.sh \
                "
 FILES_${PN} += "${@bb.utils.contains('EXTRA_OECONF', '--enable-rf4ce', '${systemd_unitdir}/system/ctrlm-main.service.d/1_rf4ce.conf', '', d)}"
 
-SYSTEMD_PACKAGES += " ${PN}"
-SYSTEMD_SERVICE_${PN}  = "${BPN}.service"
-SYSTEMD_SERVICE_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_generic', 'ctrlm-hal-rf4ce.service', '', d)}"
+SYSTEMD_PACKAGES += " ctrlm-main"
+SYSTEMD_SERVICE_ctrlm-main  = "ctrlm-main.service"
+SYSTEMD_SERVICE_ctrlm-main += "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_generic', 'ctrlm-hal-rf4ce.service', '', d)}"
 
 ENABLE_GPERFTOOLS_HEAPCHECK_WP_DISTRO = "1"
 
@@ -54,9 +55,7 @@ VSDK_UTILS_CLASS           := "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_vo
 inherit systemd coverity ${VSDK_UTILS_CLASS} ${GPERFTOOLS_HEAPCHECK_CLASS}
 
 BREAKPAD_BIN = "controlMgr"
-BREAKPAD_SHARED_LIBS ="libstdc++.so libffi.so libglib-2.0.so ld-2.22.so libc-2.22.so libpthread-2.22.so libgobject-2.0.so libcurl.so"
-
-BREAKPAD_SHARED_LIBS += "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', 'librdkversion.so librdkx-logger.so libbsd.so libxr-timestamp.so libxr-timer.so libxr_mq.so libxraudio-eos.so libxraudio-adpcm.so libxraudio.so libxraudio-hal.so libxrsv.so libxrsr.so libcrypto.so libssl.so libnopoll.so libjansson.so libxr-voice-sdk.so', '', d)}"
+BREAKPAD_SHARED_LIBS ="libstdc++.so libffi.so libglib-2.0.so ld-2.22.so libc-2.22.so libpthread-2.22.so libgobject-2.0.so libcurl.so librdkversion.so librdkx-logger.so libbsd.so libxr-timestamp.so libxr-timer.so libxr_mq.so libxraudio-eos.so libxraudio-adpcm.so libxraudio.so libxraudio-hal.so libxrsv.so libxrsr.so libcrypto.so libssl.so libnopoll.so libjansson.so libxr-voice-sdk.so"
 
 INCLUDE_DIRS = " \
     -I=${includedir}/glib-2.0 \
@@ -70,6 +69,8 @@ INCLUDE_DIRS = " \
     -I=${includedir}/rdk/ds-hal \
     -I=${includedir}/nopoll \
     "
+
+CFLAGS_append = " -std=c11 -fPIC -D_REENTRANT -rdynamic -Wall -Werror ${INCLUDE_DIRS}"
 
 CXXFLAGS_append = " -std=c++11 -fPIC -D_REENTRANT -rdynamic -Wall -Werror ${INCLUDE_DIRS}"
 
@@ -110,9 +111,15 @@ CXXFLAGS_append     = "${@bb.utils.contains('MEMORY_LOCK', 'true', ' -DMEMORY_LO
 LDFLAGS_append      = "${@bb.utils.contains('MEMORY_LOCK', 'true', ' -lclnl', '', d)}"
 DEPENDS_append      = "${@bb.utils.contains('MEMORY_LOCK', 'true', ' clnl', '', d)}"
 
-LDFLAGS_append ="${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', ' -lxr-voice-sdk -lxrsr -lxrsv -lxraudio-hal -lrdkx-logger -lxr-timestamp', '', d)}"
+LDFLAGS_append =" -lxr-voice-sdk -lxrsr -lxrsv -lxraudio-hal -lrdkx-logger -lxr-timestamp"
 LDFLAGS_append ="${@bb.utils.contains('DISTRO_FEATURES_RDK', 'comcast-gperftools-heapcheck-wp', ' -lxr-fdc', '', d)}"
 LDFLAGS_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'safec', ' `pkg-config --libs libsafec`', '', d)}"
+
+# Telemetry Support
+TELEMETRY_SUPPORT  ?= "false"
+DEPENDS_append      = "${@bb.utils.contains('TELEMETRY_SUPPORT', 'true', ' telemetry', '', d)}"
+LDFLAGS_append      = "${@bb.utils.contains('TELEMETRY_SUPPORT', 'true', ' -ltelemetry_msgsender', '', d)}"
+EXTRA_OECONF_append = "${@bb.utils.contains('TELEMETRY_SUPPORT', 'true', ' --enable-telemetry-support', '', d)}"
 
 CTRLM_GENERIC = "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_generic', 'true', 'false', d)}"
 
@@ -129,6 +136,8 @@ SUPPORT_VOICE_DEST_ALSA   ?= "false"
 export CTRLM_UTILS_JSON_TO_HEADER  = "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', '${VSDK_UTILS_JSON_TO_HEADER}', '${S}/scripts/json_to_header.py', d)}"
 export CTRLM_UTILS_JSON_COMBINE    = "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', '${VSDK_UTILS_JSON_COMBINE}', '${S}/scripts/json_combine.py', d)}"
 
+export STAGING_BINDIR_NATIVE
+
 CTRLM_CONFIG_VSDK    = "${PKG_CONFIG_SYSROOT_DIR}/usr/include/xrsr_config.json"
 CTRLM_CONFIG_OEM_ADD = "${S}/../ctrlm_config_oem.add.json"
 CTRLM_CONFIG_OEM_SUB = "${S}/../ctrlm_config_oem.sub.json"
@@ -136,16 +145,17 @@ CTRLM_CONFIG_CPC_ADD = "${S}/../ctrlm_config_cpc.add.json"
 CTRLM_CONFIG_CPC_SUB = "${S}/../ctrlm_config_cpc.sub.json"
 
 EXTRA_OECONF_append = " CTRLM_CONFIG_JSON_VSDK=${CTRLM_CONFIG_VSDK} CTRLM_CONFIG_JSON_OEM_SUB=${CTRLM_CONFIG_OEM_SUB} CTRLM_CONFIG_JSON_OEM_ADD=${CTRLM_CONFIG_OEM_ADD} CTRLM_CONFIG_JSON_CPC_SUB=${CTRLM_CONFIG_CPC_SUB} CTRLM_CONFIG_JSON_CPC_ADD=${CTRLM_CONFIG_CPC_ADD}"
-EXTRA_OECONF_append = "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_voice_sdk', ' --enable-voicesdk', '', d)}"
 EXTRA_OECONF_append = "${@ ' --enable-xrsr_sdt' if (d.getVar('SUPPORT_VOICE_DEST_ALSA', expand=False) == "true") else ''}"
 
 DEPENDS_append   = "${@ ' virtual-mic' if (d.getVar('SUPPORT_VOICE_DEST_ALSA',   expand=False) == "true") else ''}"
 
 EXTRA_OECONF_append = " GIT_BRANCH=${CMF_GIT_BRANCH}"
 
+EXTRA_OECONF_append = "${@bb.utils.contains('DISTRO_FEATURES', 'ctrlm_mic_tap', ' --enable-mic_tap', '', d)}"
+
 do_install_append() {
     install -d ${D}${systemd_unitdir}/system
-    install -m 0644 ${RECIPEDIR}/${BPN}.service ${D}${systemd_unitdir}/system/
+    install -m 0644 ${RECIPEDIR}/ctrlm-main.service ${D}${systemd_unitdir}/system/
 
     if ${@bb.utils.contains('EXTRA_OECONF', '--enable-rf4ce', 'true', 'false', d)}; then
        install -d ${D}${systemd_unitdir}/system/ctrlm-main.service.d/

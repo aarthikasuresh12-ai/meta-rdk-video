@@ -272,11 +272,11 @@ do_compile_prepend () {
 }
 
 do_install () {
-   install -d ${D}/usr/lib
+   install -d ${D}/${libdir}
    #uncomment if static libs are supported
-   #install -d ${D}/usr/lib/dukluv
+   #install -d ${D}/${libdir}/dukluv
    install -d ${D}${includedir}
-   find ${S}/build -name libpxCore* | xargs -I {} cp -dr {} ${D}/usr/lib
+   find ${S}/build -name libpxCore* | xargs -I {} cp -dr {} ${D}/${libdir}
    if [ "${@is_spark_disabled(d)}" -eq '0' ]
    then
      install -d ${D}${bindir}/tests
@@ -285,25 +285,25 @@ do_install () {
      then
           if [ "${@is_pxscene_excluded(d)}" -eq '0' ]
           then
-	    cp -dr ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/libnode.so* ${D}/usr/lib
+	    cp -dr ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/libnode.so* ${D}/${libdir}
           fi
      else
           if [ "${@is_pxscene_excluded(d)}" -eq '0' ]
           then
-	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/libnode.a ${D}/usr/lib
-	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/http_parser/libhttp_parser.a ${D}/usr/lib
-	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/uv/libuv.a ${D}/usr/lib
-	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/cares/libcares.a ${D}/usr/lib/libcares-libnode.a
-	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/v8/tools/gyp/libv8_base.a ${D}/usr/lib
-	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/v8/tools/gyp/libv8_libbase.a ${D}/usr/lib
-	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/v8/tools/gyp/libv8_libplatform.a ${D}/usr/lib
-	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/v8/tools/gyp/libv8_nosnapshot.a ${D}/usr/lib
-	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/v8_inspector/third_party/v8_inspector/platform/v8_inspector/libv8_inspector_stl.a ${D}/usr/lib
+	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/libnode.a ${D}/${libdir}
+	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/http_parser/libhttp_parser.a ${D}/${libdir}
+	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/uv/libuv.a ${D}/${libdir}
+	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/cares/libcares.a ${D}/${libdir}/libcares-libnode.a
+	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/v8/tools/gyp/libv8_base.a ${D}/${libdir}
+	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/v8/tools/gyp/libv8_libbase.a ${D}/${libdir}
+	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/v8/tools/gyp/libv8_libplatform.a ${D}/${libdir}
+	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/v8/tools/gyp/libv8_nosnapshot.a ${D}/${libdir}
+	      cp ${S}/examples/pxScene2d/external/libnode/out/Release/obj.target/deps/v8_inspector/third_party/v8_inspector/platform/v8_inspector/libv8_inspector_stl.a ${D}/${libdir}
               #uncomment below lines if static libs are supported
-	      #cp ${S}/examples/pxScene2d/external/dukluv/build/libduv.a ${D}/usr/lib/dukluv/
-	      #cp ${S}/examples/pxScene2d/external/dukluv/build/libdschema.a ${D}/usr/lib/dukluv/
-	      #cp ${S}/examples/pxScene2d/external/dukluv/build/libduktape.a ${D}/usr/lib/dukluv/
-	      #cp ${S}/examples/pxScene2d/external/dukluv/build/libuv.a ${D}/usr/lib/dukluv/
+	      #cp ${S}/examples/pxScene2d/external/dukluv/build/libduv.a ${D}/${libdir}/dukluv/
+	      #cp ${S}/examples/pxScene2d/external/dukluv/build/libdschema.a ${D}/${libdir}/dukluv/
+	      #cp ${S}/examples/pxScene2d/external/dukluv/build/libduktape.a ${D}/${libdir}/dukluv/
+	      #cp ${S}/examples/pxScene2d/external/dukluv/build/libuv.a ${D}/${libdir}/dukluv/
 
               if [ "${@build_px_tests(d)}" -eq '1' ]
 
@@ -313,11 +313,11 @@ do_install () {
           fi
      fi
    fi
-   cp -dr ${S}/examples/pxScene2d/src/libpxwayland* ${D}/usr/lib
-   cp -dr ${S}/build/egl/librtCore* ${D}/usr/lib
+   cp -dr ${S}/examples/pxScene2d/src/libpxwayland* ${D}/${libdir}
+   cp -dr ${S}/build/egl/librtCore* ${D}/${libdir}
     if [ "${@build_spark_rtremote(d)}" -eq '1' ]
     then
-    	cp -dr ${S}/remote/librtRemote* ${D}/usr/lib
+    	cp -dr ${S}/remote/librtRemote* ${D}/${libdir}
     fi
 
    mkdir -p ${D}${includedir}/pxcore

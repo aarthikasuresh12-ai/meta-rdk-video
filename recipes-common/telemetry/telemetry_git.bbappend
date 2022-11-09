@@ -4,7 +4,9 @@ SYSLOG-NG_SERVICE_telemetry2_0 = "telemetry2_0.service"
 SYSLOG-NG_DESTINATION_telemetry2_0 = "telemetry2_0.txt.0"
 SYSLOG-NG_LOGRATE_telemetry2_0 = "high"
 
-CFLAGS += " -DENABLE_RDKV_SUPPORT "
+PLATFORM ?= "STB"
+CFLAGS += " -DENABLE_RDKV_SUPPORT -DENABLE_PS_PROCESS_SEARCH "
+CFLAGS += "${@bb.utils.contains('PLATFORM', 'STB', ' -DENABLE_STB_SUPPORT ', '', d)}"
 
 do_install_append () {
 

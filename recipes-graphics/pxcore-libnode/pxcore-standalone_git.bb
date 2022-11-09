@@ -309,23 +309,23 @@ do_compile_prepend () {
 }
 
 do_install () {
-   install -d ${D}/usr/lib
-   cp -dr ${S}/examples/pxScene2d/src/libSpark* ${D}/usr/lib
+   install -d ${D}/${libdir}
+   cp -dr ${S}/examples/pxScene2d/src/libSpark* ${D}/${libdir}
    ln -sf libSpark.so ${S}/examples/pxScene2d/src/libpxscene.so
-   cp -dr ${S}/examples/pxScene2d/src/libpxscene* ${D}/usr/lib
+   cp -dr ${S}/examples/pxScene2d/src/libpxscene* ${D}/${libdir}
    if [ "${@is_spark_disabled(d)}" -eq '0' ]
    then
      #add below line later if we move for static builds
-     #install -d ${D}/usr/lib/dukluv
+     #install -d ${D}/${libdir}/dukluv
      install -d ${D}${includedir}
      install -d ${D}${bindir}/tests
 
-     #find ${S}/build -name libpxCore* | xargs -I {} cp -dr {} ${D}/usr/lib
+     #find ${S}/build -name libpxCore* | xargs -I {} cp -dr {} ${D}/${libdir}
 
 
      #Library Available only when optimusprime feature is enabled
      if [ -f  ${S}/examples/pxScene2d/src/liboptimus* ]; then
-     cp -dr ${S}/examples/pxScene2d/src/liboptimus* ${D}/usr/lib
+     cp -dr ${S}/examples/pxScene2d/src/liboptimus* ${D}/${libdir}
      fi
 
      #libnode pxcore files

@@ -6,7 +6,7 @@ SECTION = "base"
 DEPENDS = "xraudioh ctrlm-xraudio-hal-headers"
 
 SRC_URI  = "${CMF_GIT_ROOT}/rdk/components/generic/xraudio-hal_ctrlm;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_BRANCH};name=ctrlm-xraudio-hal"
-SRCREV_${PN} = "${AUTOREV}"
+SRCREV_ctrlm-xraudio-hal = "${AUTOREV}"
 
 S = "${WORKDIR}/git"
 

@@ -1,0 +1,386 @@
+From 5e20cd883cbea2c3111b624f18ef743c5fdec42a Mon Sep 17 00:00:00 2001
+From: Sergiy Gladkyy <sgladkyy@productengine.com>
+Date: Tue, 30 Aug 2022 20:38:30 +0200
+Subject: [PATCH] SERXIONE-600: LocationSync Network check (timer)
+
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Pending
+Reason for change: LocationSync depends on Network but it might not be available early on boot-up
+Implements:  network availability check
+Test Procedure: discussed in the ticket
+Signed-off-by: Sergiy Gladkyy <sgladkyy@productengine.com>
+Risks: None
+
+Change-Id: Ia4b66e10f2f2a8f191eca2df59e39ea31bdc67dd
+(cherry picked from commit b65de319b32b25af989eb1ea6c9ca2f982817f09)
+---
+ LocationSync/CMakeLists.txt   |  12 ++-
+ LocationSync/LocationSync.cpp | 189 +++++++++++++++++++++++++++++++++-
+ LocationSync/LocationSync.h   |  52 +++++++++-
+ 3 files changed, 246 insertions(+), 7 deletions(-)
+
+diff --git a/LocationSync/CMakeLists.txt b/LocationSync/CMakeLists.txt
+index a5909c24..a20b39a4 100644
+--- a/LocationSync/CMakeLists.txt
++++ b/LocationSync/CMakeLists.txt
+@@ -30,6 +30,8 @@ set(PLUGIN_LOCATIONSYNC_URI "location.webplatformforembedded.org" CACHE STRING "
+ find_package(${NAMESPACE}Plugins REQUIRED)
+ find_package(CompileSettingsDebug CONFIG REQUIRED)
+ 
++find_package(IARMBus)
++
+ add_library(${MODULE_NAME} SHARED 
+     Module.cpp
+     LocationSync.cpp
+@@ -37,6 +39,8 @@ add_library(${MODULE_NAME} SHARED
+     LocationSyncJsonRpc.cpp
+ )
+ 
++target_compile_definitions(${MODULE_NAME} PRIVATE MODULE_NAME=Plugin_${PLUGIN_NAME})
++
+ set_target_properties(${MODULE_NAME} PROPERTIES
+         CXX_STANDARD 11
+         CXX_STANDARD_REQUIRED YES)
+@@ -44,9 +48,11 @@ set_target_properties(${MODULE_NAME} PROPERTIES
+ target_link_libraries(${MODULE_NAME} 
+     PRIVATE
+         CompileSettingsDebug::CompileSettingsDebug
+-        ${NAMESPACE}Plugins::${NAMESPACE}Plugins)
+-
+-install(TARGETS ${MODULE_NAME} 
++        ${NAMESPACE}Plugins::${NAMESPACE}Plugins
++        ${IARMBUS_LIBRARIES}
++)
++target_include_directories(${MODULE_NAME} PRIVATE ${IARMBUS_INCLUDE_DIRS})
++install(TARGETS ${MODULE_NAME}
+     DESTINATION lib/${STORAGE_DIRECTORY}/plugins)
+ 
+ write_config(${PLUGIN_NAME})
+diff --git a/LocationSync/LocationSync.cpp b/LocationSync/LocationSync.cpp
+index 7acedc6e..57783033 100644
+--- a/LocationSync/LocationSync.cpp
++++ b/LocationSync/LocationSync.cpp
+@@ -18,12 +18,56 @@
+  */
+  
+ #include "LocationSync.h"
++#include <memory>
++#include "libIBus.h"
+ 
+ #define API_VERSION_NUMBER_MAJOR 1
+ #define API_VERSION_NUMBER_MINOR 0
+ #define API_VERSION_NUMBER_PATCH 0
+ 
++#define IARM_BUS_NM_SRV_MGR_NAME "NET_SRV_MGR"
++#define IARM_BUS_NETSRVMGR_API_isConnectedToInternet "isConnectedToInternet"
++
+ namespace WPEFramework {
++namespace Utils {
++    struct IARM {
++        static bool init() {
++            IARM_Result_t res;
++            bool result = false;
++            if (isConnected()) {
++                TRACE_GLOBAL(Trace::Information, (_T("IARM already connected")));
++                result = true;
++            } else {
++                res = IARM_Bus_Init(NAME);
++                TRACE_GLOBAL(Trace::Information, (_T("IARM_Bus_Init: %d"), res));
++                if (res == IARM_RESULT_SUCCESS || res == IARM_RESULT_INVALID_STATE /* already inited or connected */) {
++                    res = IARM_Bus_Connect();
++                    TRACE_GLOBAL(Trace::Information, (_T("IARM_Bus_Connect: %d"), res));
++                    if (res == IARM_RESULT_SUCCESS ||
++                        res == IARM_RESULT_INVALID_STATE /* already connected or not inited */) {
++                        result = isConnected();
++                    } else {
++                        TRACE_GLOBAL(Trace::Fatal, (_T("IARM_Bus_Connect failure: %d"), res));
++                    }
++                } else {
++                    TRACE_GLOBAL(Trace::Fatal, (_T("IARM_Bus_Init failure: %d"), res));
++                }
++            }
++            return result;
++        }
++
++        static bool isConnected()
++        {
++            IARM_Result_t res;
++            int isRegistered = 0;
++            res = IARM_Bus_IsConnected(NAME, &isRegistered);
++            TRACE_GLOBAL(Trace::Fatal, (_T("IARM_Bus_IsConnected: %d (%d)"), res, isRegistered));
++            return (isRegistered == 1);
++        }
++        static constexpr const char* NAME = "Thunder_Plugins";
++    };
++}
++
+ namespace Plugin {
+ 
+     SERVICE_REGISTRATION(LocationSync, API_VERSION_NUMBER_MAJOR, API_VERSION_NUMBER_MINOR, API_VERSION_NUMBER_PATCH);
+@@ -37,10 +81,15 @@ namespace Plugin {
+     LocationSync::LocationSync()
+         : _skipURL(0)
+         , _source()
++                , _interval(0)
++                , _retries(0)
+         , _sink(this)
+         , _service(nullptr)
++                , _networkReady(false)
++        , _iarmConnected(false)
+     {
+         RegisterAll();
++            _netControlTimer.connect(std::bind(&LocationSync::onNetControlTimer, this));
+     }
+ #ifdef __WINDOWS__
+ #pragma warning(default : 4355)
+@@ -58,12 +107,31 @@ namespace Plugin {
+         config.FromString(service->ConfigLine());
+         string version = service->Version();
+ 
++        _iarmConnected = Utils::IARM::init();
++        if (!_iarmConnected)
++        {
++            TRACE(Trace::Fatal, (_T("IARM bus is not available. Preliminary reachability check will not be performed\n")));
++        }
++
+         if (LocationService::IsSupported(config.Source.Value()) == Core::ERROR_NONE) {
+             _skipURL = static_cast<uint16_t>(service->WebPrefix().length());
+             _source = config.Source.Value();
++                _interval = config.Interval.Value();
++                _retries = config.Retries.Value();
++            ASSERT(service != nullptr);
++            ASSERT(_service == nullptr);
+             _service = service;
+-
+-            _sink.Initialize(config.Source.Value(), config.Interval.Value(), config.Retries.Value());
++            _service->AddRef();
++            TRACE(Trace::Information, (_T("Starting netcontrol timer. Source: %s, interval: %d, retries: %d, network check every %d ms")
++                    , _source.c_str()
++                    , _interval
++                    , _retries
++                    , _interval * 1000
++            ));
++            if(_netControlTimer.isActive()) {
++                _netControlTimer.stop();
++            }
++            _netControlTimer.start(_interval * 1000);
+         } else {
+             result = _T("URL for retrieving location is incorrect !!!");
+         }
+@@ -75,7 +143,12 @@ namespace Plugin {
+     void LocationSync::Deinitialize(PluginHost::IShell* service VARIABLE_IS_NOT_USED) /* override */
+     {
+         ASSERT(_service == service);
++        _service->Release();
++        _service = nullptr;
+ 
++            if(_netControlTimer.isActive()) {
++                _netControlTimer.stop();
++            }
+         _sink.Deinitialize();
+     }
+ 
+@@ -164,5 +237,117 @@ namespace Plugin {
+         }
+     }
+ 
++        void LocationSync::onNetControlTimer()
++        {
++            static uint8_t remainingAttempts = _retries;
++            bool networkReachable = getConnectivity();
++            remainingAttempts--;
++            TRACE(Trace::Information, (_T("Network is %s"), networkReachable ? "REACHABLE" : "UNREACHABLE"));
++            if (!_iarmConnected || networkReachable || remainingAttempts <= 0)
++            {
++                _netControlTimer.stop();
++                TRACE(Trace::Information, (_T("Network reachability monitoring stopped.")));
++                TRACE(Trace::Information, (_T("Proceeding with LocationService init.")));
++                _sink.Initialize(_source, _interval, _retries);
++            } else {
++                TRACE(Trace::Information, (_T("Doing one more reachability check in %d sec, remaining attempts: %d"), _interval, remainingAttempts));
++            }
++        }
++        bool LocationSync::getConnectivity()
++        {
++            bool result = false;
++            IARM_Result_t retVal = IARM_RESULT_SUCCESS;
++            /* check if plugin active */
++            auto network = _service->QueryInterfaceByCallsign<PluginHost::IDispatcher>("org.rdk.Network");
++            if (network == nullptr) {
++                TRACE(Trace::Fatal, _T(("Network plugin is not activated \n")));
++                result = false;
++            } else {
++                network->Release();
++                retVal = IARM_Bus_Call(IARM_BUS_NM_SRV_MGR_NAME, IARM_BUS_NETSRVMGR_API_isConnectedToInternet, (void*) &result, sizeof(result));
++                TRACE(Trace::Information, (_T("%s :: isConnected = %d \n"), __FUNCTION__, result));
++                if (IARM_RESULT_SUCCESS != retVal)
++                {
++                    TRACE(Trace::Fatal, (_T("Call to %s for %s failed\n"), IARM_BUS_NM_SRV_MGR_NAME, IARM_BUS_NETSRVMGR_API_isConnectedToInternet));
++                }
++            }
++            return result;
++        }
++
++        // TIMER
++        Timer::Timer() :
++                baseTimer(64 * 1024, "ThunderPluginBaseTimer")
++                , m_timerJob(this)
++                , m_isActive(false)
++                , m_isSingleShot(false)
++                , m_intervalInMs(-1)
++        {}
++
++        Timer::~Timer()
++        {
++            stop();
++        }
++
++        bool Timer::isActive()
++        {
++            return m_isActive;
++        }
++
++        void Timer::stop()
++        {
++            baseTimer.Revoke(m_timerJob);
++            m_isActive = false;
++        }
++
++        void Timer::start()
++        {
++            baseTimer.Revoke(m_timerJob);
++            baseTimer.Schedule(Core::Time::Now().Add(m_intervalInMs), m_timerJob);
++            m_isActive = true;
++        }
++
++        void Timer::start(int msec)
++        {
++            setInterval(msec);
++            start();
++        }
++
++        void Timer::setSingleShot(bool val)
++        {
++            m_isSingleShot = val;
++        }
++
++        void Timer::setInterval(int msec)
++        {
++            m_intervalInMs = msec;
++        }
++
++        void Timer::connect(std::function< void() > callback)
++        {
++            onTimeoutCallback = callback;
++        }
++
++        void Timer::Timed()
++        {
++            if(onTimeoutCallback != nullptr) {
++                onTimeoutCallback();
++            }
++            // stop in case of a single shot call; start again if it has not been stopped
++            if (m_isActive) {
++                if(m_isSingleShot) {
++                    stop();
++                } else{
++                    start();
++                }
++            }
++        }
++
++        uint64_t TimerJob::Timed(const uint64_t scheduledTime)
++        {
++            if(m_timer) {
++                m_timer->Timed();
++            }
++            return 0;
++        }
+ } // namespace Plugin
+ } // namespace WPEFramework
+diff --git a/LocationSync/LocationSync.h b/LocationSync/LocationSync.h
+index 4bfcf64f..10d3e711 100644
+--- a/LocationSync/LocationSync.h
++++ b/LocationSync/LocationSync.h
+@@ -16,7 +16,7 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+- 
++ //
+ #ifndef LOCATIONSYNC_LOCATIONSYNC_H
+ #define LOCATIONSYNC_LOCATIONSYNC_H
+ 
+@@ -26,6 +26,48 @@
+ 
+ namespace WPEFramework {
+ namespace Plugin {
++        class Timer;
++        class TimerJob
++        {
++        private:
++            TimerJob() = delete;
++            TimerJob& operator=(const TimerJob& RHS) = delete;
++        public:
++            TimerJob(WPEFramework::Plugin::Timer* tpt) : m_timer(tpt) { }
++            TimerJob(const TimerJob& copy) : m_timer(copy.m_timer) { }
++            ~TimerJob() {}
++            inline bool operator==(const TimerJob& RHS) const
++            {
++                return(m_timer == RHS.m_timer);
++            }
++        public:
++            uint64_t Timed(const uint64_t scheduledTime);
++        private:
++            WPEFramework::Plugin::Timer* m_timer;
++        };
++
++        class Timer
++        {
++        public:
++            Timer();
++            ~Timer();
++            bool isActive();
++            void stop();
++            void start();
++            void start(int msec);
++            void setSingleShot(bool val);
++            void setInterval(int msec);
++            void connect(std::function< void() > callback);
++        private:
++            void Timed();
++            WPEFramework::Core::TimerType<TimerJob> baseTimer;
++            TimerJob m_timerJob;
++            bool m_isActive;
++            bool m_isSingleShot;
++            int m_intervalInMs;
++            std::function< void() > onTimeoutCallback;
++            friend class TimerJob;
++        };
+ 
+     class LocationSync : public PluginHost::IPlugin, public PluginHost::IWeb, public PluginHost::JSONRPC {
+     public:
+@@ -201,12 +243,18 @@ namespace Plugin {
+         void event_locationchange();
+ 
+         void SyncedLocation();
+-
++        bool getConnectivity();
++        void onNetControlTimer();
+     private:
+         uint16_t _skipURL;
+         string _source;
++        uint16_t _interval;
++        uint8_t _retries;
+         Core::Sink<Notification> _sink;
+         PluginHost::IShell* _service;
++        bool _networkReady;
++        Timer _netControlTimer;
++        bool _iarmConnected;
+     };
+ 
+ } // namespace Plugin
+-- 
+2.32.1 (Apple Git-133)
+

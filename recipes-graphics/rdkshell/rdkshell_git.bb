@@ -12,21 +12,21 @@ PV = "1.x+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-#January 11, 2021
+#Sep 08 2022
 SRC_URI = "git://github.com/rdkcentral/RDKShell;branch=master"
-SRCREV = "2bc8738494ae8ce8c20bce77a01796755a6fc3fd"
+SRCREV = "859ab4266e290cf00dab5a744ffe48452ca3e7e1"
 
 do_install() {
    install -d ${D}/home/root
    cp -a ${B}/rdkshell ${D}/home/root
 
-   install -d ${D}/usr/lib
-   cp -a ${B}/librdkshell.so ${D}/usr/lib
+   install -d ${D}/${libdir}
+   cp -a ${B}/librdkshell.so ${D}/${libdir}
 
-   install -d ${D}/usr/lib/plugins/westeros
-   cp -a ${B}/extensions/RdkShellExtendedInput/libwesteros_plugin_rdkshell_extended_input.so.1.0.0 ${D}/usr/lib/plugins/westeros/libwesteros_plugin_rdkshell_extended_input.so
+   install -d ${D}/${libdir}/plugins/westeros
+   cp -a ${B}/extensions/RdkShellExtendedInput/libwesteros_plugin_rdkshell_extended_input.so.1.0.0 ${D}/${libdir}/plugins/westeros/libwesteros_plugin_rdkshell_extended_input.so
 
-   install -d ${D}/usr/lib
+   install -d ${D}/${libdir}
    install -d ${D}${includedir}
    mkdir -p ${D}${includedir}/rdkshell
 
@@ -43,5 +43,5 @@ DEBIAN_NOAUTONAME_${PN} = "1"
 BBCLASSEXTEND = "native"
 
 FILES_${PN} += "/home/root/rdkshell"
-FILES_${PN} += "/usr/lib/librdkshell.so"
-FILES_${PN} += "/usr/lib/plugins/westeros/libwesteros_plugin_rdkshell_extended_input.so"
+FILES_${PN} += "${libdir}/librdkshell.so"
+FILES_${PN} += "${libdir}/plugins/westeros/libwesteros_plugin_rdkshell_extended_input.so"

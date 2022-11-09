@@ -1,6 +1,6 @@
 [Unit]
 Description=Power state log update service
-After=pwrmgr.service power-state-monitor.service
+After=pwrmgr.service pwrmgr2.service power-state-monitor.service
 
 [Service]
 Type=oneshot

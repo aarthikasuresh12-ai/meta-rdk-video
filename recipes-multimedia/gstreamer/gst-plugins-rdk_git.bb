@@ -7,7 +7,7 @@ networking elements."
 SECTION = "console/utils"
 
 LICENSE = "LGPL-2.0"
-LIC_FILES_CHKSUM = "file://COPYING;md5=505a896dcb5794959ca509c917a0ca0c"
+LIC_FILES_CHKSUM = "file://COPYING;md5=db791dc95f6a08e8e4d206839bc67ec0"
 
 PV = "${RDK_RELEASE}+git${SRCPV}"
 
