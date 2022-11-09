@@ -6,8 +6,8 @@ SRC_URI = "${WESTEROS_URI}"
 SRCREV = "${WESTEROS_SRCREV}"
 
 WESTEROS_URI ?= "${CMF_GIT_ROOT}/components/opensource/westeros;protocol=${CMF_GIT_PROTOCOL};branch=${CMF_GIT_MASTER_BRANCH};name=westeros"
-# Tip of westeros master as of Sept 28, 2022
-WESTEROS_SRCREV = "24e485a11aa74345df1ebc7093af57cdfd769771"
+# Tip of westeros master as of Oct 14, 2022
+WESTEROS_SRCREV = "43956538c803e554357f228a51db1b6003205e2a"
 
 LICENSE_LOCATION ?= "${S}/LICENSE"
 LIC_FILES_CHKSUM = "file://${LICENSE_LOCATION};md5=8fb65319802b0c15fc9e0835350ffa02"
