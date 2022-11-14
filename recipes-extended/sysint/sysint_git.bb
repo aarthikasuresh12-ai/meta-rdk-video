@@ -385,7 +385,7 @@ do_install_append_client() {
         install -m 0644 ${S}/../systemd_units/rdnssd.service ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/dnsmerge-udhcpc.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/dnsmerge-upnp.path ${D}${systemd_unitdir}/system
-        install -m 0644 ${S}/../systemd_units/dnsmerge.service ${D}${systemd_unitdir}/system
+        install -m 0644 ${S}/../systemd_units/dnsmerge@.service ${D}${systemd_unitdir}/system
         if ${@bb.utils.contains('DISTRO_FEATURES','flex2_rdk','true','false',d)}; then
             install -m 0644 ${S}/../systemd_units/dnsmerge-dibbler.path  ${D}${systemd_unitdir}/system
             if [ -f ${D}/lib/rdk/dibbler_start_client_flex.sh ]; then
@@ -532,7 +532,7 @@ SYSTEMD_SERVICE_${PN}_append_client = " ${@bb.utils.contains('DISTRO_FEATURES', 
 SYSTEMD_SERVICE_${PN}_append_client = " ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'network-connection-stats.timer', 'eth-connection-stats.timer', d)}"
 SYSTEMD_SERVICE_${PN}_append_client = " dnsmerge-udhcpc.path"
 SYSTEMD_SERVICE_${PN}_append_client = " dnsmerge-upnp.path"
-SYSTEMD_SERVICE_${PN}_append_client = " dnsmerge.service"
+SYSTEMD_SERVICE_${PN}_append_client = " dnsmerge@.service"
 SYSTEMD_SERVICE_${PN}_append_client = " ${@bb.utils.contains('DISTRO_FEATURES', 'flex2_rdk', 'dnsmerge-dibbler.path', ' ', d)}"
 SYSTEMD_SERVICE_${PN}_append_client = " schedule_maintenance.service"
 
