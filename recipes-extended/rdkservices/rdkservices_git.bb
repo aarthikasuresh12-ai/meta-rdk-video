@@ -23,6 +23,7 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://rdkservices.ini \
            file://0001-RDKTV-11792-increase-retry-count.patch \
            file://0001-SERXIONE-600-LocationSync-Network-check-timer.patch \
+           file://0001-RDKTV-20749-Revert-Merge-pull-request-3336-from-npol.patch \
           "
 
 # Nov 22, 2022
