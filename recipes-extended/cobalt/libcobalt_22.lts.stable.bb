@@ -8,20 +8,18 @@ LIC_FILES_CHKSUM = " \
     file://../starboard/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57 \
 "
 
-require starboard_revision.inc
-
 # Disable by default for morty
 DEFAULT_PREFERENCE_morty = "-1"
 TOOLCHAIN = "gcc"
 
 SRC_URI  = "git://cobalt.googlesource.com/cobalt.git;protocol=https;name=cobalt;branch=22.lts.stable"
 SRC_URI += "git://cobalt.googlesource.com/depot_tools.git;protocol=https;destsuffix=depot_tools;name=depottools"
-SRC_URI += "${STARBOARD_SRC_URI};protocol=${CMF_GIT_PROTOCOL};destsuffix=starboard;name=starboard;branch=master"
+SRC_URI += "${CMF_GIT_ROOT}/rdk/components/generic/cobalt;protocol=${CMF_GIT_PROTOCOL};destsuffix=starboard;name=starboard;branch=22.lts.stable"
 
 PR = "5"
 SRCREV_cobalt = "22.lts.${PR}"
 SRCREV_depottools = "913305037df7027dc118253b7c2d3655d181c612"
-SRCREV_starboard = "${STARBOARD_SRCREV}"
+SRCREV_starboard = "d23e2da63e840f04a1bfa5cf1f2a1e7b0c261102"
 
 SRCREV_FORMAT = "cobalt_depottools_starboard"
 
