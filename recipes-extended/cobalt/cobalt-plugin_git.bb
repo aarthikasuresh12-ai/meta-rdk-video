@@ -17,6 +17,7 @@ inherit cmake pkgconfig
 # Generate cobalt plugin as a rdm package for test purpose when rdm-test-plugin distro is enabled.
 inherit ${@bb.utils.contains('DISTRO_FEATURES', 'rdm-test-plugin', 'comcast-package-deploy', '', d)}
 DOWNLOAD_APPS="${@bb.utils.contains('DISTRO_FEATURES','rdm-test-plugin','cobalt-test-plugin', '', d)}"
+RDM_PACKAGE_TYPE="${@bb.utils.contains('DISTRO_FEATURES','rdm-test-plugin','plugin', '', d)}"
 
 DEPENDS = "wpeframework"
 
