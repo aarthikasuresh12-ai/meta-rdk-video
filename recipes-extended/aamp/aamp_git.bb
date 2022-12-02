@@ -22,6 +22,7 @@ S = "${WORKDIR}/git/"
 
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'webkit', 'qtwebkit', '', d)}"
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'rdkbrowser2', '${WPEWEBKIT}', '', d)}"
+DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'webkitbrowser-plugin', '${WPEWEBKIT}', '', d)}"
 DEPENDS_remove_rpi = "${@bb.utils.contains('DISTRO_FEATURES', 'webkit', 'qtwebkit', '', d)}"
 
 
