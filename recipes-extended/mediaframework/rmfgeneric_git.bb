@@ -15,7 +15,7 @@ export FSROOT = '='
 
 PACKAGECONFIG_append_hybrid = " ippvsource "
 
-EXTRA_OECONF_append_hybrid = " --enable-mediaplayersink --enable-rmfproxyservice --enable-transcoderfilter --enable-hnsink --enable-vodsource --enable-qam --enable-dumpfilesink --enable-rbi --enable-rbidaemon --enable-rbiadcache"
+EXTRA_OECONF_append_hybrid = " --enable-mediaplayersink --enable-rmfproxyservice --enable-transcoderfilter --enable-hnsink --enable-vodsource --enable-qam --enable-libmediaplayer --enable-dumpfilesink --enable-rbi --enable-rbidaemon --enable-rbiadcache"
 
 ENABLE_GST1 = "--enable-gstreamer1=${@bb.utils.contains('DISTRO_FEATURES', 'gstreamer1', 'yes', 'no', d)}"
 EXTRA_OECONF += "${ENABLE_GST1}"

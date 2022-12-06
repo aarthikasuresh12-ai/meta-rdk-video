@@ -36,6 +36,7 @@ do_install() {
 	install -m 0644 ${S}/smoothsource/*.h ${D}${includedir}
 	install -m 0644 ${S}/transcoderfilter/*.h ${D}${includedir}
 	install -m 0644 ${S}/vodsource/*.h ${D}${includedir}
+	install -m 0644 ${S}/libmediaplayer/libmediaplayer.h ${D}${includedir}
 	install -m 0644 ${S}/webkitsink/*.h ${D}${includedir}
 	install -m 0644 ${S}/snmp/snmpmanager/*.h ${D}${includedir}
 	install -m 0644 ${S}/snmp/ipcclient/*.h ${D}${includedir}
