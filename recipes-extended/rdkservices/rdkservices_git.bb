@@ -57,7 +57,7 @@ include include/webkitbrowser.inc
 include include/packager.inc
 include include/texttospeech.inc
 
-WPEFRAMEWORK_LOCATIONSYNC_URI ?= "http://jsonip.metrological.com/?maf=true"
+WPEFRAMEWORK_LOCATIONSYNC_URI ?= "http://jsonip.metrological.com/?target=wpe"
 
 PACKAGECONFIG ?= " \
     ${WPE_SNAPSHOT} \
