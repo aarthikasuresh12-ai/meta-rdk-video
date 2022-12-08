@@ -386,8 +386,13 @@ do_install_append_client() {
         install -m 0644 ${S}/../systemd_units/dnsmerge-udhcpc.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/dnsmerge-upnp.path ${D}${systemd_unitdir}/system
         install -m 0644 ${S}/../systemd_units/dnsmerge.service ${D}${systemd_unitdir}/system
+        if ${@bb.utils.contains('DISTRO_FEATURES','flex2_rdk','true','false',d)}; then
+            install -m 0644 ${S}/../systemd_units/dnsmerge-dibbler.path  ${D}${systemd_unitdir}/system
+            if [ -f ${D}/lib/rdk/dibbler_start_client_flex.sh ]; then
+               cp ${D}/lib/rdk/dibbler_start_client_flex.sh ${D}/lib/rdk/dibbler_start_client.sh
+            fi
+        fi
         install -m 0644 ${S}/../systemd_units/schedule_maintenance.service ${D}${systemd_unitdir}/system
-
         ## The systemd-timesyncd version 244 and above doesn't have access to /tmp directory as it is launched by 
         ## an unprivileged user(systemd-timesync). So trigger ntp-event when /run/systemd/timesync/synchronized flag is created instead of /tmp/clock-event.
         if [ "${DUNFELL_BUILD}" = "true" ]; then
@@ -528,6 +533,7 @@ SYSTEMD_SERVICE_${PN}_append_client = " ${@bb.utils.contains('DISTRO_FEATURES', 
 SYSTEMD_SERVICE_${PN}_append_client = " dnsmerge-udhcpc.path"
 SYSTEMD_SERVICE_${PN}_append_client = " dnsmerge-upnp.path"
 SYSTEMD_SERVICE_${PN}_append_client = " dnsmerge.service"
+SYSTEMD_SERVICE_${PN}_append_client = " ${@bb.utils.contains('DISTRO_FEATURES', 'flex2_rdk', 'dnsmerge-dibbler.path', ' ', d)}"
 SYSTEMD_SERVICE_${PN}_append_client = " schedule_maintenance.service"
 
 SYSTEMD_SERVICE_${PN}_append_mediaclient = " ip-setup-monitor.service"
