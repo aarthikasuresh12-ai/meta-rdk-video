@@ -19,7 +19,8 @@ SRC_URI += "file://0003-OCDM-increase-RPC-comm-timeout.patch \
            file://0001-Support-negative-numbers-with-write_config.patch \
            file://LLAMA-2254_fix_netlink_buffer_size_error.patch \
            file://0001-RDKTV-15393-clock_gettime.patch \
-	   file://0005-DELIA-58939-Webprocess-crash.patch \
+           file://0005-DELIA-58939-Webprocess-crash.patch \
+           file://0001-Thunder_json_quoted_string_parsing_fix.patch \
            "
 
 inherit systemd update-rc.d pythonnative

@@ -1,0 +1,61 @@
+#####################################################################
+Date: Fri, 09 Dec 2022 12:35:00 PM
+From: Karunakaran A
+Subject: Fix for Thunder trace log enable error  
+Source: COMCAST
+License: Apache-2.0
+Upstream-Status: Completed
+Signed-off-by: Karunakaran_Amirthalingam@cable.comcast.com
+#####################################################################
+diff --git a/Source/core/JSON.h b/Source/core/JSON.h
+index 8dea3f03..ce1c64b6 100644
+--- a/Source/core/JSON.h
++++ b/Source/core/JSON.h
+@@ -1606,7 +1606,7 @@ namespace Core {
+             inline const string Value() const
+             {
+                 if ((_scopeCount & (SetBit | QuoteFoundBit | QuotedSerializeBit)) == (SetBit | QuoteFoundBit)) {
+-                    return ('\"' + Core::ToString(_value.c_str()) + '\"');
++                    return (Core::ToQuotedString('\"', _value));
+                 }
+                 return (((_scopeCount & (SetBit | NullBit)) == SetBit) ? Core::ToString(_value.c_str()) : Core::ToString(_default.c_str()));
+             }
+diff --git a/Source/core/Serialization.cpp b/Source/core/Serialization.cpp
+index 8f8b5902..25ff008b 100644
+--- a/Source/core/Serialization.cpp
++++ b/Source/core/Serialization.cpp
+@@ -294,5 +294,21 @@ namespace Core {
+ 
+         return (index);
+     }
++
++
++    // If we are going to mark the length of a string by quotes, make 
++    // sure that the internal quotes are escaped...
++    string EXTERNAL ToQuotedString(const TCHAR quote, const string& input) {
++        string result;
++        result += quote;
++        for (auto entry : input) {
++            if (entry == quote) {
++                result += '\\';
++            }
++            result += entry;
++        }
++        result += quote;
++        return (result);
++    }
+ }
+ } // namespace Core
+diff --git a/Source/core/Serialization.h b/Source/core/Serialization.h
+index 732396b5..671ba4a0 100644
+--- a/Source/core/Serialization.h
++++ b/Source/core/Serialization.h
+@@ -265,6 +265,8 @@ namespace Core {
+ 
+     uint16_t EXTERNAL FromString(const string& newValue, uint8_t object[], uint16_t& length, const TCHAR* ignoreList = nullptr);
+ 
++    string EXTERNAL ToQuotedString(const TCHAR quote, const string& input);
++
+     namespace Serialize {
+         template <typename TEXTTERMINATOR, typename HANDLER>
+         class ParserType {
