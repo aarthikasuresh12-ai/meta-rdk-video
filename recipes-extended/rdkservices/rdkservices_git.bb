@@ -9,7 +9,6 @@ S = "${WORKDIR}/git"
 inherit cmake pkgconfig
 
 SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main \
-           file://0001-Fix-DisplayInfo-build-with-SDK-14.4.patch \
            file://0002-RDK-28534-Comcast-Security-Agent-changes.patch \
            file://index.html \
            file://osmc-devinput-remote.json \
@@ -27,7 +26,7 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
           "
 
 # Dec 9, 2022
-SRCREV = "556e81d2ed5310803b6334fabe17891cdeec578f"
+SRCREV = "2ae147fc913714c757a78e470993ecfaeac989bf"
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
 
