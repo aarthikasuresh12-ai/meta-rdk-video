@@ -9,15 +9,14 @@ Signed-off-by: Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
  Monitor/Monitor.config | 51 ++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 51 insertions(+)
 
-diff --git a/Monitor/Monitor.config b/Monitor/Monitor.config
-index af6fb97e..b4115f39 100644
---- a/Monitor/Monitor.config
-+++ b/Monitor/Monitor.config
-@@ -171,3 +171,59 @@ if(PLUGIN_MONITOR_WEBKITBROWSER_RESIDENT_APP)
-     map_append(${configuration} observables ___array___)
+Index: git/Monitor/Monitor.config
+===================================================================
+--- git.orig/Monitor/Monitor.config
++++ git/Monitor/Monitor.config
+@@ -208,6 +208,72 @@ if(PLUGIN_MONITOR_WEBKITBROWSER_RESIDENT
      map_append(${configuration} observables ${RESIDENT_APP_MONITOR_CONFIG})
  endif()
-+
+ 
 +if(PLUGIN_MONITOR_CLONED_APPS)
 +    map()
 +        kv(callsign "SearchAndDiscovery")
@@ -72,7 +71,18 @@ index af6fb97e..b4115f39 100644
 +    ans(NETFLIX_APP_MONITOR_CONFIG)
 +    map_append(${configuration} observables ___array___)
 +    map_append(${configuration} observables ${NETFLIX_APP_MONITOR_CONFIG})
++
++    map()
++        kv(callsign "JSPP")
++        kv(operational -1)
++        kv(memory 5)
++        kv(memorylimit ${PLUGIN_MONITOR_CLONED_APP_MEMORYLIMIT})
++    end()
++    ans(JSPP_MONITOR_CONFIG)
++    map_append(${configuration} observables ___array___)
++    map_append(${configuration} observables ${JSPP_MONITOR_CONFIG})
 +endif()
--- 
-2.25.1
-
++
+ if(PLUGIN_MONITOR_INSTANCES_LIST)
+ 
+     # 'PLUGIN_MONITOR_INSTANCES_LIST' contains a semi-colon (';') separated list of Monitor observable
