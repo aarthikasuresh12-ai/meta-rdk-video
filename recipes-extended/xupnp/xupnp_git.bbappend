@@ -39,6 +39,10 @@ do_install_append_hybrid() {
 
 do_install_append_client() {
     install -m 0644 ${S}/conf/systemd/xcal-device-client.service ${D}${systemd_unitdir}/system/xcal-device.service
+
+    install -m 0644 ${S}/conf/systemd/xupnp-rfc.service ${D}${systemd_unitdir}/system/xupnp-rfc.service
+    install -D -m 0644 ${S}/conf/systemd/xupnp-rfc-check.conf  ${D}${systemd_unitdir}/system/xupnp.service.d/xupnp-rfc-check.conf
+    install -D -m 0644 ${S}/conf/systemd/xupnp-rfc-check.conf  ${D}${systemd_unitdir}/system/xcal-device.service.d/xupnp-rfc-check.conf
 }
 
 CFLAGS_client_append = " -DUSE_XUPNP_TZ_UPDATE "
@@ -54,3 +58,9 @@ FILES_${PN}_append = " ${systemd_unitdir}/system/xupnp-certs.service"
 FILES_${PN}_append = " ${sysconfdir}/Xupnp/addRouteToMocaBridge.sh"
 FILES_${PN}_append_hybrid = " ${systemd_unitdir}/system/xcal-device.path"
 FILES_${PN}_append_hybrid = " ${systemd_unitdir}/system/xupnp-firewall.service"
+
+#XUPNP RFC Check
+SYSTEMD_SERVICE_${PN}_append_client = " xupnp-rfc.service"
+FILES_${PN}_append_client = " ${systemd_unitdir}/system/xupnp-rfc.service"
+FILES_${PN}_append_client = " ${systemd_unitdir}/system//xcal-device.service.d/xupnp-rfc-check.conf"
+FILES_${PN}_append_client = " ${systemd_unitdir}/system//xupnp.service.d/xupnp-rfc-check.conf"
