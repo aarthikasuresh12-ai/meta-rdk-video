@@ -13,7 +13,7 @@ RDEPENDS_${PN} += "gst-plugins-rdk-aamp devicesettings"
 
 NO_RECOMMENDATIONS = "1"
 
-AAMP_RELEASE_TAG_NAME ?= "4.10.3.0"
+AAMP_RELEASE_TAG_NAME ?= "4.11.1.0"
 
 SRC_URI = "${CMF_GIT_ROOT}/rdk/components/generic/aamp;protocol=${CMF_GIT_PROTOCOL};branch=${AAMP_RELEASE_TAG_NAME};nobranch=1;name=aamp"
 SRC_URI += "${@bb.utils.contains('AAMP_RELEASE_TAG_NAME', 'dev_sprint_22_1', 'file://0001-Updated-Find-JSC-include-path.patch', 'file://0001-Find-JSC-include-path.patch', d)}"
