@@ -25,8 +25,8 @@ SRC_URI = "git://github.com/rdkcentral/rdkservices.git;protocol=git;branch=main 
            file://0001-RDKTV-20749-Revert-Merge-pull-request-3336-from-npol.patch \
           "
 
-# Jan 04, 2023
-SRCREV = "a421d80a44b3f45396987500003cee15df14782f"
+# Jan 09, 2023
+SRCREV = "a9ba7a51aa5696254dec8680396627a9e035e0fc"
 TOOLCHAIN = "gcc"
 EXTRA_OECMAKE += "-DCMAKE_SYSROOT=${STAGING_DIR_HOST}"
 
