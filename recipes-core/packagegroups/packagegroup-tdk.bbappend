@@ -1,6 +1,6 @@
 #components used in TDK for validating Gstreamer opensource plugins
 
-RDEPENDS_packagegroup-tdk += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_firebolt_compliance_tdk', '\
+RDEPENDS_packagegroup-tdk += "${@bb.utils.contains('DISTRO_FEATURES', 'enable_gst_testing', '\
   gstreamer1.0-plugins-base-test \
   gstreamer1.0-plugins-bad-test \
   gstreamer1.0-plugins-good-test \
