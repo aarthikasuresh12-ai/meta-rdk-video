@@ -14,7 +14,7 @@ S = "${WORKDIR}/git"
 
 DEPENDS = "iarmbus iarmmgrs e2fsprogs libsoup-2.4 libsyswrapper yajl \
            devicesettings procps glib-2.0 \
-           storagemanager cjson libtinyxml2\
+           cjson libtinyxml2\
 	  "
 DEPENDS_append = " rdk-logger libparodus parodus"
 DEPENDS_append_client = " tr69agent-headers netsrvmgr"
